@@ -11,3 +11,8 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+/* Stil dosyanızda bu stil kurallarını ekleyin */
+.disabled-input:hover {
+  cursor: not-allowed; 
+}

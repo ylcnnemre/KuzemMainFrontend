@@ -1,57 +1,65 @@
-import { json } from 'stream/consumers';
+
 import { create } from 'zustand'
+import { jwtDecode } from "jwt-decode"
+
+interface IUser {
+    _id: string,
+    name: string,
+    email: string
+    tcNo: string,
+    birthDate: string
+    gender: "erkek" | "kadın",
+    address: any,
+    iat: any,
+    exp: any
+}
 
 // User state interface
 interface UserState {
-    user: object;
-    error: string;
-    loading: boolean;
-    isUserLogout: boolean;
-    errorMsg: boolean;
-    apiError: (data: any) => void;
-    loginSuccess: (user: object, navigate: any) => void;
+    user: IUser;
+    isLoggedIn: boolean,
+    setUser: (data: IUser) => void;
+    loginSuccess: (user: any, navigate: any) => void;
     logoutUserSuccess: () => void;
-    resetLoginFlag: () => void;
 }
 
 // Zustand store
 const useUserStore = create<UserState>((set) => ({
-    user: {},
-    error: "",
-    loading: false,
-    isUserLogout: false,
-    errorMsg: false,
-
-    apiError: (data) =>
+    user: localStorage.getItem("token") ? jwtDecode(JSON.stringify(localStorage.getItem("token"))) : {
+        _id: "",
+        address: "",
+        birthDate: "",
+        email: "",
+        exp: "",
+        gender: "erkek",
+        iat: "",
+        name: "",
+        tcNo: ""
+    },
+    isLoggedIn: localStorage.getItem("token") ? true : false,
+    setUser: (data) => {
         set(() => ({
-            error: data,
-            loading: true,
-            isUserLogout: false,
-            errorMsg: true,
-        })),
+            user: data
+        }))
+    },
 
-    loginSuccess: (user, navigate) => {
-        localStorage.setItem("authUser", JSON.stringify(user))
+    loginSuccess: (token, navigate) => {
+        console.log("tokenn ==>", token)
+        localStorage.setItem("token", token.accessToken)
+        const decoded: IUser = jwtDecode(JSON.stringify(token.accessToken))
         set(() => ({
-            user: user,
-            loading: false,
-            errorMsg: false,
+            user: decoded,
+            isLoggedIn: true
         }))
         navigate("/dashboard")
-    }
-    ,
-
-    logoutUserSuccess: () =>
+    },
+    logoutUserSuccess: () => {
+        localStorage.removeItem("token")
         set(() => ({
-            isUserLogout: true,
-        })),
+            isLoggedIn: false
+        }))
+    },
 
-    resetLoginFlag: () =>
-        set(() => ({
-            error: "",
-            loading: false,
-            errorMsg: false,
-        })),
 }));
 
 export default useUserStore;

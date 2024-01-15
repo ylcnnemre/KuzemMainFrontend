@@ -1,27 +1,17 @@
 import React, { useEffect } from "react";
+import useUserStore from "../zustand/useUserStore";
+import { useNavigate, Navigate } from "react-router-dom";
 
 
-const AuthProtected = (props : any) =>{
- /*  const dispatch : any = useDispatch();
-  const { userProfile, loading, token } = useProfile();
-  const data= useProfile()
-  console.log("userprof ==>",data)
-  useEffect(() => {
-    if (userProfile && !loading && token) {
-      setAuthorization(token);
-    } else if (!userProfile && loading && !token) {
-      dispatch(logoutUser());
-    }
-  }, [token, userProfile, loading, dispatch]);
+const AuthProtected = (props: any) => {
+  const { isLoggedIn, user } = useUserStore()
+  if (isLoggedIn) {
+    return <>{props.children}</>;
+  }
+  else {
+    return <Navigate to={"/login"} />
+  }
 
-
-  if (!userProfile && loading && !token) {
-    return (
-      <Navigate to={{ pathname: "/login"}} />
-    );
-  } */
-
-  return <>{props.children}</>;
 };
 
 

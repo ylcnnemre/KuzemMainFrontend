@@ -1,7 +1,7 @@
 import React from "react";
 import { Navigate } from "react-router-dom";
 
-import DashboardEcommerce from "../pages/DashboardEcommerce";
+import Dashboard from "../pages/Dashboard";
 import Login from "../pages/Authentication/Login";
 import ForgetPasswordPage from "../pages/Authentication/ForgetPassword";
 import Logout from "../pages/Authentication/Logout";
@@ -13,8 +13,8 @@ import Faqs from "../pages/Faqs/Faqs";
 
 
 const authProtectedRoutes = [
-  { path: "/anasayfa", component: <DashboardEcommerce /> },
-  { path: "/index", component: <DashboardEcommerce /> },
+  { path: "/anasayfa", component: <Dashboard /> },
+  { path: "/index", component: <Dashboard /> },
   { path: "/profile", component: <UserProfile /> },
   { path: "/pages-profile-settings", component: <Settings /> },
   { path: "/pages-faqs", component: <Faqs /> },

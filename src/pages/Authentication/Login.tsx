@@ -1,14 +1,13 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { Card, CardBody, Col, Container, Input, Label, Row, Button, Form, FormFeedback, Alert, Spinner } from 'reactstrap';
 import ParticlesAuth from "../AuthenticationInner/ParticlesAuth";
-import { Link } from "react-router-dom";
+import { Link, Navigate } from "react-router-dom";
 import withRouter from "../../Components/Common/withRouter";
-// Formik validation
 import * as Yup from "yup";
 import { useFormik } from "formik";
-
-
 import useUserStore from '../../zustand/useUserStore';
+import { loginApi } from '../../api/Auth';
+import { toast } from 'react-toastify';
 //import images
 
 const Login = (props: any) => {
@@ -16,29 +15,42 @@ const Login = (props: any) => {
     const [userLogin, setUserLogin] = useState<any>([]);
     const [passwordShow, setPasswordShow] = useState<any>(false);
     const [loader, setLoader] = useState<boolean>(false);
-    const { loginSuccess } = useUserStore()
+    const { loginSuccess, isLoggedIn } = useUserStore()
 
-    const validation: any = useFormik({
-        // enableReinitialize : use this flag when initial values needs to be changed
+    const formik = useFormik({
         enableReinitialize: true,
-
         initialValues: {
-            email: userLogin.email || "admin@themesbrand.com" || '',
-            password: userLogin.password || "123456" || '',
+            email: userLogin.email,
+            password: userLogin.password
         },
         validationSchema: Yup.object({
-            email: Yup.string().required("Please Enter Your Email"),
+            email: Yup.string().email(),
             password: Yup.string().required("Please Enter Your Password"),
         }),
-        onSubmit: (values) => {
-            loginSuccess(values,props.router.navigate)
-            setLoader(true)
+        onSubmit: async (values) => {
+            try {
+                setLoader(true)
+                const response = await loginApi(values)
+                loginSuccess(response.data, props.router.navigate)
+            }
+            catch (err: any) {
+                toast.error(err.response.data?.message, {
+                    autoClose: 2000
+                })
+                setLoader(false)
+
+
+            }
+
+
         }
     });
 
+    if (isLoggedIn) {
+        return <Navigate to={"/anasayfa"} />
+    }
 
 
-    document.title = "Basic SignIn | Velzon - React Admin & Dashboard Template";
     return (
         <React.Fragment>
             <ParticlesAuth>
@@ -61,15 +73,15 @@ const Login = (props: any) => {
                                 <Card className="mt-4 card-bg-fill">
                                     <CardBody className="p-4">
                                         <div className="text-center mt-2">
-                                            <h5 className="text-primary">Welcome Back !</h5>
-                                            <p className="text-muted">Sign in to continue to Velzon.</p>
+                                            <h5 className="text-primary">Hoş Geldiniz !</h5>
+
                                         </div>
-                                      {/*   {error && error ? (<Alert color="danger"> {error} </Alert>) : null} */}
+                                        {/*   {error && error ? (<Alert color="danger"> {error} </Alert>) : null} */}
                                         <div className="p-2 mt-4">
                                             <Form
                                                 onSubmit={(e) => {
                                                     e.preventDefault();
-                                                    validation.handleSubmit();
+                                                    formik.handleSubmit();
                                                     return false;
                                                 }}
                                                 action="#">
@@ -79,40 +91,40 @@ const Login = (props: any) => {
                                                     <Input
                                                         name="email"
                                                         className="form-control"
-                                                        placeholder="Enter email"
+                                                        placeholder="Email"
                                                         type="email"
-                                                        onChange={validation.handleChange}
-                                                        onBlur={validation.handleBlur}
-                                                        value={validation.values.email || ""}
+                                                        onChange={formik.handleChange}
+
+                                                        value={formik.values.email}
                                                         invalid={
-                                                            validation.touched.email && validation.errors.email ? true : false
+                                                            formik.touched.email && formik.errors.email ? true : false
                                                         }
                                                     />
-                                                    {validation.touched.email && validation.errors.email ? (
-                                                        <FormFeedback type="invalid">{validation.errors.email}</FormFeedback>
+                                                    {formik.touched.email && formik.errors.email ? (
+                                                        <FormFeedback type="invalid">{formik.errors.email as string}</FormFeedback>
                                                     ) : null}
                                                 </div>
 
                                                 <div className="mb-3">
                                                     <div className="float-end">
-                                                        <Link to="/forgot-password" className="text-muted">Forgot password?</Link>
+                                                        <Link to="/forgot-password" className="text-muted">Şifremi Unuttum ?</Link>
                                                     </div>
-                                                    <Label className="form-label" htmlFor="password-input">Password</Label>
+                                                    <Label className="form-label" htmlFor="password-input">Parola</Label>
                                                     <div className="position-relative auth-pass-inputgroup mb-3">
                                                         <Input
                                                             name="password"
-                                                            value={validation.values.password || ""}
+                                                            value={formik.values.password || ""}
                                                             type={passwordShow ? "text" : "password"}
                                                             className="form-control pe-5"
-                                                            placeholder="Enter Password"
-                                                            onChange={validation.handleChange}
-                                                            onBlur={validation.handleBlur}
+                                                            placeholder="Parola"
+                                                            onChange={formik.handleChange}
+                                                            onBlur={formik.handleBlur}
                                                             invalid={
-                                                                validation.touched.password && validation.errors.password ? true : false
+                                                                formik.touched.password && formik.errors.password ? true : false
                                                             }
                                                         />
-                                                        {validation.touched.password && validation.errors.password ? (
-                                                            <FormFeedback type="invalid">{validation.errors.password}</FormFeedback>
+                                                        {formik.touched.password && formik.errors.password ? (
+                                                            <FormFeedback type="invalid">{formik.errors.password as string}</FormFeedback>
                                                         ) : null}
                                                         <button className="btn btn-link position-absolute end-0 top-0 text-decoration-none text-muted" type="button" id="password-addon"
                                                             onClick={() => setPasswordShow(!passwordShow)}><i className="ri-eye-fill align-middle"></i></button>
@@ -121,7 +133,7 @@ const Login = (props: any) => {
 
                                                 <div className="form-check">
                                                     <Input className="form-check-input" type="checkbox" value="" id="auth-remember-check" />
-                                                    <Label className="form-check-label" htmlFor="auth-remember-check">Remember me</Label>
+                                                    <Label className="form-check-label" htmlFor="auth-remember-check">Beni Hatırla</Label>
                                                 </div>
 
                                                 <div className="mt-4">
@@ -129,7 +141,7 @@ const Login = (props: any) => {
                                                         disabled={loader && true}
                                                         className="btn btn-success w-100" type="submit">
                                                         {loader && <Spinner size="sm" className='me-2'> Loading... </Spinner>}
-                                                        Sign In
+                                                        Giriş
                                                     </Button>
                                                 </div>
 
@@ -139,7 +151,7 @@ const Login = (props: any) => {
                                 </Card>
 
                                 <div className="mt-4 text-center">
-                                    <p className="mb-0">Don't have an account ? <Link to="/register" className="fw-semibold text-primary text-decoration-underline"> Signup </Link> </p>
+                                    <p className="mb-0">Hesabım Yok ? <Link to="/register" className="fw-semibold text-primary text-decoration-underline"> Kayıt Ol </Link> </p>
                                 </div>
 
                             </Col>

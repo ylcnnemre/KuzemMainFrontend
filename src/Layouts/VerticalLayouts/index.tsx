@@ -136,6 +136,7 @@ const VerticalLayout = (props: any) => {
 
             {/* menu Items */}
             {(navData || []).map((item: any, key: any) => {
+                console.log("itemm ==>",item)
                 return (
                     <React.Fragment key={key}>
                         {/* Main Header */}
@@ -232,10 +233,11 @@ const VerticalLayout = (props: any) => {
                                 ) : (
                                     <li className="nav-item">
                                         <Link
+                                           
                                             className="nav-link menu-link"
                                             to={item.link ? item.link : "/#"}>
                                             {item.icon}<span>{props.t(item.label)}</span>
-
+                                            
                                         </Link>
                                     </li>
                                 ))

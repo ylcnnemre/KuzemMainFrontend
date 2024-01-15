@@ -5,7 +5,7 @@ const ParticlesAuth = ({ children }: any) => {
     return (
         <React.Fragment>
             <div className="auth-page-wrapper pt-5">
-                <div className="auth-one-bg-position auth-one-bg" id="auth-particles">
+               {/*  <div className="auth-one-bg-position auth-one-bg" id="auth-particles">
 
                     <div className="bg-overlay"></div>
 
@@ -15,22 +15,11 @@ const ParticlesAuth = ({ children }: any) => {
                         </svg>
                     </div>
                     <canvas className="particles-js-canvas-el" width="1831" height="380" style={{ width: "100%", height: "100%" }}></canvas>
-                </div>
+                </div> */}
 
                 {/* pass the children */}
                 {children}
 
-                <footer className="footer">
-                    <div className="container">
-                        <div className="row">
-                            <div className="col-lg-12">
-                                <div className="text-center">
-                                    <p className="mb-0 text-muted">&copy; {new Date().getFullYear()} Velzon. Crafted with <i className="mdi mdi-heart text-danger"></i> by Themesbrand</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </footer>
             </div>
         </React.Fragment>
     );

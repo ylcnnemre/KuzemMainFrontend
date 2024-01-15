@@ -53,9 +53,10 @@ const Navdata = () => {
             id: "dashboard",
             label: "Dashboards",
             icon: <MdOutlineDashboard />,
-            link: "/#",
+            link: "/anasayfa",
             stateVariables: isDashboard,
             click: function (e : any) {
+                console.log("selamm ",e)
                 e.preventDefault();
                 setIsDashboard(!isDashboard);
                 setIscurrentState('Dashboard');
@@ -106,7 +107,7 @@ const Navdata = () => {
                 },
             ], */
         },
-        {
+        /* {
             id: "apps",
             label: "Apps",
             icon: <MdApps/>,
@@ -118,7 +119,7 @@ const Navdata = () => {
                 updateIconSidebar(e);
             },
             stateVariables: isApps,
-           /*  subItems: [
+            subItems: [
                 {
                     id: "calendar",
                     label: "Calendar",
@@ -465,8 +466,8 @@ const Navdata = () => {
                     badgeName: "New",
                     badgeColor: "success"
                 },
-            ], */
-        },
+            ],
+        }, */
 
     ];
     return <React.Fragment>{menuItems}</React.Fragment>;

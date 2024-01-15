@@ -5,26 +5,15 @@ import { CgProfile } from "react-icons/cg";
 import { IoHelpCircleOutline } from "react-icons/io5";
 import { MdOutlineSettings } from "react-icons/md";
 import { FiLogOut } from "react-icons/fi";
-//import images
 import avatar1 from "../../assets/images/users/avatar-1.jpg";
+import useUserStore from '../../zustand/useUserStore';
+import withRouter from './withRouter';
+import { withTranslation } from 'react-i18next';
 
-const ProfileDropdown = () => {
+const ProfileDropdown = ({ t }: any) => {
+    const { logoutUserSuccess } = useUserStore()
+    const { user } = useUserStore()
 
-
-
-    const [userName, setUserName] = useState("Admin");
-
-    useEffect(() => {
-        /*  const authUSer : any = sessionStorage.getItem("authUser");
-         if (authUSer) {
-             const obj : any = JSON.parse(authUSer);
-             setUserName(process.env.REACT_APP_DEFAULTAUTH === "fake" ? obj.username === undefined ? user.first_name ? user.first_name : obj.data.first_name : "Admin" || "Admin" :
-                 process.env.REACT_APP_DEFAULTAUTH === "firebase" ? obj.email && obj.email : "Admin"
-             );
-         } */
-    }, [userName]);
-
-    //Dropdown Toggle
     const [isProfileDropdown, setIsProfileDropdown] = useState(false);
     const toggleProfileDropdown = () => {
         setIsProfileDropdown(!isProfileDropdown);
@@ -37,24 +26,28 @@ const ProfileDropdown = () => {
                         <img className="rounded-circle header-profile-user" src={avatar1}
                             alt="Header Avatar" />
                         <span className="text-start ms-xl-2">
-                            <span className="d-none d-xl-inline-block ms-1 fw-medium user-name-text">{userName}</span>
-                            <span className="d-none d-xl-block ms-1 fs-12 text-muted user-name-sub-text">Founder</span>
+                            <span className="d-none d-xl-inline-block ms-1 fw-medium user-name-text">{user.name}</span>
+                           {/*  <span className="d-none d-xl-block ms-1 fs-12 text-muted user-name-sub-text">Founder</span> */}
                         </span>
                     </span>
                 </DropdownToggle>
                 <DropdownMenu className="dropdown-menu-end">
-                    <h6 className="dropdown-header">Welcome {userName}!</h6>
+                    <h6 className="dropdown-header">{t("Welcome")} {user.name}!</h6>
                     <DropdownItem className='p-0'>
                         <Link to="/profile" className="dropdown-item">
                             <CgProfile size={"1.2rem"} style={{ marginRight: "10px" }} />
-                            <span className="align-middle">Profile</span>
+                            <span className="align-middle">
+                                {t("Profile")}
+                            </span>
                         </Link>
                     </DropdownItem>
                     <DropdownItem className='p-0'>
                         <Link to="/pages-faqs" className="dropdown-item">
                             <IoHelpCircleOutline size={"1.2rem"} style={{ marginRight: "10px" }} />
                             <span
-                                className="align-middle">Help</span>
+                                className="align-middle">
+                                {t("Help")}
+                            </span>
                         </Link>
                     </DropdownItem>
                     <div className="dropdown-divider"></div>
@@ -62,16 +55,22 @@ const ProfileDropdown = () => {
                         <Link to="/pages-profile-settings" className="dropdown-item">
                             <MdOutlineSettings style={{ marginRight: "10px" }} />
                             <span
-                                className="align-middle">Settings</span>
+                                className="align-middle">
+                                {t("Settings")}
+                            </span>
                         </Link>
                     </DropdownItem>
 
                     <DropdownItem className='p-0'>
-                        <Link to="/logout" className="dropdown-item">
-                            <FiLogOut  style={{marginRight:"10px"}} />
+                        <p className="dropdown-item" onClick={() => {
+                            logoutUserSuccess()
+                        }} >
+                            <FiLogOut style={{ marginRight: "10px" }} />
                             <span
-                                className="align-middle" data-key="t-logout">Logout</span>
-                        </Link>
+                                className="align-middle" data-key="t-logout">
+                                {t("Logout")}
+                            </span>
+                        </p>
                     </DropdownItem>
                 </DropdownMenu>
             </Dropdown>
@@ -79,4 +78,4 @@ const ProfileDropdown = () => {
     );
 };
 
-export default ProfileDropdown;
+export default withRouter(withTranslation()(ProfileDropdown))

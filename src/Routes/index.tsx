@@ -8,13 +8,16 @@ import VerticalLayout from "../Layouts/index";
 //routes
 import { authProtectedRoutes, publicRoutes } from "./allRoutes";
 import AuthProtected from './AuthProtected';
+import { ToastContainer } from 'react-toastify';
 
 const Index = () => {
     return (
         <React.Fragment>
+            <ToastContainer />
             <Routes>
+
                 <Route>
-                    {publicRoutes.map((route : any, idx : any) => (
+                    {publicRoutes.map((route: any, idx: any) => (
                         <Route
                             path={route.path}
                             element={
@@ -23,13 +26,13 @@ const Index = () => {
                                 </NonAuthLayout>
                             }
                             key={idx}
-                            // exact={true}
+                        // exact={true}
                         />
                     ))}
                 </Route>
 
                 <Route>
-                    {authProtectedRoutes.map((route : any, idx : any) => (
+                    {authProtectedRoutes.map((route: any, idx: any) => (
                         <Route
                             path={route.path}
                             element={
@@ -37,7 +40,7 @@ const Index = () => {
                                     <VerticalLayout>{route.component}</VerticalLayout>
                                 </AuthProtected>}
                             key={idx}
-                            // exact={true}
+                        // exact={true}
                         />
                     ))}
                 </Route>
