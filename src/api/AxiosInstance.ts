@@ -1,5 +1,6 @@
 import axios from "axios"
-
+import { toast } from "react-toastify"
+import swr from "swr"
 const baseURL = import.meta.env.VITE_BASEURL
 
 const axiosInstance = axios.create({
@@ -15,18 +16,9 @@ axiosInstance.interceptors.request.use((config) => {
 })
 
 axiosInstance.interceptors.response.use((response) => response, (error) => {
-/*     if (error?.response?.status == 401) {
-        localStorage.removeItem("token")
-        window.location.href = "/giris"
-    } */
-    try {
-
-    }
-    catch (err) {
-
-    }
-
     return Promise.reject(error)
 })
 
-export { axiosInstance }
+const fetcher = (url: string) => axiosInstance.get(url).then(res => res.data);
+
+export { axiosInstance, fetcher }

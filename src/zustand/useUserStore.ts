@@ -9,6 +9,7 @@ interface IUser {
     tcNo: string,
     birthDate: string
     gender: "erkek" | "kadın",
+    role: "student" | "teacher" | "admin"
     address: any,
     iat: any,
     exp: any
@@ -32,6 +33,7 @@ const useUserStore = create<UserState>((set) => ({
         email: "",
         exp: "",
         gender: "erkek",
+        role: "student",
         iat: "",
         name: "",
         tcNo: ""
