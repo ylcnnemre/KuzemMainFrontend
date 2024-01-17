@@ -28,8 +28,14 @@ const ProfileDetail = ({ t }: any) => {
                     formik.setFieldValue(key, val)
                 }
                 else {
-                    formik.setFieldValue("city", val.city)
-                    formik.setFieldValue("region", val.region)
+                    const address: any = val
+                    formik.setFieldValue("city", address.city)
+                    if (address.city !== "") {
+                        setRegion(cityList.find(item => item.state == address.city)?.region as string[])
+                        formik.setFieldValue("region", address.region)
+                    }
+
+       
                 }
             })
             const birthDate = new Date(data.birthDate).toISOString().split('T')[0];
