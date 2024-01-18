@@ -6,8 +6,8 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { Link, useNavigate } from "react-router-dom";
 import ParticlesAuth from "../AuthenticationInner/ParticlesAuth";
-import { registerUserApi } from "../../api/User/User";
-import { ICreateUserType } from "../../api/User/Types";
+import { registerUserApi } from "../../api/User/UserApi";
+import { ICreateUserType } from "../../api/User/UserType";
 
 const Register = () => {
     const [loader, setLoader] = useState<boolean>(false);

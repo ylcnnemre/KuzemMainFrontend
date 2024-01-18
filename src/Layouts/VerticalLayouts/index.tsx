@@ -3,17 +3,16 @@ import PropTypes from "prop-types";
 import { Link } from "react-router-dom";
 import withRouter from "../../Components/Common/withRouter";
 import { Collapse } from 'reactstrap';
-// Import Data
 import navdata from "../LayoutMenuData";
-//i18n
 import { withTranslation } from "react-i18next";
-
 import useLayoutStore from '../../zustand/useLayoutStore';
+import useUserStore from '../../zustand/useUserStore';
+
 
 const VerticalLayout = (props: any) => {
     const navData = navdata().props.children;
 
-
+    const { user: { role } } = useUserStore()
     const { leftsidbarSizeType, sidebarVisibilitytype, layoutType } = useLayoutStore()
 
 
@@ -133,11 +132,9 @@ const VerticalLayout = (props: any) => {
 
     return (
         <React.Fragment>
-
-            {/* menu Items */}
             {(navData || []).map((item: any, key: any) => {
-                console.log("itemm ==>",item)
-                return (
+
+                return item?.role?.includes(role) ? (
                     <React.Fragment key={key}>
                         {/* Main Header */}
                         {item['isHeader'] ?
@@ -233,18 +230,20 @@ const VerticalLayout = (props: any) => {
                                 ) : (
                                     <li className="nav-item">
                                         <Link
-                                           
+
                                             className="nav-link menu-link"
                                             to={item.link ? item.link : "/#"}>
                                             {item.icon}<span>{props.t(item.label)}</span>
-                                            
+
                                         </Link>
                                     </li>
                                 ))
                             )
                         }
                     </React.Fragment>
-                );
+                ) : null
+
+
             })}
         </React.Fragment>
     );

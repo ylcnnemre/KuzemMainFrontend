@@ -1,44 +1,43 @@
-import React, { useEffect, useMemo, useState } from 'react'
+import React, { FC, useEffect, useMemo, useState } from 'react'
 import { Col, Form, FormFeedback, Input, Label, Row } from 'reactstrap'
 import Flatpickr from "react-flatpickr";
-import withRouter from '../../../Components/Common/withRouter';
+import withRouter from '../Common/withRouter';
 import { withTranslation } from 'react-i18next';
-import { IGetUserByIdType, IUpdateUserType } from '../../../api/User/Types';
-import { getUserByIdApi, updateUserApi } from '../../../api/User/User';
-import useUserStore from '../../../zustand/useUserStore';
+import { getUserByIdApi, updateUserApi } from '../../api/User/UserApi';
+import useUserStore from '../../zustand/useUserStore';
 import { toast } from 'react-toastify';
 import { useFormik } from 'formik';
 import * as yup from "yup"
-import { cityList } from '../../../common/constants/city';
+import { cityList } from '../../common/constants/city';
 
 const today = new Date();
 const eighteenYearsAgo = new Date(today.getFullYear() - 18, today.getMonth(), today.getDate());
 const eightyYearsAgo = new Date(today.getFullYear() - 80, today.getMonth(), today.getDate());
 
-const ProfileDetail = ({ t }: any) => {
+const ProfileDetail: FC<{ t: any, }> = ({ t }) => {
     const [region, setRegion] = useState<Array<string>>([])
-    const { user } = useUserStore()
+    const { user, setUser } = useUserStore()
+
+
     const getUserProfileData = async () => {
         try {
-            let response = await getUserByIdApi(user._id)
-            const data = response.data
-            console.log("dataa ==>", data)
-            Object.entries(data).map(([key, val]) => {
+            const { profileImg, ...rest } = user
+            console.log("rest ==>", rest)
+            Object.entries(rest).map(([key, val]) => {
                 if (key != "address") {
                     formik.setFieldValue(key, val)
                 }
                 else {
                     const address: any = val
                     formik.setFieldValue("city", address.city)
+                    formik.setFieldValue("postalCode",address.postalCode)
                     if (address.city !== "") {
                         setRegion(cityList.find(item => item.state == address.city)?.region as string[])
                         formik.setFieldValue("region", address.region)
                     }
-
-       
                 }
             })
-            const birthDate = new Date(data.birthDate).toISOString().split('T')[0];
+            const birthDate = new Date(user.birthDate).toISOString().split('T')[0];
             formik.setFieldValue('birthDate', birthDate);
         }
         catch (err: any) {
@@ -48,9 +47,7 @@ const ProfileDetail = ({ t }: any) => {
 
     useEffect(() => {
         getUserProfileData()
-    }, [])
-
-
+    }, [user])
 
 
     const formik = useFormik({
@@ -79,7 +76,8 @@ const ProfileDetail = ({ t }: any) => {
         onSubmit: async (value) => {
             try {
                 const { city, region, postalCode, email, phone, tcNo, role, ...rest } = value
-                const requestBody: IUpdateUserType = {
+                console.log("valuee ==>", value)
+                const requestBody = {
                     ...rest,
                     address: {
                         city,
@@ -89,7 +87,19 @@ const ProfileDetail = ({ t }: any) => {
                     }
                 }
                 let data = await updateUserApi(requestBody)
-
+                setUser({
+                    ...user,
+                    address: {
+                        city,
+                        additonalInfo: "",
+                        postalCode,
+                        region
+                    },
+                    name: value.name,
+                    surname: value.name,
+                    birthDate: value.birthDate,
+                    gender: value.gender as typeof user.gender
+                })
                 toast.success("Güncelleme Başarılı", {
                     autoClose: 2000
                 })

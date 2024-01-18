@@ -1,21 +1,9 @@
 
 import { create } from 'zustand'
 import { jwtDecode } from "jwt-decode"
+import { IJwtDecode, IUser } from '../api/User/UserType';
 
-interface IUser {
-    _id: string,
-    name: string,
-    email: string
-    tcNo: string,
-    birthDate: string
-    gender: "erkek" | "kadın",
-    role: "student" | "teacher" | "admin"
-    address: any,
-    iat: any,
-    exp: any
-}
 
-// User state interface
 interface UserState {
     user: IUser;
     isLoggedIn: boolean,
@@ -24,22 +12,28 @@ interface UserState {
     logoutUserSuccess: () => void;
 }
 
-// Zustand store
+const decodeToken = () => {
+    const { iat, exp, ...rest } = jwtDecode<IJwtDecode>(JSON.stringify(localStorage.getItem("token")))
+    return rest
+}
+
 const useUserStore = create<UserState>((set) => ({
-    user: localStorage.getItem("token") ? jwtDecode(JSON.stringify(localStorage.getItem("token"))) : {
+    user: localStorage.getItem("token") ? decodeToken() : {
         _id: "",
+        surname: "",
         address: "",
         birthDate: "",
         email: "",
-        exp: "",
+        phone: "",
         gender: "erkek",
         role: "student",
-        iat: "",
+        profileImg: "",
         name: "",
         tcNo: ""
     },
     isLoggedIn: localStorage.getItem("token") ? true : false,
     setUser: (data) => {
+        console.log("dataaaSett==>", data)
         set(() => ({
             user: data
         }))
@@ -48,9 +42,10 @@ const useUserStore = create<UserState>((set) => ({
     loginSuccess: (token, navigate) => {
         console.log("tokenn ==>", token)
         localStorage.setItem("token", token.accessToken)
-        const decoded: IUser = jwtDecode(JSON.stringify(token.accessToken))
+        const decodeJwt: IJwtDecode = jwtDecode(JSON.stringify(token.accessToken))
+        const { iat, exp, ...restDecode } = decodeJwt
         set(() => ({
-            user: decoded,
+            user: decodeJwt,
             isLoggedIn: true
         }))
         navigate("/dashboard")

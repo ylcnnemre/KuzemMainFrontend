@@ -1,7 +1,7 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
 import { Col, Form, FormFeedback, Input, Label, Row, TabPane } from 'reactstrap'
-import withRouter from '../../../Components/Common/withRouter'
+import withRouter from '../Common/withRouter'
 import { withTranslation } from 'react-i18next'
 import { useFormik } from 'formik'
 import * as yup from "yup"

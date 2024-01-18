@@ -1,22 +1,19 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { MdOutlineDashboard ,MdApps } from "react-icons/md";
+import { MdOutlineDashboard, MdApps } from "react-icons/md";
+import { PiChalkboardTeacherDuotone } from "react-icons/pi";
+import { GoGitBranch } from "react-icons/go";
 
 const Navdata = () => {
     const history = useNavigate();
-    //state data
     const [isDashboard, setIsDashboard] = useState(false);
     const [isApps, setIsApps] = useState(false);
-
-    // Apps
-   
-
     const [iscurrentState, setIscurrentState] = useState('Dashboard');
 
-    function updateIconSidebar(e : any) {
+    function updateIconSidebar(e: any) {
         if (e && e.target && e.target.getAttribute("sub-items")) {
-            const ul : any = document.getElementById("two-column-menu");
-            const iconItems : any = ul.querySelectorAll(".nav-icon.active");
+            const ul: any = document.getElementById("two-column-menu");
+            const iconItems: any = ul.querySelectorAll(".nav-icon.active");
             let activeIconItems = [...iconItems];
             activeIconItems.forEach((item) => {
                 item.classList.remove("active");
@@ -44,69 +41,44 @@ const Navdata = () => {
         isApps,
     ]);
 
-    const menuItems : any = [
-        {
-            label: "Menu",
-            isHeader: true,
-        },
+    const menuItems: any = [
         {
             id: "dashboard",
             label: "Dashboards",
             icon: <MdOutlineDashboard />,
             link: "/anasayfa",
+            role: ["admin", "teacher", "student"],
             stateVariables: isDashboard,
-            click: function (e : any) {
-                console.log("selamm ",e)
+            click: function (e: any) {
+                console.log("selamm ", e)
                 e.preventDefault();
                 setIsDashboard(!isDashboard);
                 setIscurrentState('Dashboard');
                 updateIconSidebar(e);
             },
-           /*  subItems: [
-                {
-                    id: "analytics",
-                    label: "Analytics",
-                    link: "/dashboard-analytics",
-                    parentId: "dashboard",
-                },
-                {
-                    id: "crm",
-                    label: "CRM",
-                    link: "/dashboard-crm",
-                    parentId: "dashboard",
-                },
-                {
-                    id: "ecommerce",
-                    label: "Ecommerce",
-                    link: "/dashboard",
-                    parentId: "dashboard",
-                },
-                {
-                    id: "crypto",
-                    label: "Crypto",
-                    link: "/dashboard-crypto",
-                    parentId: "dashboard",
-                },
-                {
-                    id: "projects",
-                    label: "Projects",
-                    link: "/dashboard-projects",
-                    parentId: "dashboard",
-                },
-                {
-                    id: "nft",
-                    label: "NFT",
-                    link: "/dashboard-nft",
-                    parentId: "dashboard",
-                },
-                {
-                    id: "job",
-                    label: "Job",
-                    link: "/dashboard-job",
-                    parentId: "dashboard",
-                },
-            ], */
+            /*  subItems: [
+                 {
+                     id: "analytics",
+                     label: "Analytics",
+                     link: "/dashboard-analytics",
+                     parentId: "dashboard",
+                 },
+             ], */
         },
+        {
+            id: "Eğitmen",
+            label: "Eğitmenler",
+            link: "/egitmen",
+            role: ["admin"],
+            icon: <PiChalkboardTeacherDuotone />
+        },
+        {
+            id: "Brans",
+            label: "Branşlar",
+            link: "/brans",
+            role: ["admin"],
+            icon: <GoGitBranch />
+        }
         /* {
             id: "apps",
             label: "Apps",

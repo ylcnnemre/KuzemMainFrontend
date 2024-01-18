@@ -9,8 +9,12 @@ import VerticalLayout from "../Layouts/index";
 import { authProtectedRoutes, publicRoutes } from "./allRoutes";
 import AuthProtected from './AuthProtected';
 import { ToastContainer } from 'react-toastify';
+import useUserStore from '../zustand/useUserStore';
 
 const Index = () => {
+
+    const { user: { role } } = useUserStore()
+
     return (
         <React.Fragment>
             <ToastContainer />
@@ -32,17 +36,19 @@ const Index = () => {
                 </Route>
 
                 <Route>
-                    {authProtectedRoutes.map((route: any, idx: any) => (
-                        <Route
-                            path={route.path}
-                            element={
-                                <AuthProtected>
-                                    <VerticalLayout>{route.component}</VerticalLayout>
-                                </AuthProtected>}
-                            key={idx}
-                        // exact={true}
-                        />
-                    ))}
+                    {authProtectedRoutes.map((route, idx: any) => {
+                        return route.role.includes(role) && (
+                            <Route
+                                path={route.path}
+                                element={
+                                    <AuthProtected>
+                                        <VerticalLayout>{route.component}</VerticalLayout>
+                                    </AuthProtected>}
+                                key={idx}
+                            // exact={true}
+                            />
+                        )
+                    })}
                 </Route>
             </Routes>
         </React.Fragment>

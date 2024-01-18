@@ -1,6 +1,6 @@
 import React, { FC } from 'react'
 import { CardHeader, Nav, NavItem, NavLink } from 'reactstrap';
-import withRouter from '../../../Components/Common/withRouter';
+import withRouter from '../Common/withRouter';
 import { withTranslation } from 'react-i18next';
 import classNames from 'classnames';
 
