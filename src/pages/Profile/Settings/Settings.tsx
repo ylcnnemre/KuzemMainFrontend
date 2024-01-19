@@ -14,8 +14,6 @@ import { CircleLoader } from 'react-spinners';
 import { toast } from 'react-toastify';
 
 
-
-
 const Settings = ({ t }: any) => {
 
     const [activeTab, setActiveTab] = useState("1");
@@ -29,6 +27,7 @@ const Settings = ({ t }: any) => {
         try {
             setLoading(true)
             let response = await getUserByIdApi(user._id)
+            console.log("response ==>",response)
             const data = response.data
             setUser(data)
             setLoading(false)

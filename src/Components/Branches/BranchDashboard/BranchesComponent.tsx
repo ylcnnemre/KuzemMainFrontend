@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react'
-import { getAllBranch } from '../../api/Branch/BranchApi'
-import { IGetAllBranch } from '../../api/Branch/BranchType'
+import { getAllBranch } from '../../../api/Branch/BranchApi'
+import { IBranch } from '../../../api/Branch/BranchType'
 import { Button } from 'reactstrap'
-
-const BranchesComponent = () => {
-    const [branch, setBranch] = useState<IGetAllBranch[]>([])
+import "./index.scss"
+import { Link } from 'react-router-dom'
+const BranchDashboard = () => {
+    const [branch, setBranch] = useState<IBranch[]>([])
     const [loading, setLoading] = useState<boolean>(false)
     const branchList = async () => {
         try {
@@ -24,7 +25,12 @@ const BranchesComponent = () => {
 
     return (
         <div className="table-responsive table-card mx-2 mt-2">
-            <table className="table align-middle table-nowrap table-striped-columns mb-0">
+            <div className='createButton_container'>
+                <Link className='btn btn-success px-4 py-1' to={"/brans/ekle"} >
+                    Branş Ekle
+                </Link>
+            </div>
+            <table className="table align-middle table-nowrap table-striped-columns ">
                 <thead className="table-light">
                     <tr>
                         <th scope="col">İsim</th>
@@ -67,4 +73,4 @@ const BranchesComponent = () => {
     )
 }
 
-export default BranchesComponent
+export default BranchDashboard

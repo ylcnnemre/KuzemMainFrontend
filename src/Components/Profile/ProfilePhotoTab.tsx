@@ -3,6 +3,7 @@ import { Card, CardBody, Col, Input, Label } from 'reactstrap'
 import aykut from "../../assets/images/aykut.jpg";
 import useUserStore from '../../zustand/useUserStore';
 import { uploadProfileImgApi } from '../../api/User/UserApi';
+import { toast } from 'react-toastify';
 
 const ProfilePhotoTab = () => {
     const { user, setUser } = useUserStore()
@@ -26,8 +27,11 @@ const ProfilePhotoTab = () => {
                     profileImg: response.data.path
                 })
             }
-            catch (err) {
-
+            catch (err:any) {
+                console.log("err ==>",err)
+                toast.error(err.response.data.message,{
+                    autoClose : 2000
+                })
             }
         }
     }

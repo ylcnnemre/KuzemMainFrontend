@@ -1,11 +1,13 @@
 import { AxiosResponse } from "axios";
 import { axiosInstance } from "../AxiosInstance";
-import { IGetAllBranch } from "./BranchType";
+import { ICreateBranch, IBranch } from "./BranchType";
 
 
-const getAllBranch = (): Promise<AxiosResponse<IGetAllBranch[]>> => axiosInstance.get("/branch/all")
+const getAllBranch = (): Promise<AxiosResponse<IBranch[]>> => axiosInstance.get("/branch/all")
 
+const createBranch = (data: ICreateBranch) => axiosInstance.post("/branch/create",data)
 
 export {
-    getAllBranch
+    getAllBranch,
+    createBranch
 }

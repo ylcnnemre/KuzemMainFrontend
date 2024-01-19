@@ -29,6 +29,7 @@ const useUserStore = create<UserState>((set) => ({
         role: "student",
         profileImg: "",
         name: "",
+        branch : undefined,
         tcNo: ""
     },
     isLoggedIn: localStorage.getItem("token") ? true : false,

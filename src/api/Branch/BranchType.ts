@@ -1,6 +1,6 @@
 import { IUser } from "../User/UserType"
 
-export interface IGetAllBranch {
+export interface IBranch {
     _id: string
     name: string
     description: string
@@ -8,4 +8,9 @@ export interface IGetAllBranch {
     updatedAt: string
     createdByUser: IUser[]
     uptadedByUser: IUser[]
+}
+
+export interface ICreateBranch {
+    name: string
+    description: string
 }

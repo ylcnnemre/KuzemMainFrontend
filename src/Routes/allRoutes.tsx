@@ -7,18 +7,22 @@ import Register from "../pages/Authentication/Register";
 import UserProfile from "../pages/Authentication/user-profile";
 import Settings from "../pages/Profile/Settings/Settings";
 import Faqs from "../pages/Faqs/Faqs";
-import TeacherDashboard from "../pages/TeacherDashboard/TeacherDashboard";
-import AddTeacherPage from "../pages/AddTeacher/AddTeacherPage";
+import TeacherPage from "../pages/Teacher/TeacherPage";
 import BranchesPage from "../pages/Branches/BranchesPage";
+import AddBranchPage from "../pages/Branches/AddBranchPage";
+import AddTeacherPage from "../pages/Teacher/AddTeacherPage";
+import EditTeacherPage from "../pages/Teacher/EditTeacherPage";
 
 type role = "admin" | "student" | "teacher"
 
 const authProtectedRoutes: Array<{ path: string, component: React.ReactNode, exact?: boolean, role: role[] }> = [
   { path: "/anasayfa", component: <Dashboard />, role: ["student", "admin", "teacher"] },
   { path: "/profile", component: <UserProfile />, role: ["student", "admin", "teacher"] },
-  { path: "/egitmen", component: <TeacherDashboard />, role: ["admin"] },
+  { path: "/egitmen", component: <TeacherPage />, role: ["admin"] },
   { path: "/brans", component: <BranchesPage />, role: ["admin"] },
   { path: "/egitmen/ekle", component: <AddTeacherPage />, role: ["admin"] },
+  { path: "/egitmen/duzenle/:id", component: <EditTeacherPage />, role: ["admin"] },
+  { path: "/brans/ekle", component: <AddBranchPage />, role: ["admin"] },
   { path: "/pages-profile-settings", component: <Settings />, role: ["admin", "student", "teacher"] },
   { path: "/pages-faqs", component: <Faqs />, role: ["admin", "student", "teacher"] },
   {

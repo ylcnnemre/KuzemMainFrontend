@@ -1,26 +1,30 @@
 import React, { FC, useEffect, useMemo, useState } from 'react'
 import { Col, Form, FormFeedback, Input, Label, Row } from 'reactstrap'
-import withRouter from '../Common/withRouter';
-import { withTranslation } from 'react-i18next';
-import { updateUserApi } from '../../api/User/UserApi';
-import useUserStore from '../../zustand/useUserStore';
-import { toast } from 'react-toastify';
-import { useFormik } from 'formik';
+import { cityList } from '../../../common/constants/city'
+import { getUserByIdApi, updateUserApi } from '../../../api/User/UserApi'
+import useUserStore from '../../../zustand/useUserStore'
+import { toast } from 'react-toastify'
+import { useFormik } from 'formik'
 import * as yup from "yup"
-import { cityList } from '../../common/constants/city';
+import withRouter from '../../Common/withRouter'
+import { withTranslation } from 'react-i18next'
+import { useParams } from 'react-router-dom'
+import { CircleLoader, DotLoader, PropagateLoader } from 'react-spinners'
+import { IUser } from '../../../api/User/UserType'
+import { getAllBranch } from '../../../api/Branch/BranchApi'
 
 const today = new Date();
 const eighteenYearsAgo = new Date(today.getFullYear() - 18, today.getMonth(), today.getDate());
 const eightyYearsAgo = new Date(today.getFullYear() - 80, today.getMonth(), today.getDate());
 
-const ProfileDetail: FC<{ t: any, }> = ({ t }) => {
+const EditTeacherComponent: FC<{ t: Function }> = ({ t }) => {
+    const { id } = useParams()
+    const [loading, setLoading] = useState<boolean>(false)
     const [region, setRegion] = useState<Array<string>>([])
-    const { user, setUser } = useUserStore()
-
-
-    const getUserProfileData = async () => {
+    const [branchList, setBranchList] = useState<string[]>([])
+    const setTeacherProfileData = async (data: IUser) => {
         try {
-            const { profileImg, branch, ...rest } = user
+            const { profileImg, birthDate, branch, ...rest } = data
             Object.entries(rest).map(([key, val]) => {
                 if (key != "address") {
                     formik.setFieldValue(key, val)
@@ -35,8 +39,9 @@ const ProfileDetail: FC<{ t: any, }> = ({ t }) => {
                     }
                 }
             })
-            const birthDate = new Date(user.birthDate).toISOString().split('T')[0];
-            formik.setFieldValue('birthDate', birthDate);
+            const formatBirthDate = new Date(birthDate).toISOString().split('T')[0];
+            formik.setFieldValue('birthDate', formatBirthDate);
+            formik.setFieldValue("branch", branch?.name)
         }
         catch (err: any) {
             toast.error(err.response.data.message)
@@ -44,8 +49,23 @@ const ProfileDetail: FC<{ t: any, }> = ({ t }) => {
     }
 
     useEffect(() => {
-        getUserProfileData()
-    }, [user])
+        setLoading(true)
+        getUserByIdApi(id as string).then(val => {
+            setTeacherProfileData(val.data)
+        }).catch(err => {
+            toast.error("Bir Sorun oluştu", {
+                autoClose: 2000
+            })
+        })
+        getAllBranch().then(val => {
+            setBranchList(val.data.map(item => item.name))
+        }).catch(err => {
+            toast.error("Bir Sorun oluştu", {
+                autoClose: 2000
+            })
+        })
+        setLoading(false)
+    }, [id])
 
 
     const formik = useFormik({
@@ -57,6 +77,7 @@ const ProfileDetail: FC<{ t: any, }> = ({ t }) => {
             name: "",
             phone: "",
             role: "student",
+            branch: "",
             surname: "",
             tcNo: "",
             city: "",
@@ -68,51 +89,30 @@ const ProfileDetail: FC<{ t: any, }> = ({ t }) => {
             name: yup.string().required(),
             surname: yup.string().required(),
             phone: yup.string(),
+            branch: yup.string().required("Branş Seçilmeli"),
             birthDate: yup.date().max(eighteenYearsAgo, 'You must be at least 18 years old.').min(eightyYearsAgo, 'You must be at most 80 years old.').required("Doğum Tarihi Seçiniz"),
 
         }),
         onSubmit: async (value) => {
-            try {
-                const { city, region, postalCode, email, phone, tcNo, role, ...rest } = value
-                console.log("valuee ==>", value)
-                const requestBody = {
-                    ...rest,
-                    address: {
-                        city,
-                        additionalInfo: "",
-                        postalCode,
-                        region
-                    }
-                }
-                let data = await updateUserApi(requestBody)
-                setUser({
-                    ...user,
-                    address: {
-                        city,
-                        additonalInfo: "",
-                        postalCode,
-                        region
-                    },
-                    name: value.name,
-                    surname: value.name,
-                    birthDate: value.birthDate,
-                    gender: value.gender as typeof user.gender
-                })
-                toast.success("Güncelleme Başarılı", {
-                    autoClose: 2000
-                })
-            }
-            catch (err) {
-
-            }
-
-
+            const { city, region, postalCode, email, phone, tcNo, role, ...rest } = value
+            let response = await updateUserApi(value)
+            console.log("response ==>", response)
         }
     })
-    console.log("formik =>=>",formik.values)
+
     const postalCodeDisableControl = useMemo(() => {
         return formik.values.city == "" || formik.values.region == ""
     }, [formik.values.city, formik.values.region])
+
+    console.log("formik ==>", formik.values)
+
+    if (loading) {
+        return (
+            <div style={{ display: "flex", justifyContent: "center", marginTop: "50px" }} >
+                <PropagateLoader color="#36d7b7" />
+            </div>
+        )
+    }
 
     return (
         <Form onSubmit={formik.handleSubmit}>
@@ -201,7 +201,7 @@ const ProfileDetail: FC<{ t: any, }> = ({ t }) => {
                     </div>
                 </Col>
 
-                <Col lg={6}>
+                <Col lg={4}>
                     <div className="mb-3">
                         <Label htmlFor="emailInput" className="form-label">
                             {t("Gender")}
@@ -216,7 +216,7 @@ const ProfileDetail: FC<{ t: any, }> = ({ t }) => {
                         </select>
                     </div>
                 </Col>
-                <Col lg={6}>
+                <Col lg={4}>
                     <div className="mb-3">
                         <Label htmlFor="emailInput" className="form-label">
                             {t("Role")}
@@ -226,6 +226,24 @@ const ProfileDetail: FC<{ t: any, }> = ({ t }) => {
                             value={formik.values.role}
                             disabled
                         />
+                    </div>
+                </Col>
+                <Col lg={4}>
+                    <div className="mb-3">
+                        <Label htmlFor="emailInput" className="form-label">
+                            {t("Branş")}
+                        </Label>
+                        <select className='form-control' name="branch" id="branch" onChange={formik.handleChange} value={formik.values.branch} >
+                            {
+                                branchList.map(item => {
+                                    return (
+                                        <option key={`${item}`} value={item}> {item} </option>
+                                    )
+                                })
+                            }
+
+                        </select>
+
                     </div>
                 </Col>
                 <Col lg={4}>
@@ -313,6 +331,4 @@ const ProfileDetail: FC<{ t: any, }> = ({ t }) => {
     )
 }
 
-export default withRouter(withTranslation()(ProfileDetail))
-
-
+export default withRouter(withTranslation()(EditTeacherComponent))
