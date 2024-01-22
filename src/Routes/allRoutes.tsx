@@ -12,6 +12,8 @@ import BranchesPage from "../pages/Branches/BranchesPage";
 import AddBranchPage from "../pages/Branches/AddBranchPage";
 import AddTeacherPage from "../pages/Teacher/AddTeacherPage";
 import EditTeacherPage from "../pages/Teacher/EditTeacherPage";
+import CoursePage from "../pages/Course/CoursePage";
+import AddCoursePage from "../pages/Course/AddCoursePage";
 
 type role = "admin" | "student" | "teacher"
 
@@ -23,6 +25,8 @@ const authProtectedRoutes: Array<{ path: string, component: React.ReactNode, exa
   { path: "/egitmen/ekle", component: <AddTeacherPage />, role: ["admin"] },
   { path: "/egitmen/duzenle/:id", component: <EditTeacherPage />, role: ["admin"] },
   { path: "/brans/ekle", component: <AddBranchPage />, role: ["admin"] },
+  { path: "/kurs", component: <CoursePage />, role: ["admin"] },
+  { path: "/kurs/ekle", component: <AddCoursePage />, role: ["admin"] },
   { path: "/pages-profile-settings", component: <Settings />, role: ["admin", "student", "teacher"] },
   { path: "/pages-faqs", component: <Faqs />, role: ["admin", "student", "teacher"] },
   {

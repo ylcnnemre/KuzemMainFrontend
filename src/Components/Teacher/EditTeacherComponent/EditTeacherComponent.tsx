@@ -24,6 +24,7 @@ const EditTeacherComponent: FC<{ t: Function }> = ({ t }) => {
     const [branchList, setBranchList] = useState<string[]>([])
     const setTeacherProfileData = async (data: IUser) => {
         try {
+            console.log("dataa ==> ", data)
             const { profileImg, birthDate, branch, ...rest } = data
             Object.entries(rest).map(([key, val]) => {
                 if (key != "address") {
@@ -94,15 +95,35 @@ const EditTeacherComponent: FC<{ t: Function }> = ({ t }) => {
 
         }),
         onSubmit: async (value) => {
-            const { city, region, postalCode, email, phone, tcNo, role, ...rest } = value
-            let response = await updateUserApi(value)
-            console.log("response ==>", response)
+            try {
+                const { city, region, postalCode, email, phone, tcNo, role, ...rest } = value
+                console.log("vall =>", value)
+                let response = await updateUserApi({
+                    ...rest,
+                    address: {
+                        city,
+                        region,
+                        postalCode,
+                        additionalInfo: ""
+                    }
+                })
+                toast.success("güncelleme başarılı", {
+                    autoClose: 1500
+                })
+            }
+            catch (err: any) {
+                console.log("err =>>", err)
+                toast.error(err.response.data.message[0], {
+                    autoClose: 1500
+                })
+            }
         }
     })
 
     const postalCodeDisableControl = useMemo(() => {
         return formik.values.city == "" || formik.values.region == ""
     }, [formik.values.city, formik.values.region])
+
 
     console.log("formik ==>", formik.values)
 

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { MdOutlineDashboard, MdApps } from "react-icons/md";
+import { MdOutlineDashboard, MdApps, MdCastForEducation } from "react-icons/md";
 import { PiChalkboardTeacherDuotone } from "react-icons/pi";
 import { GoGitBranch } from "react-icons/go";
 
@@ -78,6 +78,13 @@ const Navdata = () => {
             link: "/brans",
             role: ["admin"],
             icon: <GoGitBranch />
+        },
+        {
+            id: "Kurslar",
+            label: "Kurslar",
+            link: "/kurs",
+            role: ["admin"],
+            icon: <MdCastForEducation />
         }
         /* {
             id: "apps",
