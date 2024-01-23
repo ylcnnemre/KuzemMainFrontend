@@ -19,11 +19,14 @@ const uploadProfileImgApi = async (data: any): Promise<AxiosResponse<{ path: str
 
 const getUserByRoleApi = async (role: "student" | "teacher"): Promise<AxiosResponse<IUser[]>> => axiosInstance.get(`/user/all/${role}`)
 
+const getTeacherListApi = (id: string): Promise<AxiosResponse<IUser[]>> => axiosInstance.get(`/user/teacher/branch/${id}`)
+
 export {
     createStudentApi,
     createTeacherApi,
     getUserByIdApi,
     updateUserApi,
     uploadProfileImgApi,
-    getUserByRoleApi
+    getUserByRoleApi,
+    getTeacherListApi
 }
