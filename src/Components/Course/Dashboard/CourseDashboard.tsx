@@ -67,9 +67,7 @@ const CourseDashboard = () => {
                 return item
             }
         })
-        console.log("coursEdTA =>", result)
         let res = sliceData(result, currentPage)
-        console.log("ress ==>", res)
         setTempData(res)
         setTemp2(result)
         setPageNumbers(Array.from({ length: result.length / 8 }, (_, index) => index + 1))
