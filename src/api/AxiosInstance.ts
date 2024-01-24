@@ -16,7 +16,13 @@ axiosInstance.interceptors.request.use((config) => {
 })
 
 axiosInstance.interceptors.response.use((response) => response, (error) => {
-    return Promise.reject(error)
+    if (error.response.status === 401) {
+        localStorage.removeItem("token")
+        window.location.href = "/giris"
+    } else {
+        return Promise.reject(error)
+    }
+
 })
 
 const fetcher = (url: string) => axiosInstance.get(url).then(res => res.data);

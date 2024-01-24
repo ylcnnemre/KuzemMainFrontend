@@ -72,10 +72,15 @@ const AddCourseForm = () => {
         try {
           console.log("formDataa ==>", formData.get("title"))
           let response = await createCourseApi(formData)
-          console.log("response ==>", response)
+          console.log("response ==>",response)
+          toast.success(response.data.msg, {
+            autoClose: 1500
+          })
         }
-        catch (err) {
-          console.log("errr =>", err)
+        catch (err: any) {
+          toast.error(err.response.data.message, {
+            autoClose: 1500
+          })
         }
       }
 
@@ -292,7 +297,7 @@ const AddCourseForm = () => {
               <img
                 src={URL.createObjectURL(file)}
                 alt={`Preview-${index}`}
-                style={{ maxWidth: '140px', maxHeight: '140px', marginRight: "20px" }}
+                style={{ maxWidth: '160px', maxHeight: '160px',borderRadius:"10px", marginRight: "20px" }}
               />
             ))}
 

@@ -1,9 +1,41 @@
-.course_container{
+.course_container {
     display: flex;
     flex-direction: column;
 
-    .brans_link{
+    .brans_link {
         width: max-content;
         align-self: flex-end;
+    }
+
+    .filter_section{
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+
+        .search_input{
+            width: max-content;
+        }
+    }
+
+
+    .card_container {
+        padding: 15px 15px;
+        background-color: rgba($color: #0B60B0, $alpha: 0.4);
+        border-radius: 20px;
+        margin: 15px 0;
+
+        .card_content {
+            display: flex;
+            margin-top: 10px;
+
+            h5{
+                text-transform: capitalize;
+            }
+        }
+    }
+
+    .pagination_section{
+        display: flex;
+        justify-content: flex-end;
     }
 }
