@@ -5,3 +5,7 @@
   list-style-type: none;
   scroll-behavior: smooth;
 }
+
+p{
+  margin: 0;
+}

@@ -24,7 +24,7 @@ const Login = (props: any) => {
             password: userLogin.password
         },
         validationSchema: Yup.object({
-            email: Yup.string().email(),
+            email: Yup.string().email().required(),
             password: Yup.string().required("Please Enter Your Password"),
         }),
         onSubmit: async (values) => {
@@ -34,6 +34,7 @@ const Login = (props: any) => {
                 loginSuccess(response.data, props.router.navigate)
             }
             catch (err: any) {
+                console.log("errr ==>", err)
                 toast.error(err.response.data?.message, {
                     autoClose: 2000
                 })
@@ -82,9 +83,9 @@ const Login = (props: any) => {
                                                 onSubmit={(e) => {
                                                     e.preventDefault();
                                                     formik.handleSubmit();
-                                                    return false;
+
                                                 }}
-                                                action="#">
+                                            >
 
                                                 <div className="mb-3">
                                                     <Label htmlFor="email" className="form-label">Email</Label>

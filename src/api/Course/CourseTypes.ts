@@ -1,27 +1,31 @@
 
-export interface IGetAllTypes {
+export interface ICourseType {
     _id: string
     title: string
-    branch: string
+    branch: string | IBranch
     endDate: string
     startDate: string
-    teacher: teacher
-    quote: number,
+    teacher: ITeacher
+    quota: number,
     schedule: Array<any>
-    photos: Array<string>
+    photos: Array<string>,
+    documents: Array<string>
     createdAt: string
     updatedAt: string
 }
 
-interface teacher {
+interface ITeacher {
     _id: string
     name: string
     surname: string
-    email: string
-    birthDate: string
     gender: string
     profileImg: string
     role: string
-    createdAt: string
-    updatedAt: string
+}
+
+
+interface IBranch {
+    _id: string
+    name: string
+    description: string
 }

@@ -5,10 +5,7 @@ import { fetcher } from './api/AxiosInstance';
 
 const App = () => {
   return (
-    <SWRConfig value={{ fetcher }}>
       <Route />
-    </SWRConfig>
-
   )
 }
 

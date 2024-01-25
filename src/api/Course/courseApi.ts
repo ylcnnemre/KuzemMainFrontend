@@ -1,6 +1,6 @@
 import { AxiosResponse } from "axios";
 import { axiosInstance } from "../AxiosInstance";
-import { IGetAllTypes } from "./CourseTypes";
+import { ICourseType } from "./CourseTypes";
 
 
 const createCourseApi = (data: FormData) => axiosInstance.post("/course/create", data, {
@@ -9,9 +9,12 @@ const createCourseApi = (data: FormData) => axiosInstance.post("/course/create",
     }
 })
 
-const getAllCourseApi = (): Promise<AxiosResponse<IGetAllTypes[]>> => axiosInstance.get("/course/all")
+const getAllCourseApi = (): Promise<AxiosResponse<ICourseType[]>> => axiosInstance.get("/course/all")
+
+const getDetailCourseApi = (id: string): Promise<AxiosResponse<ICourseType>> => axiosInstance.get(`/course/${id}`)
 
 export {
     createCourseApi,
-    getAllCourseApi
+    getAllCourseApi,
+    getDetailCourseApi
 }

@@ -15,6 +15,8 @@ import EditTeacherPage from "../pages/Teacher/EditTeacherPage";
 import CoursePage from "../pages/Course/CoursePage";
 import AddCoursePage from "../pages/Course/AddCoursePage";
 import TestPage from "../pages/TestPage";
+import DetailCourse from "../Components/Course/DetailCourse/DetailCourse";
+import CourseDetailPage from "../pages/Course/CourseDetailPage";
 
 type role = "admin" | "student" | "teacher"
 
@@ -28,6 +30,7 @@ const authProtectedRoutes: Array<{ path: string, component: React.ReactNode, exa
   { path: "/brans/ekle", component: <AddBranchPage />, role: ["admin"] },
   { path: "/kurs", component: <CoursePage />, role: ["admin"] },
   { path: "/kurs/ekle", component: <AddCoursePage />, role: ["admin"] },
+  { path: "/kurs/:id", component: <CourseDetailPage />, role: ["admin", "student", "teacher"] },
   { path: "/pages-profile-settings", component: <Settings />, role: ["admin", "student", "teacher"] },
   { path: "/pages-faqs", component: <Faqs />, role: ["admin", "student", "teacher"] },
   { path: "/test", component: <TestPage />, role: ["admin", "student", "teacher"] },
@@ -41,7 +44,7 @@ const authProtectedRoutes: Array<{ path: string, component: React.ReactNode, exa
 ];
 
 const publicRoutes = [
-  { path: "/login", component: <Login /> },
+  { path: "/giris", component: <Login /> },
   { path: "/forgot-password", component: <ForgetPasswordPage /> },
   { path: "/register", component: <Register /> },
 

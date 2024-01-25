@@ -7,12 +7,12 @@
         align-self: flex-end;
     }
 
-    .filter_section{
+    .filter_section {
         display: flex;
         align-items: center;
         justify-content: space-between;
 
-        .search_input{
+        .search_input {
             width: max-content;
         }
     }
@@ -24,17 +24,47 @@
         border-radius: 20px;
         margin: 15px 0;
 
-        .card_content {
+
+        .test_content {
             display: flex;
             margin-top: 10px;
+            text-transform: capitalize;
+            flex-direction: column;
+         
+            .test_header {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                width: 100%;
+                margin-bottom: 20px;
+                margin-top: 5px;
+                .test_title {
+                    font-weight: bolder;
+                    margin: 0;
+                }
 
-            h5{
-                text-transform: capitalize;
+                .test_date {
+                    font-size: .8rem;
+                }
+            }
+            .test_footer{
+                .detail_link{
+                    background-color: #3FA7D6;
+                    padding: 3px 15px;
+                    border-radius: 10px;
+                    color: white;
+                    transition: .3s all;
+                    font-weight: 500;
+                    &:hover{
+                        opacity: .8;
+                        color: white
+                    }
+                }
             }
         }
     }
 
-    .pagination_section{
+    .pagination_section {
         display: flex;
         justify-content: flex-end;
     }

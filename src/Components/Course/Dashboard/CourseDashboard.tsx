@@ -8,16 +8,19 @@ import "swiper/css/scrollbar";
 import "swiper/css/effect-fade";
 import "swiper/css/effect-flip";
 import { getAllCourseApi } from '../../../api/Course/courseApi'
-import { IGetAllTypes } from '../../../api/Course/CourseTypes'
+import { ICourseType } from '../../../api/Course/CourseTypes'
 import { Swiper, SwiperSlide } from 'swiper/react'
 import { Autoplay, EffectCreative, EffectFade, Pagination } from 'swiper/modules'
 import { CircleLoader } from 'react-spinners'
-import { Col, PaginationItem, PaginationLink, Row, Pagination as PageList, Input } from 'reactstrap'
+import { Col, PaginationItem, PaginationLink, Row, Pagination as PageList, Input, Button } from 'reactstrap'
+
+
+
 const CourseDashboard = () => {
-    const [courseData, setCourseData] = useState<IGetAllTypes[]>([])
-    const [tempData, setTempData] = useState<IGetAllTypes[]>([])
+    const [courseData, setCourseData] = useState<ICourseType[]>([])
+    const [tempData, setTempData] = useState<ICourseType[]>([])
     const [pageNumbers, setPageNumbers] = useState<number[]>([])
-    const [temp2, setTemp2] = useState<IGetAllTypes[]>([])
+    const [temp2, setTemp2] = useState<ICourseType[]>([])
     const [loading, setLoading] = useState<boolean>(false)
     const [currentPage, setCurrentPage] = useState(1);
 
@@ -26,6 +29,7 @@ const CourseDashboard = () => {
             setLoading(true)
             const testList = []
             const response = await getAllCourseApi()
+            console.log("response ==>", response)
             for (let item = 0; item < 16; item++) {
                 testList.push(...response.data.map(el => {
                     return {
@@ -84,7 +88,7 @@ const CourseDashboard = () => {
                     Kurs Ekle
                 </Link>
             </div>
-            <Row  >
+            <Row style={{ marginTop: "10px" }}  >
                 {
                     tempData.map(item => {
                         return (
@@ -104,10 +108,22 @@ const CourseDashboard = () => {
                                             }
                                         </div>
                                     </Swiper>
-                                    <div className='card_content'>
-                                        <h5>
-                                            {item.title}
-                                        </h5>
+                                    <div className='test_content'>
+                                        <div className='test_header'>
+                                            <h5 className='test_title'>
+                                                {item.title}
+                                            </h5>
+
+                                            <p className='test_quota'>
+                                                {item.quota}
+                                            </p>
+                                        </div>
+                                        <div className='test_footer'>
+                                            <Link to={`/kurs/${item._id}`} className='detail_link'  >
+                                                İncele
+                                            </Link>
+                                        </div>
+
                                     </div>
                                 </div>
                             </Col>

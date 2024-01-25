@@ -7,17 +7,31 @@ import { toast } from 'react-toastify'
 import { getTeacherListApi } from '../../../api/User/UserApi'
 import { IUser } from '../../../api/User/UserType'
 import { createCourseApi } from '../../../api/Course/courseApi'
+import { FaRegFilePdf } from "react-icons/fa";
+import { LuFileJson } from "react-icons/lu";
+
 const AddCourseForm = () => {
   const [branchList, setBranchList] = useState<Array<{ id: string, name: string }>>([])
   const [teacherList, setTeacherList] = useState<IUser[]>([])
-  const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
+  const [selectedImageFiles, setSelectedFiles] = useState<File[]>([]);
+  const [selectedDocumentFiles, setSelectedDocumentFiles] = useState<File[]>([])
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleCourseImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
       const filesArray: File[] = Array.from(e.target.files);
       setSelectedFiles(filesArray);
     }
   };
+
+  const handleCourseDocument = (e: any) => {
+    console.log("eee==>", e.target.files)
+    if (e.target.files) {
+      const filesArray: File[] = Array.from(e.target.files)
+      setSelectedDocumentFiles(filesArray)
+    }
+  }
+
+
   const formik = useFormik({
     initialValues: {
       title: "",
@@ -51,31 +65,32 @@ const AddCourseForm = () => {
     }),
     onSubmit: async (value, { resetForm }) => {
       console.log("valuee ==>", value)
-      if (!selectedFiles.length) {
+      if (!selectedImageFiles.length) {
         toast.error("en az bir tane fotoğraf seçiniz", {
           autoClose: 1000
         })
       }
       else {
-        console.log("girişşş")
         const formData = new FormData()
         Object.entries(value).map(([key, val]) => {
           const data: any = val
-          console.log("keyy ==>", key)
-          console.log("valll ==>", val)
           formData.append(key, data)
         })
-        selectedFiles.forEach((item, index) => {
-          formData.append(`images[]`, item)
+
+        selectedImageFiles.forEach((item, index) => {
+          formData.append(`files[]`, item, `courseImage-ctype-${item.name}`)
+        })
+
+        selectedDocumentFiles.forEach((item, index) => {
+          formData.append("files[]", item, `courseDocument-ctype-${item.name}`)
         })
 
         try {
-          console.log("formDataa ==>", formData.get("title"))
           let response = await createCourseApi(formData)
-          console.log("response ==>",response)
           toast.success(response.data.msg, {
             autoClose: 1500
           })
+          resetForm()
         }
         catch (err: any) {
           toast.error(err.response.data.message, {
@@ -128,6 +143,14 @@ const AddCourseForm = () => {
     }
   }
 
+  const extensionIcon = (mimeType: string) => {
+    if (mimeType == "application/pdf") {
+      return <FaRegFilePdf style={{ fontSize: "30px" }} />
+    }
+    else if (mimeType == "application/json") {
+      return <LuFileJson style={{ fontSize: "30px" }} />
+    }
+  }
 
   useEffect(() => {
     getBranchList()
@@ -137,7 +160,7 @@ const AddCourseForm = () => {
   return (
     <Form onSubmit={formik.handleSubmit} >
       <Row>
-        <Col lg={6}>
+        <Col lg={4}>
           <div className="mb-3">
             <Label className="form-label">
               İsim
@@ -154,7 +177,7 @@ const AddCourseForm = () => {
           </div>
         </Col>
 
-        <Col lg={6}>
+        <Col lg={4}>
           <div className="mb-3">
             <Label className="form-label">
               Branş
@@ -178,7 +201,7 @@ const AddCourseForm = () => {
             ) : null}
           </div>
         </Col>
-        <Col lg={6}>
+        <Col lg={4}>
           <div className="mb-3">
             <Label className="form-label">
               Eğitmen
@@ -202,7 +225,7 @@ const AddCourseForm = () => {
             ) : null}
           </div>
         </Col>
-        <Col lg={6}>
+        <Col lg={4}>
           <div className="mb-3">
             <Label className="form-label">
               Kontenjan
@@ -220,7 +243,7 @@ const AddCourseForm = () => {
             ) : null}
           </div>
         </Col>
-        <Col lg={6}>
+        <Col lg={4}>
           <div className="mb-3">
             <Label className="form-label">
               Başlangıç tarihi
@@ -243,7 +266,7 @@ const AddCourseForm = () => {
             ) : null}
           </div>
         </Col>
-        <Col lg={6}>
+        <Col lg={4}>
           <div className="mb-3">
             <Label className="form-label">
               Bitiş tarihi
@@ -282,27 +305,49 @@ const AddCourseForm = () => {
             ) : null}
           </div>
         </Col>
-        <Col lg={12}>
+        <Col lg={6}>
           <div className="mb-3">
             <Label className="form-label">
               Kurs Fotoğrafları
             </Label>
-            <Input accept='image/png image/jpg image/jpeg' onChange={handleFileChange} className='form-control' type='file' multiple />
+            <Input accept='image/png image/jpg image/jpeg' onChange={handleCourseImageChange} className='form-control' type='file' multiple />
 
+            {selectedImageFiles.length > 0 && (
+              <div className="mt-2 d-flex">
+                {selectedImageFiles.map((file, index) => (
+                  <img
+                    src={URL.createObjectURL(file)}
+                    alt={`Preview-${index}`}
+                    style={{ maxWidth: '100px', maxHeight: '100px', borderRadius: "10px", marginRight: "20px" }}
+                  />
+                ))}
+
+              </div>
+            )}
           </div>
         </Col>
-        {selectedFiles.length > 0 && (
-          <div className="mt-2 d-flex">
-            {selectedFiles.map((file, index) => (
-              <img
-                src={URL.createObjectURL(file)}
-                alt={`Preview-${index}`}
-                style={{ maxWidth: '160px', maxHeight: '160px',borderRadius:"10px", marginRight: "20px" }}
-              />
-            ))}
+        <Col lg={6}>
+          <div className="mb-3">
+            <Label className="form-label">
+              Kurs Dökümanları
+            </Label>
+            <Input onChange={handleCourseDocument} className='form-control' type='file' multiple />
 
+            {selectedDocumentFiles.length > 0 && (
+              <div className="mt-2 d-flex">
+                {selectedDocumentFiles.map((file, index) => (
+                  <div style={{ display: "flex", alignItems: "center" }}>
+                    {extensionIcon(file.type)}
+                    <p style={{ marginBottom: 0, height: "max-content" }}>
+                      {file.name}
+                    </p>
+                  </div>
+                ))}
+
+              </div>
+            )}
           </div>
-        )}
+        </Col>
         <div style={{ display: "flex", justifyContent: "flex-end", marginTop: "20px" }}>
           <Button style={{ padding: "7px 40px" }}>
             Onayla
