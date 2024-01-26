@@ -17,6 +17,7 @@ import AddCoursePage from "../pages/Course/AddCoursePage";
 import TestPage from "../pages/TestPage";
 import DetailCourse from "../Components/Course/DetailCourse/DetailCourse";
 import CourseDetailPage from "../pages/Course/CourseDetailPage";
+import EditCoursePage from "../pages/Course/EditCoursePage";
 
 type role = "admin" | "student" | "teacher"
 
@@ -31,6 +32,7 @@ const authProtectedRoutes: Array<{ path: string, component: React.ReactNode, exa
   { path: "/kurs", component: <CoursePage />, role: ["admin"] },
   { path: "/kurs/ekle", component: <AddCoursePage />, role: ["admin"] },
   { path: "/kurs/:id", component: <CourseDetailPage />, role: ["admin", "student", "teacher"] },
+  { path: "/kurs/duzenle/:id", component: <EditCoursePage />, role: ["admin"] },
   { path: "/pages-profile-settings", component: <Settings />, role: ["admin", "student", "teacher"] },
   { path: "/pages-faqs", component: <Faqs />, role: ["admin", "student", "teacher"] },
   { path: "/test", component: <TestPage />, role: ["admin", "student", "teacher"] },

@@ -2,11 +2,12 @@
 export interface ICourseType {
     _id: string
     title: string
-    branch: string | IBranch
+    branch: any
     endDate: string
     startDate: string
     teacher: ITeacher
     quota: number,
+    description: string,
     schedule: Array<any>
     photos: Array<string>,
     documents: Array<string>

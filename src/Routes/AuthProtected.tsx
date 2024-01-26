@@ -9,7 +9,7 @@ const AuthProtected = (props: any) => {
     return <>{props.children}</>;
   }
   else {
-    return <Navigate to={"/login"} />
+    return <Navigate to={"/giris"} />
   }
 
 };
