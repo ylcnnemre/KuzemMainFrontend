@@ -17,6 +17,7 @@ const ProfileDetail: FC<{ t: any, }> = ({ t }) => {
     const [region, setRegion] = useState<Array<string>>([])
     const { user, setUser } = useUserStore()
 
+    console.log("user  ===>",user)
 
     const getUserProfileData = async () => {
         try {

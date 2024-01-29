@@ -1,6 +1,6 @@
 import { AxiosResponse } from "axios";
 import { axiosInstance } from "../AxiosInstance";
-import { ICourseType } from "./CourseTypes";
+import { ICourseType, IDeletePhoto } from "./CourseTypes";
 
 
 const createCourseApi = (data: FormData) => axiosInstance.post("/course/create", data, {
@@ -13,8 +13,22 @@ const getAllCourseApi = (): Promise<AxiosResponse<ICourseType[]>> => axiosInstan
 
 const getDetailCourseApi = (id: string): Promise<AxiosResponse<ICourseType>> => axiosInstance.get(`/course/${id}`)
 
+const deletePhotoApi = (data: IDeletePhoto) => axiosInstance.delete(`/course/photo`, {
+    data: {
+        ...data
+    }
+})
+
+const addPhotoApi = (data: FormData) => axiosInstance.post("/course/photo", data, {
+    headers: {
+        "Content-Type": "multipart/form-data"
+    }
+})
+
 export {
     createCourseApi,
     getAllCourseApi,
-    getDetailCourseApi
+    getDetailCourseApi,
+    deletePhotoApi,
+    addPhotoApi
 }

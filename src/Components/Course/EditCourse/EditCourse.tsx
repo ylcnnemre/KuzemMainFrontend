@@ -1,41 +1,65 @@
-import React, { useEffect, useState } from 'react'
-import { Button, Col, Form, FormFeedback, Input, Label, Row } from 'reactstrap';
+import "swiper/css";
+import "swiper/css/pagination";
+import "swiper/css/navigation";
+import "swiper/css/scrollbar";
+import "swiper/css/effect-fade";
+import "swiper/css/effect-flip";
+
+import React, { useEffect, useMemo, useRef, useState } from 'react'
+import { Button, Col, Form, FormFeedback, Input, Label, Modal, ModalBody, ModalFooter, ModalHeader, Row } from 'reactstrap';
 import { IUser } from '../../../api/User/UserType';
 import { useFormik } from 'formik';
 import * as yup from "yup"
 import { toast } from 'react-toastify';
-import { createCourseApi, getDetailCourseApi } from '../../../api/Course/courseApi';
+import { addPhotoApi, createCourseApi, deletePhotoApi, getDetailCourseApi } from '../../../api/Course/courseApi';
 import { getAllBranch } from '../../../api/Branch/BranchApi';
 import { getTeacherListApi } from '../../../api/User/UserApi';
 import { FaRegFilePdf } from 'react-icons/fa';
 import { LuFileJson2 } from 'react-icons/lu';
 import { useParams } from 'react-router-dom';
 import { ICourseType } from '../../../api/Course/CourseTypes';
-
+import { Swiper, SwiperSlide } from 'swiper/react';
+import { Autoplay, Navigation, Pagination } from 'swiper/modules';
 
 const EditCourse = () => {
     const [branchList, setBranchList] = useState<Array<{ id: string, name: string }>>([])
     const [teacherList, setTeacherList] = useState<IUser[]>([])
-    const [selectedImageFiles, setSelectedFiles] = useState<File[]>([]);
-    const [selectedDocumentFiles, setSelectedDocumentFiles] = useState<File[]>([])
-    const [courseData, setCourseData] = useState<ICourseType>()
-
+    const [modal_standard, setmodal_standard] = useState(false);
+    const [photoList, setPhotoList] = useState<string[]>([])
+    const [selectedPhotoIndex, setSelectedPhotoIndex] = useState<number>(0)
+    const [documentList, setDocumentList] = useState<string[]>([])
     const { id } = useParams()
-    const handleCourseImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const fileInputRef = useRef<any>(null);
+
+
+    const handleAddCourseImage = async (e: React.ChangeEvent<HTMLInputElement>) => {
         if (e.target.files) {
             const filesArray: File[] = Array.from(e.target.files);
-            setSelectedFiles(filesArray);
-        }
-    };
+            const formData = new FormData()
+            formData.append("id", id as string)
+            filesArray.forEach(item => {
+                formData.append("files[]", item)
+            })
 
-    const handleCourseDocument = (e: any) => {
-        console.log("eee==>", e.target.files)
-        if (e.target.files) {
-            const filesArray: File[] = Array.from(e.target.files)
-            setSelectedDocumentFiles(filesArray)
+            await addPhotoApi(formData)
         }
     }
 
+    /*     const handleCourseImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+            if (e.target.files) {
+                const filesArray: File[] = Array.from(e.target.files);
+                setSelectedFiles(filesArray);
+            }
+        };
+    
+        const handleCourseDocument = (e: any) => {
+            console.log("eee==>", e.target.files)
+            if (e.target.files) {
+                const filesArray: File[] = Array.from(e.target.files)
+                setSelectedDocumentFiles(filesArray)
+            }
+        }
+     */
 
     const formik = useFormik({
         initialValues: {
@@ -128,6 +152,9 @@ const EditCourse = () => {
         try {
             const response = await getDetailCourseApi(id ?? "")
             let teacherList = await getTeacherListApi(response.data.branch._id)
+            console.log("responeData ==>", response.data)
+            setPhotoList(response.data.photos)
+            setDocumentList(response.data.documents)
             setTeacherList(teacherList.data)
             let startDate = new Date(response.data.startDate).toISOString().split('T')[0];
             let endDate = new Date(response.data.endDate).toISOString().split("T")[0]
@@ -152,7 +179,31 @@ const EditCourse = () => {
     }, [])
 
 
-    console.log("formik  ==>", formik.values)
+    const photoName = useMemo(() => {
+        let photo = photoList[selectedPhotoIndex]?.split("/uploads/course/")[1].split("-")[0]
+        return photo
+    }, [photoList, selectedPhotoIndex])
+
+
+    const deletePhoto = async () => {
+        try {
+            let formatPhotoName = photoList[selectedPhotoIndex].split("/uploads/course/")[1]
+            let data = await deletePhotoApi({
+                id: id as string,
+                imgName: formatPhotoName
+            })
+            toast.success("Dosya başarı ile silindi", {
+                autoClose: 1500
+            })
+            setPhotoList(photoList.filter(el => el !== photoList[selectedPhotoIndex]))
+        }
+        catch (err: any) {
+            toast.error(err.message, {
+                autoClose: 1500
+            })
+        }
+    }
+
 
     return (
         <Form onSubmit={formik.handleSubmit} >
@@ -305,44 +356,79 @@ const EditCourse = () => {
                 <Col lg={6}>
                     <div className="mb-3">
                         <Label className="form-label">
-                            Kurs Fotoğrafları
+                            Fotoğraflar
                         </Label>
-                        <Input accept='image/png image/jpg image/jpeg' onChange={handleCourseImageChange} className='form-control' type='file' multiple />
 
-                        {selectedImageFiles.length > 0 && (
-                            <div className="mt-2 d-flex">
-                                {selectedImageFiles.map((file, index) => (
-                                    <img
-                                        src={URL.createObjectURL(file)}
-                                        alt={`Preview-${index}`}
-                                        style={{ maxWidth: '100px', maxHeight: '100px', borderRadius: "10px", marginRight: "20px" }}
-                                    />
-                                ))}
+                        <Button color='warning' onClick={() => { setmodal_standard(!modal_standard) }} style={{ padding: "5px 40px", marginLeft: "30px" }} >
+                            Görüntüle ({photoList.length})
+                        </Button>
+                        <input ref={fileInputRef} accept='image/png image/jpg image/jpeg' onChange={handleAddCourseImage} style={{ display: "none" }} className='form-control' type='file' multiple />
+                        <Button color='success' style={{ padding: "5px 40px", marginLeft: "30px" }} onClick={() => {
+                            console.log("asd =>", fileInputRef.current)
+                            fileInputRef.current.click();
+                        }} >
+                            Fotoğraf Ekle
+                        </Button>
+                        <Modal id="myModal"
+                            isOpen={modal_standard}
+                            toggle={() => {
+                                setmodal_standard(!modal_standard)
+                            }}
+                        >
+                            <ModalHeader>
+                                <h5
+                                    className="modal-title"
+                                    id="myModalLabel"
+                                >
+                                    Fotoğraflar
+                                </h5>
 
-                            </div>
-                        )}
+                            </ModalHeader>
+                            <ModalBody>
+                                <Row>
+                                    <Col sm={12}>
+                                        <Swiper onSlideChange={(e) => {
+                                            setSelectedPhotoIndex(e.activeIndex)
+                                        }} pagination={{ type: "fraction", clickable: true }} modules={[Pagination, Navigation]} loop={false} className="mySwiper swiper pagination-fraction-swiper rounded" >
+                                            <div className="swiper-wrapper">
+                                                {
+                                                    photoList.map(item => {
+                                                        return (
+                                                            <SwiperSlide><img src={`${import.meta.env.VITE_BASEURL}${item}`} alt="" className="img-fluid w-100" /></SwiperSlide>
+                                                        )
+                                                    })
+                                                }
+
+                                            </div>
+                                        </Swiper>
+                                    </Col>
+                                    <Col sm={12}>
+                                        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: "20px" }}>
+                                            <p>
+                                                {photoName}
+                                            </p>
+                                            <Button color="danger" size="sm" style={{ padding: "5px 40px" }} onClick={() => {
+                                                deletePhoto()
+                                            }} >
+                                                Sil
+                                            </Button>
+                                        </div>
+
+                                    </Col>
+                                </Row>
+                            </ModalBody>
+
+                        </Modal>
                     </div>
                 </Col>
                 <Col lg={6}>
-                    <div className="mb-3">
+                    <div className='mb-3'>
                         <Label className="form-label">
-                            Kurs Dökümanları
+                            Dökümanlar
                         </Label>
-                        <Input onChange={handleCourseDocument} className='form-control' type='file' multiple />
-
-                        {selectedDocumentFiles.length > 0 && (
-                            <div className="mt-2 d-flex">
-                                {selectedDocumentFiles.map((file, index) => (
-                                    <div style={{ display: "flex", alignItems: "center" }}>
-                                        {extensionIcon(file.type)}
-                                        <p style={{ marginBottom: 0, height: "max-content" }}>
-                                            {file.name}
-                                        </p>
-                                    </div>
-                                ))}
-
-                            </div>
-                        )}
+                        <Button color='warning' onClick={() => { setmodal_standard(!modal_standard) }} style={{ padding: "5px 40px", marginLeft: "30px" }} >
+                            Görüntüle ({documentList.length})
+                        </Button>
                     </div>
                 </Col>
                 <div style={{ display: "flex", justifyContent: "flex-end", marginTop: "20px" }}>
@@ -357,3 +443,5 @@ const EditCourse = () => {
 }
 
 export default EditCourse
+
+

@@ -30,3 +30,9 @@ interface IBranch {
     name: string
     description: string
 }
+
+
+export interface IDeletePhoto {
+    imgName: string
+    id: string
+}

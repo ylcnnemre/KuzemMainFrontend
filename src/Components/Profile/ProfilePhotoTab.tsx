@@ -9,9 +9,12 @@ const ProfilePhotoTab = () => {
     const { user, setUser } = useUserStore()
 
     const imgUrl = useMemo(() => {
-        if (user.profileImg) {
+        if (user.profileImg !== "" && user.profileImg !== undefined) {
             let img = `${import.meta.env.VITE_BASEURL}${user.profileImg}`
             return img
+        }
+        else {
+            return aykut
         }
     }, [user])
 
@@ -27,10 +30,10 @@ const ProfilePhotoTab = () => {
                     profileImg: response.data.path
                 })
             }
-            catch (err:any) {
-                console.log("err ==>",err)
-                toast.error(err.response.data.message,{
-                    autoClose : 2000
+            catch (err: any) {
+                console.log("err ==>", err)
+                toast.error(err.response.data.message, {
+                    autoClose: 2000
                 })
             }
         }
@@ -41,7 +44,7 @@ const ProfilePhotoTab = () => {
             <CardBody className="p-4">
                 <div className="text-center">
                     <div className="profile-user position-relative d-inline-block mx-auto  mb-4">
-                        <img src={imgUrl ?? aykut}
+                        <img src={imgUrl}
                             className="rounded-circle avatar-xl img-thumbnail user-profile-image"
                             alt="user-profile" />
                         <div className="avatar-xs p-0 rounded-circle profile-photo-edit">
