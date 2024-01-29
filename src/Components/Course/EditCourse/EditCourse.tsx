@@ -41,7 +41,10 @@ const EditCourse = () => {
                 formData.append("files[]", item)
             })
 
-            await addPhotoApi(formData)
+            let response = await addPhotoApi(formData)
+            setPhotoList(response.data)
+            console.log("response ==>", response)
+            console.log("photoList ==>", photoList)
         }
     }
 
@@ -353,7 +356,7 @@ const EditCourse = () => {
                         ) : null}
                     </div>
                 </Col>
-                <Col lg={6}>
+                <Col lg={5} >
                     <div className="mb-3">
                         <Label className="form-label">
                             Fotoğraflar
@@ -374,6 +377,7 @@ const EditCourse = () => {
                             toggle={() => {
                                 setmodal_standard(!modal_standard)
                             }}
+                            style={{ maxWidth: "600px", width: "100%" }}
                         >
                             <ModalHeader>
                                 <h5
@@ -394,7 +398,7 @@ const EditCourse = () => {
                                                 {
                                                     photoList.map(item => {
                                                         return (
-                                                            <SwiperSlide><img src={`${import.meta.env.VITE_BASEURL}${item}`} alt="" className="img-fluid w-100" /></SwiperSlide>
+                                                            <SwiperSlide><img src={`${import.meta.env.VITE_BASEURL}${item}`} alt="" className="img-fluid w-100 " /></SwiperSlide>
                                                         )
                                                     })
                                                 }
@@ -402,6 +406,7 @@ const EditCourse = () => {
                                             </div>
                                         </Swiper>
                                     </Col>
+
                                     <Col sm={12}>
                                         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: "20px" }}>
                                             <p>
@@ -421,7 +426,7 @@ const EditCourse = () => {
                         </Modal>
                     </div>
                 </Col>
-                <Col lg={6}>
+                <Col lg={5}>
                     <div className='mb-3'>
                         <Label className="form-label">
                             Dökümanlar
@@ -431,11 +436,14 @@ const EditCourse = () => {
                         </Button>
                     </div>
                 </Col>
-                <div style={{ display: "flex", justifyContent: "flex-end", marginTop: "20px" }}>
-                    <Button style={{ padding: "7px 40px" }}>
-                        Onayla
-                    </Button>
-                </div>
+                <Col lg={2}>
+                    <div style={{ display: "flex", justifyContent: "flex-end" }}>
+                        <Button style={{ padding: "7px 40px" }}>
+                            Onayla
+                        </Button>
+                    </div>
+                </Col>
+
             </Row>
 
         </Form>

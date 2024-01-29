@@ -19,7 +19,7 @@ const deletePhotoApi = (data: IDeletePhoto) => axiosInstance.delete(`/course/pho
     }
 })
 
-const addPhotoApi = (data: FormData) => axiosInstance.post("/course/photo", data, {
+const addPhotoApi = (data: FormData): Promise<AxiosResponse<string[]>> => axiosInstance.post("/course/photo", data, {
     headers: {
         "Content-Type": "multipart/form-data"
     }

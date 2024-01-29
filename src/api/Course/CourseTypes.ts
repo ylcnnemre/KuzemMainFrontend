@@ -36,3 +36,4 @@ export interface IDeletePhoto {
     imgName: string
     id: string
 }
+
