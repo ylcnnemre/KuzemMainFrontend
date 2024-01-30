@@ -9,10 +9,38 @@ export interface ICourseType {
     quota: number,
     description: string,
     schedule: Array<any>
-    photos: Array<string>,
-    documents: Array<string>
+    photos: Array<IPhoto>,
+    documents: Array<IDocument>
     createdAt: string
     updatedAt: string
+}
+
+export interface IPhoto {
+    _id: string
+    path: string
+    name: string
+    extension: string
+    createdBy: {
+        _id: string
+        name: string
+        surname: string
+    },
+    createdAt: string
+    updatedAt: string
+}
+export interface IDocument {
+    _id: string
+    path: string
+    extension: string
+    name: string
+    createdBy: {
+        _id: string
+        name: string
+        surname: string
+    }
+    createdAt: string
+    updatedAt: string
+
 }
 
 interface ITeacher {
@@ -34,6 +62,13 @@ interface IBranch {
 
 export interface IDeletePhoto {
     imgName: string
-    id: string
+    courseId: string
+    imgId: string
 }
 
+
+export interface IDeleteDocument {
+    documentName: string
+    courseId: string
+    documentId: string
+}

@@ -37,7 +37,7 @@ const DetailCourse = () => {
             setLoading(true)
 
             let response = await getDetailCourseApi(id as string)
-            console.log("response ==>", response)
+            console.log("response ==>", response.data)
             setCourseDetailData(response.data)
         }
         catch (err: any) {
@@ -68,11 +68,11 @@ const DetailCourse = () => {
     const documentList = useMemo(() => {
         const iconHandler = (ext: string) => {
             switch (ext) {
-                case "json":
+                case ".json":
                     return <BsFiletypeJson />
-                case "pdf":
+                case ".pdf":
                     return <FaRegFilePdf />
-                case "doc":
+                case ".doc":
                     return <FaRegFileWord />
                 default:
                     return <FaFile />
@@ -80,9 +80,9 @@ const DetailCourse = () => {
         }
         let response = courseDetailData?.documents.map(item => {
             return {
-                icon: iconHandler(item.split(".").pop() ?? ""),
-                path: item,
-                name: item.split("/uploads/course/")[1].split("-")[0]
+                icon: iconHandler(item.extension),
+                path: item.path,
+                name: item.name
             }
         })
         return response
@@ -115,7 +115,7 @@ const DetailCourse = () => {
                                         {
                                             courseDetailData?.photos.map(item => {
                                                 return (
-                                                    <SwiperSlide key={`${item}`} ><img src={`${import.meta.env.VITE_BASEURL}${item}`} alt="" className="img-fluid" style={{ width: "100%", borderRadius: "10px" }} /></SwiperSlide>
+                                                    <SwiperSlide key={`${item}`} ><img src={`${import.meta.env.VITE_BASEURL}${item.path}`} alt="" className="img-fluid" style={{ width: "100%", borderRadius: "10px" , height:"280px" }} /></SwiperSlide>
                                                 )
                                             })
                                         }
@@ -169,7 +169,7 @@ const DetailCourse = () => {
                                         documentList?.map(item => {
                                             return (
                                                 <Col sm={4}>
-                                                    <DetailWidget icon={item.icon} title='Dosya' value={item.name} onClick={() => {
+                                                    <DetailWidget icon={item.icon} title='Dosya' value={item.name.split("-")[0]} onClick={() => {
                                                         openFile(item.path)
                                                     }} />
                                                 </Col>

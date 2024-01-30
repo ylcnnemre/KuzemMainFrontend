@@ -1,0 +1,119 @@
+.tab_content {
+    padding-left: 10px;
+
+    .swiper_container {
+
+
+        .photo_slide {
+            transition: .5s all;
+            cursor: pointer;
+
+
+            .photo_section {
+                padding: 10px;
+                background-color: #0e1f35;
+                border-radius: 15px;
+                display: flex;
+                flex-direction: column;
+
+                .card_footer {
+                    margin-top: 10px;
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+
+                    .delete_btn {
+                        width: max-content;
+                        align-self: flex-end;
+                        padding: 4px 25px;
+                    }
+                }
+            }
+
+            &:hover .zoom_icon {
+                opacity: 1;
+            }
+
+            .zoom_icon {
+                transition: .5s all;
+                position: absolute;
+                top: 40%;
+                left: 50%;
+                font-size: 2rem;
+                transform: translateX(-50%) translateY(-50%);
+                color: white;
+                opacity: 0;
+            }
+
+            .photo_img {
+                border-radius: 10px;
+                position: relative;
+                transition: .5s all;
+                z-index: 1000;
+                width: 100%;
+                height: 200px;
+
+                &:hover {
+                    opacity: .7;
+                }
+            }
+        }
+
+
+        .document_slide {
+            transition: .5s all;
+
+            .document_section {
+                display: flex;
+                flex-direction: column;
+                background-color: #0e1f35;
+                border-radius: 15px;
+                position: relative;
+                transition: .5s all;
+
+                &_container {
+                    display: flex;
+                    padding: 10px 10px;
+                }
+
+                &_content{
+                    width: 100%;
+                    padding-left: 20px;
+                    position: relative;
+                    .document_name{
+                        margin-bottom: 10px;
+                        span{
+                            font-weight: bolder;
+                        }
+                    }
+                    .document_createdBy{
+                        span{
+                            font-weight: bolder;
+                        }
+                    }
+                    .zoom_icon{
+                        opacity: 1;
+                        display: none;
+                        position: absolute;
+                        top: 50%;
+                        left: 50%;
+                    }
+                }
+
+                .delete_btn_container{
+                    width: 100% !important;
+                    border-top: .5px solid rgba($color: gray, $alpha: .3);
+                    display: flex;
+                    padding: 10px 20px 10px 10px;
+                    width: max-content;
+                    justify-content: space-between;
+                    align-items: center;
+                    .delete_btn{
+                        padding: 3px 20px;
+                    }
+                }
+                
+            }
+        }
+    }
+}

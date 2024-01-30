@@ -30,7 +30,7 @@ const CourseDashboard = () => {
             const testList = []
             const response = await getAllCourseApi()
             console.log("response ==>", response)
-            for (let item = 0; item < 16; item++) {
+            for (let item = 0; item < 5; item++) {
                 testList.push(...response.data.map(el => {
                     return {
                         ...el,
@@ -102,7 +102,7 @@ const CourseDashboard = () => {
                                             {
                                                 item.photos.map(el => {
                                                     return (
-                                                        <SwiperSlide><img src={`${import.meta.env.VITE_BASEURL}${el}`} alt="" className="img-fluid" style={{ width: "100%", borderRadius: "10px" }} /></SwiperSlide>
+                                                        <SwiperSlide><img src={`${import.meta.env.VITE_BASEURL}${el.path}`} alt="" className="img-fluid" style={{ width: "100%", height:"200px", borderRadius: "10px" }} /></SwiperSlide>
                                                     )
                                                 })
                                             }

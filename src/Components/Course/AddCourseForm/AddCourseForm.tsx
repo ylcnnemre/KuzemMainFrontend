@@ -9,7 +9,7 @@ import { IUser } from '../../../api/User/UserType'
 import { createCourseApi } from '../../../api/Course/courseApi'
 import { FaRegFilePdf } from "react-icons/fa";
 import { LuFileJson } from "react-icons/lu";
-
+import "./index.scss"
 const AddCourseForm = () => {
   const [branchList, setBranchList] = useState<Array<{ id: string, name: string }>>([])
   const [teacherList, setTeacherList] = useState<IUser[]>([])
@@ -306,14 +306,15 @@ const AddCourseForm = () => {
           </div>
         </Col>
         <Col lg={6}>
-          <div className="mb-3">
+          <div className="mb-4">
             <Label className="form-label">
               Kurs Fotoğrafları
             </Label>
             <Input accept='image/png image/jpg image/jpeg' onChange={handleCourseImageChange} className='form-control' type='file' multiple />
 
+
             {selectedImageFiles.length > 0 && (
-              <div className="mt-2 d-flex">
+              <div className="mt-2 photo_list">
                 {selectedImageFiles.map((file, index) => (
                   <img
                     src={URL.createObjectURL(file)}
@@ -324,6 +325,7 @@ const AddCourseForm = () => {
 
               </div>
             )}
+
           </div>
         </Col>
         <Col lg={6}>

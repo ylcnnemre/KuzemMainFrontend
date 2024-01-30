@@ -4,65 +4,81 @@ import "swiper/css/navigation";
 import "swiper/css/scrollbar";
 import "swiper/css/effect-fade";
 import "swiper/css/effect-flip";
-
+import "./index.scss"
 import React, { useEffect, useMemo, useRef, useState } from 'react'
-import { Button, Col, Form, FormFeedback, Input, Label, Modal, ModalBody, ModalFooter, ModalHeader, Row } from 'reactstrap';
+import { Button, Card, CardText, CardTitle, Col, Form, FormFeedback, Input, Label, Modal, ModalBody, ModalFooter, ModalHeader, Nav, NavItem, NavLink, Row, TabContent, TabPane } from 'reactstrap';
 import { IUser } from '../../../api/User/UserType';
 import { useFormik } from 'formik';
 import * as yup from "yup"
 import { toast } from 'react-toastify';
-import { addPhotoApi, createCourseApi, deletePhotoApi, getDetailCourseApi } from '../../../api/Course/courseApi';
+import { addDocumentApi, addPhotoApi, createCourseApi, deleteDocumentApi, deletePhotoApi, getDetailCourseApi } from '../../../api/Course/courseApi';
 import { getAllBranch } from '../../../api/Branch/BranchApi';
 import { getTeacherListApi } from '../../../api/User/UserApi';
 import { FaRegFilePdf } from 'react-icons/fa';
-import { LuFileJson2 } from 'react-icons/lu';
-import { useParams } from 'react-router-dom';
-import { ICourseType } from '../../../api/Course/CourseTypes';
+import { useNavigate, useNavigation, useParams } from 'react-router-dom';
+import { ICourseType, IPhoto } from '../../../api/Course/CourseTypes';
 import { Swiper, SwiperSlide } from 'swiper/react';
-import { Autoplay, Navigation, Pagination } from 'swiper/modules';
+import { Autoplay, Grid, Navigation, Pagination } from 'swiper/modules';
+import classNames from "classnames";
+import { TfiZoomIn } from "react-icons/tfi";
+
 
 const EditCourse = () => {
     const [branchList, setBranchList] = useState<Array<{ id: string, name: string }>>([])
     const [teacherList, setTeacherList] = useState<IUser[]>([])
-    const [modal_standard, setmodal_standard] = useState(false);
-    const [photoList, setPhotoList] = useState<string[]>([])
-    const [selectedPhotoIndex, setSelectedPhotoIndex] = useState<number>(0)
-    const [documentList, setDocumentList] = useState<string[]>([])
+    const [photoList, setPhotoList] = useState<ICourseType["photos"]>([])
+    const [documentList, setDocumentList] = useState<ICourseType["documents"]>([])
     const { id } = useParams()
-    const fileInputRef = useRef<any>(null);
-
-
-    const handleAddCourseImage = async (e: React.ChangeEvent<HTMLInputElement>) => {
-        if (e.target.files) {
-            const filesArray: File[] = Array.from(e.target.files);
-            const formData = new FormData()
-            formData.append("id", id as string)
-            filesArray.forEach(item => {
-                formData.append("files[]", item)
-            })
-
-            let response = await addPhotoApi(formData)
-            setPhotoList(response.data)
-            console.log("response ==>", response)
-            console.log("photoList ==>", photoList)
+    const photoInputRef = useRef<any>(null);
+    const documetInputRef = useRef<any>(null)
+    const [activeTab, setActiveTab] = useState('1');
+    const navigation = useNavigate()
+    const toggle = (tab: any) => {
+        if (activeTab !== tab) {
+            setActiveTab(tab);
         }
     }
 
-    /*     const handleCourseImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-            if (e.target.files) {
+    const handleAddCourseImage = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        if (e.target.files) {
+            try {
                 const filesArray: File[] = Array.from(e.target.files);
-                setSelectedFiles(filesArray);
+                const formData = new FormData()
+                formData.append("id", id as string)
+                filesArray.forEach(item => {
+                    formData.append("files[]", item)
+                })
+
+                let response = await addPhotoApi(formData)
+                setPhotoList([...response.data.photos.reverse()])
             }
-        };
-    
-        const handleCourseDocument = (e: any) => {
-            console.log("eee==>", e.target.files)
-            if (e.target.files) {
-                const filesArray: File[] = Array.from(e.target.files)
-                setSelectedDocumentFiles(filesArray)
+            catch (err: any) {
+                console.log("err ==>", err.message)
             }
         }
-     */
+    }
+    const handleAddCourseDocument = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        console.log("eee ==>", e.target.files)
+        if (e.target.files) {
+            try {
+                const filesArray: File[] = Array.from(e.target.files);
+                const formData = new FormData()
+                formData.append("id", id as string)
+                filesArray.forEach(item => {
+                    formData.append("files[]", item)
+                })
+
+                let response = await addDocumentApi(formData)
+                console.log("response ==>", response)
+                setDocumentList([...response.data.documents.reverse()])
+            }
+            catch (err: any) {
+                toast.error(err.response.data.message, {
+                    autoClose: 1000
+                })
+            }
+        }
+    }
 
     const formik = useFormik({
         initialValues: {
@@ -142,20 +158,11 @@ const EditCourse = () => {
         }
     }
 
-    const extensionIcon = (mimeType: string) => {
-        if (mimeType == "application/pdf") {
-            return <FaRegFilePdf style={{ fontSize: "30px" }} />
-        }
-        else if (mimeType == "application/json") {
-            return <LuFileJson2 style={{ fontSize: "30px" }} />
-        }
-    }
 
     const detailCourseApiRequest = async () => {
         try {
             const response = await getDetailCourseApi(id ?? "")
             let teacherList = await getTeacherListApi(response.data.branch._id)
-            console.log("responeData ==>", response.data)
             setPhotoList(response.data.photos)
             setDocumentList(response.data.documents)
             setTeacherList(teacherList.data)
@@ -169,8 +176,11 @@ const EditCourse = () => {
             formik.setFieldValue("startDate", startDate)
             formik.setFieldValue("endDate", endDate)
         }
-        catch (err) {
-
+        catch (err: any) {
+            navigation("/kurs")
+            toast.error(err.response.data.message, {
+                autoClose: 1500
+            })
         }
 
     }
@@ -182,23 +192,18 @@ const EditCourse = () => {
     }, [])
 
 
-    const photoName = useMemo(() => {
-        let photo = photoList[selectedPhotoIndex]?.split("/uploads/course/")[1].split("-")[0]
-        return photo
-    }, [photoList, selectedPhotoIndex])
 
-
-    const deletePhoto = async () => {
+    const deletePhoto = async (item: IPhoto) => {
         try {
-            let formatPhotoName = photoList[selectedPhotoIndex].split("/uploads/course/")[1]
-            let data = await deletePhotoApi({
-                id: id as string,
-                imgName: formatPhotoName
+            await deletePhotoApi({
+                courseId: id as string,
+                imgName: item.name,
+                imgId: item._id
             })
-            toast.success("Dosya başarı ile silindi", {
-                autoClose: 1500
+            toast.success("Fotoğraf başarıyla silindi", {
+                autoClose: 1000
             })
-            setPhotoList(photoList.filter(el => el !== photoList[selectedPhotoIndex]))
+            setPhotoList(photoList.filter(el => el.name !== item.name))
         }
         catch (err: any) {
             toast.error(err.message, {
@@ -207,6 +212,31 @@ const EditCourse = () => {
         }
     }
 
+    const deleteDocument = async (item: IPhoto) => {
+        try {
+            await deleteDocumentApi({
+                courseId: id as string,
+                documentId: item._id,
+                documentName: item.name
+            })
+            toast.success("Döküman başarı ile silindi", {
+                autoClose: 1000
+            })
+            setDocumentList(documentList.filter(el => el.name !== item.name))
+        }
+        catch (err: any) {
+            toast.error(err.message, {
+                autoClose: 1500
+            })
+        }
+    }
+
+
+
+    const openFile = (path: any) => {
+        const fullFilePath = `${import.meta.env.VITE_BASEURL}${path}`;
+        window.open(fullFilePath, '_blank');
+    };
 
     return (
         <Form onSubmit={formik.handleSubmit} >
@@ -339,7 +369,7 @@ const EditCourse = () => {
                         ) : null}
                     </div>
                 </Col>
-                <Col lg={12}>
+                <Col lg={10}>
                     <div className="mb-3">
                         <Label className="form-label">
                             Açıklama
@@ -356,7 +386,147 @@ const EditCourse = () => {
                         ) : null}
                     </div>
                 </Col>
-                <Col lg={5} >
+                <Col lg={2}>
+                    <div style={{ display: "flex", height: "100%", flexDirection: "column", justifyContent: "center", alignItems: "center" }}>
+                        <Button style={{ padding: "7px 40px" }}>
+                            Güncelle
+                        </Button>
+                    </div>
+                </Col>
+                <Col lg={12}>
+                    <Nav tabs>
+                        <NavItem>
+                            <NavLink
+                                className={classNames({ active: activeTab === '1' })}
+                                onClick={() => { toggle('1'); }}
+                            >
+                                Fotoğraflar
+                            </NavLink>
+                        </NavItem>
+                        <NavItem>
+                            <NavLink
+                                className={classNames({ active: activeTab === '2' })}
+                                onClick={() => { toggle('2'); }}
+                            >
+                                Dökümanlar
+                            </NavLink>
+                        </NavItem>
+                        <NavItem>
+                            <NavLink
+                                className={classNames({ active: activeTab === '3' })}
+                                onClick={() => { toggle('3'); }}
+                            >
+                                Öğrenciler
+                            </NavLink>
+                        </NavItem>
+                    </Nav>
+                    <TabContent activeTab={activeTab} className="tab_content">
+                        <TabPane tabId="1">
+                            <Row style={{ marginTop: "20px" }}>
+                                <Swiper className="swiper_container" slidesPerView={4} grid={{ rows: 1 }} spaceBetween={30} pagination={{ clickable: true }} modules={[Grid]} >
+                                    {
+                                        photoList.map((el) => {
+                                            return (
+                                                <SwiperSlide className="photo_slide">
+                                                    <div className="photo_section">
+                                                        <img src={`${import.meta.env.VITE_BASEURL}${el.path}`} className="img-fluid photo_img" alt="" />
+                                                        <TfiZoomIn className="zoom_icon" />
+                                                        <div className="card_footer">
+                                                            <p>
+                                                                {el.name.split("-")[0]}
+                                                            </p>
+                                                            <Button size="sm" color="danger" className="delete_btn" onClick={() => {
+                                                                deletePhoto(el)
+                                                            }} >
+                                                                Sil
+                                                            </Button>
+                                                        </div>
+                                                    </div>
+                                                </SwiperSlide>
+                                            )
+                                        })
+                                    }
+
+                                </Swiper>
+                                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: "30px" }}>
+                                    <input ref={photoInputRef} accept='image/png image/jpg image/jpeg' onChange={handleAddCourseImage} style={{ display: "none" }} className='form-control' type='file' multiple />
+                                    <Button style={{ width: "max-content" }} onClick={() => {
+                                        photoInputRef.current.click();
+                                    }}>
+                                        Fotoğraf Ekle
+                                    </Button>
+                                    <p style={{ fontWeight: "bold" }}>
+                                        Fotoğraf Sayısı : {photoList.length}
+                                    </p>
+                                </div>
+
+
+                            </Row>
+                        </TabPane>
+                        <TabPane tabId="2">
+                            <Row style={{ marginTop: "20px" }}  >
+
+                                <Swiper className="swiper_container" slidesPerView={4} grid={{ rows: 1 }} spaceBetween={30} pagination={{ clickable: true }} modules={[Grid]} >
+                                    {
+                                        documentList.map((el) => {
+                                            return (
+                                                <SwiperSlide className="document_slide">
+                                                    <div className="document_section">
+                                                        <div className="document_section_container">
+                                                            <FaRegFilePdf style={{ fontSize: "52px" }} />
+                                                            <div className="document_section_content">
+                                                                <p className="document_name">
+                                                                    <span>İsim :</span> {el.name.split("-")[0]}
+                                                                </p>
+                                                                <p className="document_createdBy">
+                                                                    <span>Oluşturan :</span> {el.createdBy.name + " " + el.createdBy.surname}
+                                                                </p>
+                                                                <TfiZoomIn className="zoom_icon" />
+
+                                                            </div>
+                                                        </div>
+                                                        <div className="delete_btn_container">
+                                                            <p>
+                                                                {new Date(el.createdAt).toLocaleDateString()}
+                                                            </p>
+                                                            <div>
+                                                                <Button size="sm" className="delete_btn" color="primary" style={{ marginRight: "10px" }} onClick={() => {
+                                                                    openFile(el.path)
+                                                                }} >
+                                                                    İncele
+                                                                </Button>
+                                                                <Button size="sm" className="delete_btn" color="danger" onClick={() => {
+                                                                    deleteDocument(el)
+                                                                }} >
+                                                                    Sil
+                                                                </Button>
+                                                            </div>
+                                                        </div>
+
+                                                    </div>
+                                                </SwiperSlide>
+                                            )
+                                        })
+                                    }
+
+                                </Swiper>
+                                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: "30px" }}>
+                                    <input  accept='application/pdf' onChange={handleAddCourseDocument}  className='form-control' type='file' multiple />
+                                    {/* <Button style={{ width: "max-content" }} onClick={() => {
+                                        documetInputRef.current.click();
+                                    }}>
+                                        Döküman Ekle
+                                    </Button> */}
+                                    <p style={{ fontWeight: "bold" }}>
+                                        Döküman Sayısı : {documentList.length}
+                                    </p>
+                                </div>
+
+                            </Row>
+                        </TabPane>
+                    </TabContent>
+                </Col>
+                {/*    <Col lg={5} >
                     <div className="mb-3">
                         <Label className="form-label">
                             Fotoğraflar
@@ -398,7 +568,7 @@ const EditCourse = () => {
                                                 {
                                                     photoList.map(item => {
                                                         return (
-                                                            <SwiperSlide><img src={`${import.meta.env.VITE_BASEURL}${item}`} alt="" className="img-fluid w-100 " /></SwiperSlide>
+                                                            <SwiperSlide><img src={`${import.meta.env.VITE_BASEURL}${item.path}`} alt="" className="img-fluid w-100 " /></SwiperSlide>
                                                         )
                                                     })
                                                 }
@@ -431,18 +601,65 @@ const EditCourse = () => {
                         <Label className="form-label">
                             Dökümanlar
                         </Label>
-                        <Button color='warning' onClick={() => { setmodal_standard(!modal_standard) }} style={{ padding: "5px 40px", marginLeft: "30px" }} >
+                        <Button color='warning' onClick={() => { setDocumentModalShow(!documentModalShow) }} style={{ padding: "5px 40px", marginLeft: "30px" }} >
                             Görüntüle ({documentList.length})
                         </Button>
+
+                        <Modal id="myModal"
+                            isOpen={documentModalShow}
+                            toggle={() => {
+                                setDocumentModalShow(!documentModalShow)
+                            }}
+                            style={{ maxWidth: "600px", width: "100%" }}
+                        >
+                            <ModalHeader>
+                                <h5
+                                    className="modal-title"
+                                    id="myModalLabel"
+                                >
+                                    Dökümanlar
+                                </h5>
+
+                            </ModalHeader>
+                            <ModalBody>
+                                <Row>
+                                    <Col sm={12}>
+                                        <Swiper onSlideChange={(e) => {
+                                            setSelectedPhotoIndex(e.activeIndex)
+                                        }} pagination={{ type: "fraction", clickable: true }} modules={[Pagination, Navigation]} loop={false} className="mySwiper swiper pagination-fraction-swiper rounded" >
+                                            <div className="swiper-wrapper">
+                                                {
+                                                    documentList.map(item => {
+                                                        return (
+                                                            <p>
+                                                                {parseDocument(item)}
+                                                            </p>
+                                                        )
+                                                    })
+                                                }
+
+                                            </div>
+                                        </Swiper>
+                                    </Col>
+
+                                    <Col sm={12}>
+                                        <div style={{ display: "flex", justifyContent: "flex-end", alignItems: "center", marginTop: "20px" }}>
+
+                                            <Button color="danger" size="sm" style={{ padding: "5px 40px" }} onClick={() => {
+                                                deletePhoto()
+                                            }} >
+                                                Sil
+                                            </Button>
+                                        </div>
+
+                                    </Col>
+                                </Row>
+                            </ModalBody>
+
+                        </Modal>
                     </div>
-                </Col>
-                <Col lg={2}>
-                    <div style={{ display: "flex", justifyContent: "flex-end" }}>
-                        <Button style={{ padding: "7px 40px" }}>
-                            Onayla
-                        </Button>
-                    </div>
-                </Col>
+                </Col> */}
+
 
             </Row>
 
