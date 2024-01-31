@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { MdOutlineDashboard, MdApps, MdCastForEducation } from "react-icons/md";
 import { PiChalkboardTeacherDuotone } from "react-icons/pi";
 import { GoGitBranch } from "react-icons/go";
+import { PiStudent } from "react-icons/pi";
 
 const Navdata = () => {
     const history = useNavigate();
@@ -83,8 +84,15 @@ const Navdata = () => {
             id: "Kurslar",
             label: "Kurslar",
             link: "/kurs",
-            role: ["admin"],
+            role: ["admin","teacher"],
             icon: <MdCastForEducation />
+        },
+        {
+            id: "Ogrenci",
+            label: "Öğrenciler",
+            link: "/ogrenci",
+            role: ["admin"],
+            icon: <PiStudent />
         }
         /* {
             id: "apps",

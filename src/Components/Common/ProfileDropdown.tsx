@@ -52,7 +52,7 @@ const ProfileDropdown = ({ t }: any) => {
                     </DropdownItem>
                     <div className="dropdown-divider"></div>
                     <DropdownItem className='p-0'>
-                        <Link to="/pages-profile-settings" className="dropdown-item">
+                        <Link to="/profil" className="dropdown-item">
                             <MdOutlineSettings style={{ marginRight: "10px" }} />
                             <span
                                 className="align-middle">

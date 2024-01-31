@@ -332,7 +332,7 @@ const Register = () => {
                                     </CardBody>
                                 </Card>
                                 <div className="mt-4 text-center">
-                                    <p className="mb-0">Zaten Hesabım var ? <Link to="/login" className="fw-semibold text-primary text-decoration-underline"> Giriş Yap</Link> </p>
+                                    <p className="mb-0">Zaten Hesabım var ? <Link to="/giris" className="fw-semibold text-primary text-decoration-underline"> Giriş Yap</Link> </p>
                                 </div>
                             </Col>
                         </Row>

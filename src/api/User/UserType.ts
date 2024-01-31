@@ -30,7 +30,7 @@ export interface ICreateStudentType {
     phone: string
     birthDate: string
     gender: "erkek" | "kadın",
-    password: string
+    password?: string
 }
 
 export interface ICreateTeacherType extends Omit<ICreateStudentType, "password"> {

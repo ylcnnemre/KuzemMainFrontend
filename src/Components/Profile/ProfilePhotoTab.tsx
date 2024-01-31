@@ -4,19 +4,23 @@ import aykut from "../../assets/images/aykut.jpg";
 import useUserStore from '../../zustand/useUserStore';
 import { uploadProfileImgApi } from '../../api/User/UserApi';
 import { toast } from 'react-toastify';
+import { IoCamera } from 'react-icons/io5';
 
 const ProfilePhotoTab = () => {
     const { user, setUser } = useUserStore()
 
     const imgUrl = useMemo(() => {
-        if (user.profileImg !== "" && user.profileImg !== undefined) {
+        if (user.profileImg !== "" && user.profileImg !== undefined && user.profileImg !== null) {
             let img = `${import.meta.env.VITE_BASEURL}${user.profileImg}`
+            console.log("imgg ==>",img)
             return img
         }
         else {
             return aykut
         }
     }, [user])
+
+
 
     const handleFileChange = async (event: any) => {
         const file = event.target.files[0]
@@ -53,7 +57,7 @@ const ProfilePhotoTab = () => {
                             <Label htmlFor="profile-img-file-input"
                                 className="profile-photo-edit avatar-xs">
                                 <span className="avatar-title rounded-circle bg-light text-body">
-                                    <i className="ri-camera-fill"></i>
+                                    <IoCamera />
                                 </span>
                             </Label>
                         </div>

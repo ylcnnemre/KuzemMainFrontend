@@ -18,6 +18,8 @@ import TestPage from "../pages/TestPage";
 import DetailCourse from "../Components/Course/DetailCourse/DetailCourse";
 import CourseDetailPage from "../pages/Course/CourseDetailPage";
 import EditCoursePage from "../pages/Course/EditCoursePage";
+import StudentDashboardPage from "../pages/Student/StudentDashboardPage";
+import AddStudentPage from "../pages/Student/AddStudentPage";
 
 type role = "admin" | "student" | "teacher"
 
@@ -28,12 +30,14 @@ const authProtectedRoutes: Array<{ path: string, component: React.ReactNode, exa
   { path: "/brans", component: <BranchesPage />, role: ["admin"] },
   { path: "/egitmen/ekle", component: <AddTeacherPage />, role: ["admin"] },
   { path: "/egitmen/duzenle/:id", component: <EditTeacherPage />, role: ["admin"] },
+  { path: "/ogrenci", component: <StudentDashboardPage />, role: ["admin"] },
+  { path: "/ogrenci/ekle", component: <AddStudentPage />, role: ["admin"] },
   { path: "/brans/ekle", component: <AddBranchPage />, role: ["admin"] },
-  { path: "/kurs", component: <CoursePage />, role: ["admin"] },
+  { path: "/kurs", component: <CoursePage />, role: ["admin","teacher"] },
   { path: "/kurs/ekle", component: <AddCoursePage />, role: ["admin"] },
   { path: "/kurs/:id", component: <CourseDetailPage />, role: ["admin", "student", "teacher"] },
   { path: "/kurs/duzenle/:id", component: <EditCoursePage />, role: ["admin"] },
-  { path: "/pages-profile-settings", component: <Settings />, role: ["admin", "student", "teacher"] },
+  { path: "/profil", component: <Settings />, role: ["admin", "student", "teacher"] },
   { path: "/pages-faqs", component: <Faqs />, role: ["admin", "student", "teacher"] },
   { path: "/test", component: <TestPage />, role: ["admin", "student", "teacher"] },
   {
@@ -48,7 +52,7 @@ const authProtectedRoutes: Array<{ path: string, component: React.ReactNode, exa
 const publicRoutes = [
   { path: "/giris", component: <Login /> },
   { path: "/forgot-password", component: <ForgetPasswordPage /> },
-  { path: "/register", component: <Register /> },
+  { path: "/kayit", component: <Register /> },
 
 ];
 

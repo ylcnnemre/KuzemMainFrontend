@@ -511,12 +511,12 @@ const EditCourse = () => {
 
                                 </Swiper>
                                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: "30px" }}>
-                                    <input  accept='application/pdf' onChange={handleAddCourseDocument}  className='form-control' type='file' multiple />
-                                    {/* <Button style={{ width: "max-content" }} onClick={() => {
+                                    <input ref={documetInputRef} accept='application/pdf' onChange={handleAddCourseDocument} style={{ display: "none" }} className='form-control' type='file' multiple />
+                                    <Button style={{ width: "max-content" }} onClick={() => {
                                         documetInputRef.current.click();
                                     }}>
                                         Döküman Ekle
-                                    </Button> */}
+                                    </Button>
                                     <p style={{ fontWeight: "bold" }}>
                                         Döküman Sayısı : {documentList.length}
                                     </p>

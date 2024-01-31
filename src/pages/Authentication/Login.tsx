@@ -8,10 +8,11 @@ import { useFormik } from "formik";
 import useUserStore from '../../zustand/useUserStore';
 import { loginApi } from '../../api/Auth';
 import { toast } from 'react-toastify';
+import { FaEye, FaEyeSlash, FaLock, FaLockOpen } from 'react-icons/fa';
 //import images
 
 const Login = (props: any) => {
-
+    console.log("wind ==>", window.location.pathname)
     const [userLogin, setUserLogin] = useState<any>([]);
     const [passwordShow, setPasswordShow] = useState<any>(false);
     const [loader, setLoader] = useState<boolean>(false);
@@ -35,12 +36,8 @@ const Login = (props: any) => {
             }
             catch (err: any) {
                 console.log("errr ==>", err)
-                toast.error(err.response.data?.message, {
-                    autoClose: 2000
-                })
+
                 setLoader(false)
-
-
             }
 
 
@@ -128,7 +125,9 @@ const Login = (props: any) => {
                                                             <FormFeedback type="invalid">{formik.errors.password as string}</FormFeedback>
                                                         ) : null}
                                                         <button className="btn btn-link position-absolute end-0 top-0 text-decoration-none text-muted" type="button" id="password-addon"
-                                                            onClick={() => setPasswordShow(!passwordShow)}><i className="ri-eye-fill align-middle"></i></button>
+                                                            onClick={() => setPasswordShow(!passwordShow)}>
+                                                            {passwordShow ? <FaEye /> : <FaEyeSlash />}
+                                                        </button>
                                                     </div>
                                                 </div>
 
@@ -152,7 +151,7 @@ const Login = (props: any) => {
                                 </Card>
 
                                 <div className="mt-4 text-center">
-                                    <p className="mb-0">Hesabım Yok ? <Link to="/register" className="fw-semibold text-primary text-decoration-underline"> Kayıt Ol </Link> </p>
+                                    <p className="mb-0">Hesabım Yok ? <Link to="/kayit" className="fw-semibold text-primary text-decoration-underline"> Kayıt Ol </Link> </p>
                                 </div>
 
                             </Col>
