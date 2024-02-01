@@ -48,7 +48,7 @@ const Navdata = () => {
             label: "Dashboards",
             icon: <MdOutlineDashboard />,
             link: "/anasayfa",
-            role: ["admin", "teacher", "student"],
+            role: ["admin", "teacher", "student", "superadmin"],
             stateVariables: isDashboard,
             click: function (e: any) {
                 console.log("selamm ", e)
@@ -70,28 +70,28 @@ const Navdata = () => {
             id: "Eğitmen",
             label: "Eğitmenler",
             link: "/egitmen",
-            role: ["admin"],
+            role: ["admin", "superadmin"],
             icon: <PiChalkboardTeacherDuotone />
         },
         {
             id: "Brans",
             label: "Branşlar",
             link: "/brans",
-            role: ["admin"],
+            role: ["admin", "superadmin"],
             icon: <GoGitBranch />
         },
         {
             id: "Kurslar",
             label: "Kurslar",
             link: "/kurs",
-            role: ["admin","teacher"],
+            role: ["admin", "teacher", "superadmin"],
             icon: <MdCastForEducation />
         },
         {
             id: "Ogrenci",
             label: "Öğrenciler",
             link: "/ogrenci",
-            role: ["admin"],
+            role: ["admin","superadmin"],
             icon: <PiStudent />
         }
         /* {

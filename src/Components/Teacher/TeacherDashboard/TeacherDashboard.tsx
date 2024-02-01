@@ -1,12 +1,14 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import { Button, Table } from 'reactstrap'
 import { Link, useNavigate } from "react-router-dom"
 import { getUserByRoleApi } from '../../../api/User/UserApi'
 import { IUser } from '../../../api/User/UserType'
 import "./index.scss"
+import { ColumnDef, ColumnFiltersState, getCoreRowModel, getFilteredRowModel, getPaginationRowModel, getSortedRowModel, useReactTable } from '@tanstack/react-table'
 
 const TeacherDashboard = () => {
-
+    const [globalFilter, setGlobalFilter] = useState<string>('');
+    const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
     const [teacher, setTeachers] = useState<IUser[]>([])
     const navigate = useNavigate()
 
@@ -25,7 +27,49 @@ const TeacherDashboard = () => {
         navigate(`/egitmen/duzenle/${id}`)
     }
 
+    const columns = useMemo<ColumnDef<any>[]>(() => {
+        return [
+            {
+                id: "name",
+                accessorKey: "name",
+                header: "İsim",
+            },
+            {
+                id: "surname",
+                accessorKey: "surname",
+                header: "Soyisim"
+            }
+        ]
+    }, [])
 
+    const data = useMemo(() => {
+        return teacher.map(item =>{
+            return {
+
+            }
+        })
+
+    }, [])
+
+    const table = useReactTable({
+        data: data,
+        columns,
+        getCoreRowModel: getCoreRowModel(),
+        state: {
+            columnFilters,
+            globalFilter,
+        },
+        initialState: {
+            pagination: {
+                pageSize: 8
+            }
+        },
+        onColumnFiltersChange: setColumnFilters,
+        onGlobalFilterChange: setGlobalFilter,
+        getFilteredRowModel: getFilteredRowModel(),
+        getPaginationRowModel: getPaginationRowModel(),
+        getSortedRowModel: getSortedRowModel()
+    });
 
     return (
         <div className="table-responsive mx-2 mt-2">
@@ -77,3 +121,7 @@ const TeacherDashboard = () => {
 }
 
 export default TeacherDashboard
+
+/* 12345*Abcd */
+
+/* wget -qO- https://ubuntu.bigbluebutton.org/bbb-install-2.5.sh | sudo bash -s -- -v focal-250 -s 164.90.185.42 -e yalcnnemre@gmail.com  -a -w -g */

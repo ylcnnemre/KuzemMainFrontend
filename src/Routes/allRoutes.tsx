@@ -21,32 +21,32 @@ import EditCoursePage from "../pages/Course/EditCoursePage";
 import StudentDashboardPage from "../pages/Student/StudentDashboardPage";
 import AddStudentPage from "../pages/Student/AddStudentPage";
 
-type role = "admin" | "student" | "teacher"
+type role = "admin" | "student" | "teacher" | "superadmin"
 
 const authProtectedRoutes: Array<{ path: string, component: React.ReactNode, exact?: boolean, role: role[] }> = [
-  { path: "/anasayfa", component: <Dashboard />, role: ["student", "admin", "teacher"] },
-  { path: "/profile", component: <UserProfile />, role: ["student", "admin", "teacher"] },
-  { path: "/egitmen", component: <TeacherPage />, role: ["admin"] },
-  { path: "/brans", component: <BranchesPage />, role: ["admin"] },
-  { path: "/egitmen/ekle", component: <AddTeacherPage />, role: ["admin"] },
-  { path: "/egitmen/duzenle/:id", component: <EditTeacherPage />, role: ["admin"] },
-  { path: "/ogrenci", component: <StudentDashboardPage />, role: ["admin"] },
-  { path: "/ogrenci/ekle", component: <AddStudentPage />, role: ["admin"] },
-  { path: "/brans/ekle", component: <AddBranchPage />, role: ["admin"] },
-  { path: "/kurs", component: <CoursePage />, role: ["admin","teacher"] },
-  { path: "/kurs/ekle", component: <AddCoursePage />, role: ["admin"] },
-  { path: "/kurs/:id", component: <CourseDetailPage />, role: ["admin", "student", "teacher"] },
-  { path: "/kurs/duzenle/:id", component: <EditCoursePage />, role: ["admin"] },
-  { path: "/profil", component: <Settings />, role: ["admin", "student", "teacher"] },
-  { path: "/pages-faqs", component: <Faqs />, role: ["admin", "student", "teacher"] },
-  { path: "/test", component: <TestPage />, role: ["admin", "student", "teacher"] },
+  { path: "/anasayfa", component: <Dashboard />, role: ["student", "admin", "teacher","superadmin"] },
+  { path: "/profile", component: <UserProfile />, role: ["student", "admin", "teacher","superadmin"] },
+  { path: "/egitmen", component: <TeacherPage />, role: ["admin","superadmin"] },
+  { path: "/brans", component: <BranchesPage />, role: ["admin","superadmin"] },
+  { path: "/egitmen/ekle", component: <AddTeacherPage />, role: ["admin","superadmin"] },
+  { path: "/egitmen/duzenle/:id", component: <EditTeacherPage />, role: ["admin","superadmin"] },
+  { path: "/ogrenci", component: <StudentDashboardPage />, role: ["admin","superadmin"] },
+  { path: "/ogrenci/ekle", component: <AddStudentPage />, role: ["admin","superadmin"] },
+  { path: "/brans/ekle", component: <AddBranchPage />, role: ["admin","superadmin"] },
+  { path: "/kurs", component: <CoursePage />, role: ["admin", "teacher","superadmin"] },
+  { path: "/kurs/ekle", component: <AddCoursePage />, role: ["admin","superadmin"] },
+  { path: "/kurs/:id", component: <CourseDetailPage />, role: ["admin", "student", "teacher","superadmin"] },
+  { path: "/kurs/duzenle/:id", component: <EditCoursePage />, role: ["admin","superadmin"] },
+  { path: "/profil", component: <Settings />, role: ["admin", "student", "teacher","superadmin"] },
+  { path: "/pages-faqs", component: <Faqs />, role: ["admin", "student", "teacher","superadmin"] },
+  { path: "/test", component: <TestPage />, role: ["admin", "student", "teacher","superadmin"] },
   {
     path: "/",
     exact: true,
     component: <Navigate to="/anasayfa" />,
     role: ["admin", "student", "teacher"]
   },
-  { path: "*", component: <Navigate to="/anasayfa" />, role: ["admin", "teacher", "student"] },
+  { path: "*", component: <Navigate to="/anasayfa" />, role: ["superadmin","admin", "teacher", "student"] },
 ];
 
 const publicRoutes = [

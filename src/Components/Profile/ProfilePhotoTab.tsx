@@ -12,14 +12,12 @@ const ProfilePhotoTab = () => {
     const imgUrl = useMemo(() => {
         if (user.profileImg !== "" && user.profileImg !== undefined && user.profileImg !== null) {
             let img = `${import.meta.env.VITE_BASEURL}${user.profileImg}`
-            console.log("imgg ==>",img)
             return img
         }
         else {
             return aykut
         }
     }, [user])
-
 
 
     const handleFileChange = async (event: any) => {

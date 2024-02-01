@@ -15,14 +15,14 @@ const AddBranchForm = () => {
       name: yup.string().required("İsim Giriniz"),
       description: yup.string().required("Açıklama giriniz")
     }),
-    onSubmit: async (value) => {
+    onSubmit: async (value,{resetForm}) => {
       try {
         
         await createBranch(value)
         toast.success("branş kayıt edildi", {
           autoClose: 1500
         })
-
+        resetForm()
       }
       catch (err: any) {
         toast.error(err.response.data.message, {
