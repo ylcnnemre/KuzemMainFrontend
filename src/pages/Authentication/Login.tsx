@@ -32,6 +32,7 @@ const Login = (props: any) => {
             try {
                 setLoader(true)
                 const response = await loginApi(values)
+                console.log("resLog ==>",response.data)
                 loginSuccess(response.data, props.router.navigate)
             }
             catch (err: any) {

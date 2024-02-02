@@ -1,39 +1,58 @@
 import { IBranch } from "../Branch/BranchType"
 
-export interface IUser {
+
+export interface IJwtDecode {
     _id: string,
     name: string,
     surname: string
     email: string
-    phone: string,
-    tcNo: string,
-    birthDate: string
-    gender: "erkek" | "kadın",
     role: "student" | "teacher" | "admin"
-    address: any,
-    branch?: IBranch
-    profileImg: string,
-}
-
-
-
-export interface IJwtDecode extends IUser {
     iat: string
     exp: string
 }
 
-export interface ICreateStudentType {
-    name: string,
+export interface IProfileData {
+    _id: string
+    name: string
     surname: string
     email: string
+    gender: string
+    phone: string
+    role: string
+    tcNo: string
+    birthDate: string,
+    branch?: any
+    address?: {
+        _id: string
+        city: string
+        createdAt: string
+        updatedAt: string
+        postalCode: string
+        additionalInfo: string
+        region: string
+    },
+    profileImg?: {
+        path: string
+    }
+}
+
+
+
+
+export interface ICreateUserType {
+    name: string,
+    surname: string
+    password?: string
     tcNo: string,
+    email: string
+    role: string
     phone: string
     birthDate: string
     gender: "erkek" | "kadın",
-    password?: string
+    branch?: string
 }
 
-export interface ICreateTeacherType extends Omit<ICreateStudentType, "password"> {
+export interface ICreateTeacherType extends Omit<ICreateUserType, "password"> {
     branch: string
 }
 
@@ -44,7 +63,7 @@ export interface IUpdateUserType {
     surname: string
     birthDate: string
     gender: string,
-    branch? : string,
+    branch?: string,
     address?: {
         city: string
         region: string

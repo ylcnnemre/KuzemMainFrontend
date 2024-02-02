@@ -8,16 +8,14 @@ import { toast } from 'react-toastify';
 import { useFormik } from 'formik';
 import * as yup from "yup"
 import { cityList } from '../../common/constants/city';
+import { IProfileData } from '../../api/User/UserType';
 
 const today = new Date();
 const eighteenYearsAgo = new Date(today.getFullYear() - 18, today.getMonth(), today.getDate());
 const eightyYearsAgo = new Date(today.getFullYear() - 80, today.getMonth(), today.getDate());
 
-const ProfileDetail: FC<{ t: any, }> = ({ t }) => {
+const ProfileDetail: FC<{ t: any, user: IProfileData, setUser: Function }> = ({ t, setUser, user }) => {
     const [region, setRegion] = useState<Array<string>>([])
-    const { user, setUser } = useUserStore()
-
-    console.log("user  ===>",user)
 
     const getUserProfileData = async () => {
         try {
@@ -95,22 +93,23 @@ const ProfileDetail: FC<{ t: any, }> = ({ t }) => {
                         region
                     },
                     name: value.name,
-                    surname: value.name,
+                    surname: value.surname,
                     birthDate: value.birthDate,
                     gender: value.gender as typeof user.gender
                 })
                 toast.success("Güncelleme Başarılı", {
-                    autoClose: 2000
+                    autoClose: 1000
                 })
             }
-            catch (err) {
-
+            catch (err: any) {
+                toast.error(err.response.data.message, {
+                    autoClose: 1000
+                })
             }
 
 
         }
     })
-    console.log("formik =>=>",formik.values)
     const postalCodeDisableControl = useMemo(() => {
         return formik.values.city == "" || formik.values.region == ""
     }, [formik.values.city, formik.values.region])

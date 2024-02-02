@@ -5,21 +5,11 @@ import useUserStore from '../../zustand/useUserStore';
 import { uploadProfileImgApi } from '../../api/User/UserApi';
 import { toast } from 'react-toastify';
 import { IoCamera } from 'react-icons/io5';
+import { IProfileData } from '../../api/User/UserType';
 
-const ProfilePhotoTab = () => {
-    const { user, setUser } = useUserStore()
+const ProfilePhotoTab: FC<{ user: IProfileData, setUser: React.Dispatch<React.SetStateAction<IProfileData | undefined>> }> = ({ user, setUser }) => {
 
-    const imgUrl = useMemo(() => {
-        if (user.profileImg !== "" && user.profileImg !== undefined && user.profileImg !== null) {
-            let img = `${import.meta.env.VITE_BASEURL}${user.profileImg}`
-            return img
-        }
-        else {
-            return aykut
-        }
-    }, [user])
-
-
+    console.log("user ==>", user)
     const handleFileChange = async (event: any) => {
         const file = event.target.files[0]
         if (file) {
@@ -27,9 +17,12 @@ const ProfilePhotoTab = () => {
             formData.append("file", file)
             try {
                 let response = await uploadProfileImgApi(formData)
+                console.log("resp ==>", response)
                 setUser({
                     ...user,
-                    profileImg: response.data.path
+                    profileImg: {
+                        path: response.data.path
+                    }
                 })
             }
             catch (err: any) {
@@ -41,12 +34,16 @@ const ProfilePhotoTab = () => {
         }
     }
 
+    const profileImg = useMemo(() => {
+        return user.profileImg ? `${import.meta.env.VITE_BASEURL}${user.profileImg.path}` : aykut
+    }, [user])
+
     return (
         <Card className="card-bg-fill">
             <CardBody className="p-4">
                 <div className="text-center">
                     <div className="profile-user position-relative d-inline-block mx-auto  mb-4">
-                        <img src={imgUrl}
+                        <img src={profileImg}
                             className="rounded-circle avatar-xl img-thumbnail user-profile-image"
                             alt="user-profile" />
                         <div className="avatar-xs p-0 rounded-circle profile-photo-edit">

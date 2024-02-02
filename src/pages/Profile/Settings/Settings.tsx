@@ -12,40 +12,38 @@ import { getUserByIdApi } from '../../../api/User/UserApi';
 import useUserStore from '../../../zustand/useUserStore';
 import { CircleLoader } from 'react-spinners';
 import { toast } from 'react-toastify';
+import { IProfileData } from '../../../api/User/UserType';
 
 
 const Settings = ({ t }: any) => {
 
     const [activeTab, setActiveTab] = useState("1");
-    const [loading, setLoading] = useState<boolean>(false)
-    const { user, setUser } = useUserStore()
+    const [userData, setUserData] = useState<IProfileData>()
+    const { user } = useUserStore()
     const tabChange = (tab: any) => {
         if (activeTab !== tab) setActiveTab(tab);
     };
 
     const getUserProfileData = async () => {
         try {
-            setLoading(true)
             let response = await getUserByIdApi(user._id)
-            console.log("response ==>",response)
-            const data = response.data
-            setUser(data)
-            setLoading(false)
+            console.log("response ==>", response.data)
+            setUserData(response.data)
         }
         catch (err: any) {
             toast.error(err.response.data.message)
-            setLoading(false)
         }
     }
     useEffect(() => {
         getUserProfileData()
     }, [])
 
+
     return (
         <React.Fragment>
             <div className="page-content">
                 {
-                    loading ? (
+                    !userData ? (
                         <div style={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
                             <CircleLoader color="#36d7b7" />
                         </div>
@@ -54,7 +52,7 @@ const Settings = ({ t }: any) => {
                             <BreadCrumb title={"ProfileSettings"} pageTitle="Pages" />
                             <Row>
                                 <Col xxl={3} >
-                                    <ProfilePhotoTab />
+                                    <ProfilePhotoTab user={userData} setUser={setUserData} />
                                 </Col>
                                 <Col xxl={9}>
                                     <Card>
@@ -62,7 +60,7 @@ const Settings = ({ t }: any) => {
                                         <CardBody className="p-4">
                                             <TabContent activeTab={activeTab}>
                                                 <TabPane tabId="1">
-                                                    <ProfileDetail />
+                                                    <ProfileDetail user={userData} setUser={setUserData} />
                                                 </TabPane>
                                                 <TabPane tabId="2">
                                                     <ChangePasswordTab />

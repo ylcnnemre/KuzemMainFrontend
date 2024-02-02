@@ -17,10 +17,9 @@ const AddBranchForm = () => {
     }),
     onSubmit: async (value,{resetForm}) => {
       try {
-        
         await createBranch(value)
         toast.success("branş kayıt edildi", {
-          autoClose: 1500
+          autoClose: 1000
         })
         resetForm()
       }

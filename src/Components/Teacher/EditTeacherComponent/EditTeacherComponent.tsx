@@ -113,7 +113,7 @@ const EditTeacherComponent: FC<{ t: Function }> = ({ t }) => {
             }
             catch (err: any) {
                 console.log("err =>>", err)
-                toast.error(err.response.data.message[0], {
+                toast.error(err.response.data.message, {
                     autoClose: 1500
                 })
             }

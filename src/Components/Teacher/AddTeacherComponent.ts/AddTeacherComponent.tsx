@@ -4,10 +4,10 @@ import { withTranslation } from 'react-i18next'
 import { useFormik } from 'formik'
 import * as yup from "yup"
 import { Col, FormFeedback, Input, Label, Row, Form } from 'reactstrap'
-import { ICreateStudentType, ICreateTeacherType } from '../../../api/User/UserType'
+import { ICreateUserType, ICreateTeacherType } from '../../../api/User/UserType'
 import { toast } from 'react-toastify'
 import { getAllBranch } from '../../../api/Branch/BranchApi'
-import { createTeacherApi } from '../../../api/User/UserApi'
+import { createTeacherApi, createUserApi } from '../../../api/User/UserApi'
 
 const today = new Date();
 const eighteenYearsAgo = new Date(today.getFullYear() - 18, today.getMonth(), today.getDate());
@@ -63,14 +63,15 @@ const AddTeacherComponent: FC<{ t: Function }> = ({ t }) => {
         onSubmit: async (value, { resetForm }) => {
             try {
                 const { gender, ...rest } = value
-                await createTeacherApi({
+                await createUserApi({
                     ...rest,
-                    gender: gender as ICreateTeacherType["gender"]
+                    gender: gender as ICreateTeacherType["gender"],
+                    role : "teacher"
                 })
                 toast.success("Öğretmen kayıt edildi", {
                     autoClose: 1500
                 })
-                resetForm()
+                /* resetForm() */
             }
             catch (err: any) {
                 console.log("err =>", err)

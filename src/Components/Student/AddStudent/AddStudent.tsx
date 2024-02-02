@@ -6,7 +6,7 @@ import { createStudentApi, createTeacherApi } from '../../../api/User/UserApi';
 import { toast } from 'react-toastify';
 import withRouter from '../../Common/withRouter';
 import { withTranslation } from 'react-i18next';
-import { ICreateStudentType } from '../../../api/User/UserType';
+import { ICreateUserType } from '../../../api/User/UserType';
 
 const today = new Date();
 const eighteenYearsAgo = new Date(today.getFullYear() - 18, today.getMonth(), today.getDate());
@@ -46,7 +46,7 @@ const AddStudent = ({ t }: any) => {
                 const responseBody = {
                     ...rest,
                     tcNo: `${tcNo}`,
-                    gender: gender as ICreateStudentType["gender"],
+                    gender: gender as ICreateUserType["gender"],
                     birthDate: new Date(birthDate).toISOString().split('T')[0]
                 }
                 await createStudentApi(responseBody)

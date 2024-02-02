@@ -1,20 +1,21 @@
 import React, { useEffect, useMemo, useState } from 'react'
 import { Button, Table } from 'reactstrap'
 import { Link, useNavigate } from "react-router-dom"
-import { getUserByRoleApi } from '../../../api/User/UserApi'
-import { IUser } from '../../../api/User/UserType'
+
 import "./index.scss"
-import { ColumnDef, ColumnFiltersState, getCoreRowModel, getFilteredRowModel, getPaginationRowModel, getSortedRowModel, useReactTable } from '@tanstack/react-table'
+import { ColumnDef, ColumnFiltersState, flexRender, getCoreRowModel, getFilteredRowModel, getPaginationRowModel, getSortedRowModel, useReactTable } from '@tanstack/react-table'
+import { getUserByRoleApi } from '../../../api/User/Teacher/TeacherApi'
+import { ITeacherType } from '../../../api/User/Teacher/teacherType'
 
 const TeacherDashboard = () => {
     const [globalFilter, setGlobalFilter] = useState<string>('');
     const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
-    const [teacher, setTeachers] = useState<IUser[]>([])
+    const [teacher, setTeachers] = useState<ITeacherType[]>([])
     const navigate = useNavigate()
 
     const getAllTeacher = async () => {
         const response = await getUserByRoleApi("teacher")
-        console.log("response ==>", response)
+        console.log("responseTeacher ==>", response)
         setTeachers(response.data)
     }
 
@@ -38,18 +39,57 @@ const TeacherDashboard = () => {
                 id: "surname",
                 accessorKey: "surname",
                 header: "Soyisim"
+            },
+            {
+                id: "email",
+                accessorKey: "email",
+                header: "Email",
+            },
+            {
+                id: "phone",
+                accessorKey: "phone",
+                header: "Telefon"
+            },
+            {
+                id: "branch",
+                accessorKey: "branch",
+                header: "Branş"
+            },
+            {
+                id: "actions",
+                accessorKey: "id",
+                header: "Action",
+                cell: function render({ getValue }) {
+                    return (
+                        <div>
+                            <Button color="warning" style={{ marginRight: "10px" }} onClick={() => {
+                                navigate(`/egitmen/duzenle/${getValue()}`)
+                            }} >
+                                Düzenle
+                            </Button>
+                            <Button color="danger">
+                                Sil
+                            </Button>
+                        </div>
+                    )
+                }
             }
         ]
     }, [])
 
     const data = useMemo(() => {
-        return teacher.map(item =>{
+        return teacher.map(item => {
             return {
-
+                id: item._id,
+                name: item.name,
+                surname: item.surname,
+                email: item.email,
+                phone: item.phone,
+                branch: item.branch?.name
             }
         })
 
-    }, [])
+    }, [teacher])
 
     const table = useReactTable({
         data: data,
@@ -72,49 +112,125 @@ const TeacherDashboard = () => {
     });
 
     return (
-        <div className="table-responsive mx-2 mt-2">
-            <div className='createTeacherButton_container'>
-                <Link to={"/egitmen/ekle"} className='btn btn-success px-4 py-1'>
-                    Eğitmen Ekle
-                </Link>
+        <div className="">
+
+            <div className="d-flex mb-3 border border-dashed" >
+
+                <input placeholder="ara" className="form-control" style={{ width: "max-content" }} onChange={e => {
+                    setGlobalFilter(e.target.value)
+                }} />
+                <div className="col-sm-auto ms-auto">
+                    <Link
+                        to="/egitmen/ekle"
+                        className="btn btn-primary"
+                    >
+                        Eğitmen Ekle
+                    </Link>
+                </div>
+            </div>
+            <div className={"table-responsive mb-1"}>
+                <Table hover className={"mb-0 align-middle table-borderless"}>
+                    <thead className={"table-light text-muted"}>
+                        {table.getHeaderGroups().map((headerGroup: any) => (
+                            <tr key={headerGroup.id}>
+                                {headerGroup.headers.map((header: any) => (
+                                    <th key={header.id}   {...{
+                                        onClick: header.column.getToggleSortingHandler(),
+                                    }}>
+                                        {header.isPlaceholder ? null : (
+                                            <React.Fragment>
+                                                {flexRender(
+                                                    header.column.columnDef.header,
+                                                    header.getContext()
+                                                )}
+                                                {{
+                                                    asc: ' ',
+                                                    desc: ' ',
+                                                }
+                                                [header.column.getIsSorted() as string] ?? null}
+
+                                            </React.Fragment>
+                                        )}
+                                    </th>
+                                ))}
+                            </tr>
+                        ))}
+                    </thead>
+
+                    <tbody>
+                        {table.getRowModel().rows.map((row: any) => {
+                            return (
+                                <tr key={row.id}>
+                                    {row.getVisibleCells().map((cell: any) => {
+                                        return (
+                                            <td key={cell.id}>
+                                                {flexRender(
+                                                    cell.column.columnDef.cell,
+                                                    cell.getContext()
+                                                )}
+                                            </td>
+                                        );
+                                    })}
+                                </tr>
+                            );
+                        })}
+                    </tbody>
+                </Table>
+                {
+                    <div style={{ display: "flex", flexDirection: "row-reverse", justifyContent: "space-between" }} >
+                        <div >
+                            <span className="mx-2">Sayfa Başına Kayıt</span>
+                            <select
+
+                                value={table.getState().pagination.pageSize}
+                                onChange={(e) => {
+                                    table.setPageSize(Number(e.target.value));
+                                }}
+                            >
+                                {[2, 4, 6, 8].map((pageSize) => (
+                                    <option key={pageSize} value={pageSize}>
+                                        {pageSize}
+                                    </option>
+                                ))}
+                            </select>
+                        </div>
+                        <div >
+
+                            <button
+                                style={{ padding: "3px", marginRight: "5px" }}
+                                onClick={() => table.previousPage()}
+                                disabled={!table.getCanPreviousPage()}
+                            >
+                                <span >{'<'}</span>
+                            </button>
+                            <span>
+                                <input
+                                    min={1}
+                                    max={table.getPageCount()}
+                                    type="number"
+                                    value={table.getState().pagination.pageIndex + 1}
+                                    onChange={(e) => {
+                                        const page = e.target.value ? Number(e.target.value) - 1 : 0;
+                                        table.setPageIndex(page);
+                                    }}
+
+                                />
+                                to {table.getPageCount()}
+                            </span>
+                            <button
+                                style={{ padding: "3px", marginLeft: "5px" }}
+                                onClick={() => table.nextPage()}
+                                disabled={!table.getCanNextPage()}
+                            >
+                                <span >{'>'}</span>
+                            </button>
+
+                        </div>
+                    </div>
+                }
 
             </div>
-            <table className="table align-middle table-nowrap table-striped-columns ">
-                <thead className='table-light'>
-                    <tr>
-                        <th scope="col">#</th>
-                        <th scope="col">İsim</th>
-                        <th scope="col">Soyisim</th>
-                        <th scope='col'>Branş</th>
-                        <th scope="col">Email</th>
-                        <th scope="col">Telefon</th>
-                        <th scope='col'>İşlemler</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {
-                        teacher.map((item, index) => {
-                            return (
-                                <tr key={`${index}`} >
-                                    <td className="fw-medium">{index + 1}</td>
-                                    <td>{item.name}</td>
-                                    <td>{item.surname}</td>
-                                    <td>{item.branch?.name}  </td>
-                                    <td>{item.email} </td>
-                                    <td> {item.phone} </td>
-                                    <td>
-                                        <Button color='warning' size='sm' onClick={() => {
-                                            editTeacher(item._id)
-                                        }} >
-                                            Düzenle
-                                        </Button>
-                                    </td>
-                                </tr>
-                            )
-                        })
-                    }
-                </tbody>
-            </table>
+
         </div>
 
     )

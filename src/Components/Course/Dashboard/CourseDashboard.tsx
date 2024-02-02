@@ -29,7 +29,7 @@ const CourseDashboard = () => {
             setLoading(true)
             const testList = []
             const response = await getAllCourseApi()
-            console.log("response ==>", response)
+            console.log("responseCoursee ==>", response)
             for (let item = 0; item < 5; item++) {
                 testList.push(...response.data.map(el => {
                     return {
@@ -55,6 +55,24 @@ const CourseDashboard = () => {
         getCourseList()
     }, [])
 
+
+    const photoList = useMemo(() => {
+        return courseData.map(el => {
+            return {
+                ...el,
+                files: el.files.filter(item => item.type == "photo")
+            }
+        })
+    }, [courseData])
+
+    const documentList = useMemo(() => {
+        return courseData.map(el => {
+            return {
+                ...el,
+                files: el.files.filter(item => item.type == "document")
+            }
+        })
+    }, [courseData])
 
 
     const sliceData = (elemens: Array<any>, currentIndex: number) => {
@@ -100,9 +118,9 @@ const CourseDashboard = () => {
                                         }} modules={[EffectCreative, Pagination, Autoplay]} loop={true} autoplay={{ delay: 2500, disableOnInteraction: false }} className="mySwiper swiper effect-creative-swiper rounded">
                                         <div className="swiper-wrapper">
                                             {
-                                                item.photos.map(el => {
+                                                item.files.filter(el => el.type == "photo").map(el => {
                                                     return (
-                                                        <SwiperSlide><img src={`${import.meta.env.VITE_BASEURL}${el.path}`} alt="" className="img-fluid" style={{ width: "100%", height:"200px", borderRadius: "10px" }} /></SwiperSlide>
+                                                        <SwiperSlide><img src={`${import.meta.env.VITE_BASEURL}${el.path}`} alt="" className="img-fluid" style={{ width: "100%", height: "200px", borderRadius: "10px" }} /></SwiperSlide>
                                                     )
                                                 })
                                             }

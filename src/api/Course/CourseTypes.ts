@@ -1,18 +1,27 @@
 
 export interface ICourseType {
     _id: string
-    title: string
     branch: any
-    endDate: string
-    startDate: string
-    teacher: ITeacher
-    quota: number,
-    description: string,
-    schedule: Array<any>
-    photos: Array<IPhoto>,
-    documents: Array<IDocument>
     createdAt: string
     updatedAt: string
+    description: string
+    schedule: any[]
+    endDate: string
+    files: Array<{
+        createdAt: string
+        createdBy: any
+        extension: string,
+        path: string,
+        name: string
+        type: string
+        updatedAt: string
+        _id: string
+    }>
+    quota: number
+    startDate: string
+    teacher: any
+    title: string
+
 }
 
 export interface IPhoto {

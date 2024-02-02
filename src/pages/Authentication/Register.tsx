@@ -7,7 +7,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import { Link, useNavigate } from "react-router-dom";
 import ParticlesAuth from "../AuthenticationInner/ParticlesAuth";
 import { createStudentApi } from "../../api/User/UserApi";
-import { ICreateStudentType } from "../../api/User/UserType";
+import { ICreateUserType } from "../../api/User/UserType";
 
 const Register = () => {
     const [loader, setLoader] = useState<boolean>(false);
@@ -50,10 +50,10 @@ const Register = () => {
         onSubmit: async (values, { resetForm }) => {
             try {
                 const { confirm_password, gender, tcNo, birthDate, ...rest } = values
-                const respo: ICreateStudentType = {
+                const respo: ICreateUserType = {
                     ...rest,
                     tcNo: `${tcNo}`,
-                    gender: gender as ICreateStudentType["gender"],
+                    gender: gender as ICreateUserType["gender"],
                     birthDate: new Date(birthDate).toISOString().split('T')[0]
                 }
 
