@@ -78,7 +78,7 @@ const DetailCourse = () => {
                     return <FaFile />
             }
         }
-        let response = courseDetailData?.documents.map(item => {
+        let response = courseDetailData?.files.filter(el => el.type).map(item => {
             return {
                 icon: iconHandler(item.extension),
                 path: item.path,
