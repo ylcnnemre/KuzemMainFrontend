@@ -28,7 +28,6 @@ import { FaFile } from "react-icons/fa";
 
 const DetailCourse = () => {
     const [loading, setLoading] = useState<boolean>(false)
-    const [thumbsSwiper, setThumbsSwiper] = useState<any>(null);
     const [courseDetailData, setCourseDetailData] = useState<ICourseType>()
     const { id } = useParams();
     const navigation = useNavigate()
@@ -78,7 +77,7 @@ const DetailCourse = () => {
                     return <FaFile />
             }
         }
-        let response = courseDetailData?.files.filter(el => el.type).map(item => {
+        let response = courseDetailData?.files.filter(el => el.type == "document").map(item => {
             return {
                 icon: iconHandler(item.extension),
                 path: item.path,
@@ -86,7 +85,12 @@ const DetailCourse = () => {
             }
         })
         return response
-    }, [courseDetailData?.documents])
+    }, [courseDetailData?.files])
+
+
+    const photoList = useMemo(() => {
+        return courseDetailData?.files.filter(el => el.type == "photo")
+    }, [courseDetailData?.files])
 
     const openFile = (path: any) => {
         const fullFilePath = `${import.meta.env.VITE_BASEURL}${path}`;
@@ -113,9 +117,9 @@ const DetailCourse = () => {
                                     }} modules={[EffectCreative, Pagination, Autoplay]} loop={true} autoplay={{ delay: 2500, disableOnInteraction: false }} className="mySwiper swiper effect-creative-swiper rounded">
                                     <div className="swiper-wrapper">
                                         {
-                                            courseDetailData?.photos.map(item => {
+                                            photoList?.map(item => {
                                                 return (
-                                                    <SwiperSlide key={`${item}`} ><img src={`${import.meta.env.VITE_BASEURL}${item.path}`} alt="" className="img-fluid" style={{ width: "100%", borderRadius: "10px" , height:"280px" }} /></SwiperSlide>
+                                                    <SwiperSlide key={`${item}`} ><img src={`${import.meta.env.VITE_BASEURL}${item.path}`} alt="" className="img-fluid" style={{ width: "100%", borderRadius: "10px", height: "280px" }} /></SwiperSlide>
                                                 )
                                             })
                                         }

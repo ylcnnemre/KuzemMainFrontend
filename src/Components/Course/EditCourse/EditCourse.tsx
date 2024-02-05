@@ -26,8 +26,8 @@ import { TfiZoomIn } from "react-icons/tfi";
 const EditCourse = () => {
     const [branchList, setBranchList] = useState<Array<{ id: string, name: string }>>([])
     const [teacherList, setTeacherList] = useState<IUser[]>([])
-    const [photoList, setPhotoList] = useState<ICourseType["photos"]>([])
-    const [documentList, setDocumentList] = useState<ICourseType["documents"]>([])
+    const [photoList, setPhotoList] = useState<ICourseType["files"]>([])
+    const [documentList, setDocumentList] = useState<ICourseType["files"]>([])
     const { id } = useParams()
     const photoInputRef = useRef<any>(null);
     const documetInputRef = useRef<any>(null)
@@ -50,7 +50,8 @@ const EditCourse = () => {
                 })
 
                 let response = await addPhotoApi(formData)
-                setPhotoList([...response.data.photos.reverse()])
+                
+                /* setPhotoList([...response.data.photos.reverse()]) */
             }
             catch (err: any) {
                 console.log("err ==>", err.message)
@@ -70,7 +71,7 @@ const EditCourse = () => {
 
                 let response = await addDocumentApi(formData)
                 console.log("response ==>", response)
-                setDocumentList([...response.data.documents.reverse()])
+                /* setDocumentList([...response.data.documents.reverse()]) */
             }
             catch (err: any) {
                 toast.error(err.response.data.message, {
@@ -162,9 +163,10 @@ const EditCourse = () => {
     const detailCourseApiRequest = async () => {
         try {
             const response = await getDetailCourseApi(id ?? "")
+            console.log("courseDetail ==>", response)
             let teacherList = await getTeacherListApi(response.data.branch._id)
-            setPhotoList(response.data.photos)
-            setDocumentList(response.data.documents)
+            setPhotoList(response.data.files.filter(el => el.type == "photo"))
+            setDocumentList(response.data.files.filter(el => el.type == "document"))
             setTeacherList(teacherList.data)
             let startDate = new Date(response.data.startDate).toISOString().split('T')[0];
             let endDate = new Date(response.data.endDate).toISOString().split("T")[0]
@@ -455,7 +457,7 @@ const EditCourse = () => {
                                     }}>
                                         Fotoğraf Ekle
                                     </Button>
-                                    <p style={{ fontWeight: "bold" }}>
+                                     <p style={{ fontWeight: "bold" }}>
                                         Fotoğraf Sayısı : {photoList.length}
                                     </p>
                                 </div>
@@ -517,7 +519,7 @@ const EditCourse = () => {
                                     }}>
                                         Döküman Ekle
                                     </Button>
-                                    <p style={{ fontWeight: "bold" }}>
+                                     <p style={{ fontWeight: "bold" }}>
                                         Döküman Sayısı : {documentList.length}
                                     </p>
                                 </div>
