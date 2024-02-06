@@ -5,14 +5,14 @@ import * as yup from "yup"
 import { getAllBranch } from '../../../api/Branch/BranchApi'
 import { toast } from 'react-toastify'
 import { getTeacherListApi } from '../../../api/User/UserApi'
-import { IUser } from '../../../api/User/UserType'
 import { createCourseApi } from '../../../api/Course/courseApi'
 import { FaRegFilePdf } from "react-icons/fa";
 import { LuFileJson } from "react-icons/lu";
 import "./index.scss"
+import { ITeacherType } from '../../../api/User/Teacher/teacherType'
 const AddCourseForm = () => {
   const [branchList, setBranchList] = useState<Array<{ id: string, name: string }>>([])
-  const [teacherList, setTeacherList] = useState<IUser[]>([])
+  const [teacherList, setTeacherList] = useState<ITeacherType[]>([])
   const [selectedImageFiles, setSelectedFiles] = useState<File[]>([]);
   const [selectedDocumentFiles, setSelectedDocumentFiles] = useState<File[]>([])
 

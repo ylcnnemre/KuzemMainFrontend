@@ -66,12 +66,12 @@ const AddTeacherComponent: FC<{ t: Function }> = ({ t }) => {
                 await createUserApi({
                     ...rest,
                     gender: gender as ICreateTeacherType["gender"],
-                    role : "teacher"
+                    role: "teacher"
                 })
                 toast.success("Öğretmen kayıt edildi", {
                     autoClose: 1500
                 })
-                /* resetForm() */
+                resetForm()
             }
             catch (err: any) {
                 console.log("err =>", err)
@@ -208,10 +208,10 @@ const AddTeacherComponent: FC<{ t: Function }> = ({ t }) => {
                             </Label>
                             <select className='form-control' value={formik.values.gender} name='gender' onChange={formik.handleChange} onBlur={formik.handleBlur} >
                                 <option value="erkek">
-                                    {t("Male")}
+                                    erkek
                                 </option>
                                 <option value="kadın">
-                                    {t("Female")}
+                                    kadın
                                 </option>
                             </select>
                         </div>

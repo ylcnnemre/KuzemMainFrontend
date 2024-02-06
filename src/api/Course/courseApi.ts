@@ -1,6 +1,6 @@
 import { AxiosResponse } from "axios";
 import { axiosInstance } from "../AxiosInstance";
-import { ICourseType, IDeleteDocument, IDeletePhoto, IPhoto } from "./CourseTypes";
+import { ICourseType, ICourseUpdateType, IDeleteDocument, IDeletePhoto, IFiles } from "./CourseTypes";
 
 
 const createCourseApi = (data: FormData) => axiosInstance.post("/course/create", data, {
@@ -8,6 +8,9 @@ const createCourseApi = (data: FormData) => axiosInstance.post("/course/create",
         "Content-Type": "multipart/form-data"
     }
 })
+
+const updateCourseApi = (data: ICourseUpdateType) => axiosInstance.put("/course", data)
+
 
 const getAllCourseApi = (): Promise<AxiosResponse<ICourseType[]>> => axiosInstance.get("/course/all")
 
@@ -25,14 +28,14 @@ const deleteDocumentApi = (data: IDeleteDocument) => axiosInstance.delete("/cour
     }
 })
 
-const addPhotoApi = (data: FormData): Promise<AxiosResponse<{ _id: string, photos: IPhoto[] }>> => axiosInstance.post("/course/photo", data, {
+const addPhotoApi = (data: FormData): Promise<AxiosResponse<{ _id: string, files: IFiles[] }>> => axiosInstance.post("/course/photo", data, {
     headers: {
         "Content-Type": "multipart/form-data"
     }
 })
 
 
-const addDocumentApi = (data: FormData): Promise<AxiosResponse<{ _id: string, documents: IPhoto[] }>> => axiosInstance.post("/course/document", data, {
+const addDocumentApi = (data: FormData): Promise<AxiosResponse<{ _id: string, files: IFiles[] }>> => axiosInstance.post("/course/document", data, {
     headers: {
         "Content-Type": "multipart/form-data"
     }
@@ -46,5 +49,6 @@ export {
     deletePhotoApi,
     addPhotoApi,
     deleteDocumentApi,
-    addDocumentApi
+    addDocumentApi,
+    updateCourseApi
 }

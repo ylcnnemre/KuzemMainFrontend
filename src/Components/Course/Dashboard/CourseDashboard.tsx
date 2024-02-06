@@ -13,6 +13,7 @@ import { Swiper, SwiperSlide } from 'swiper/react'
 import { Autoplay, EffectCreative, EffectFade, Pagination } from 'swiper/modules'
 import { CircleLoader } from 'react-spinners'
 import { Col, PaginationItem, PaginationLink, Row, Pagination as PageList, Input, Button } from 'reactstrap'
+import { toast } from 'react-toastify';
 
 
 
@@ -43,8 +44,11 @@ const CourseDashboard = () => {
             setTemp2(testList)
             setPageNumbers(Array.from({ length: Math.ceil(testList.length / 8) }, (_, index) => index + 1))
         }
-        catch (err) {
-            console.log("errr =>", err)
+        catch (err: any) {
+            console.log("err ===>", err)
+            toast.error(err.response.data.message, {
+                autoClose: 1500
+            })
         }
         finally {
             setLoading(false)
@@ -82,17 +86,31 @@ const CourseDashboard = () => {
         let result = elemens.slice(startIndex, endIndex)
         return result
     }
-
+    const divideChunks = (len: number) => {
+        let mod = len % 8
+        let divide = Math.floor(len / 8)
+        const result = [];
+        for (let i = 1; i <= divide; i++) {
+            result.push(i);
+        }
+        if (mod !== 0) {
+            result.push(divide + 1)
+        }
+        return result;
+    }
     const searchOnChange = (e: any) => {
         let result = courseData.filter(item => {
             if (item.title.toLowerCase().search(e.target.value.toLowerCase()) !== -1) {
                 return item
             }
         })
+        console.log("result ==>", result)
         let res = sliceData(result, currentPage)
         setTempData(res)
         setTemp2(result)
-        setPageNumbers(Array.from({ length: result.length / 8 }, (_, index) => index + 1))
+        let pagev = Array.from({ length: result.length / 8 }, (_, index) => index + 1)
+        console.log("pag3evv0=>>", pagev)
+        setPageNumbers(divideChunks(result.length))
     }
 
     if (loading) {
@@ -151,15 +169,17 @@ const CourseDashboard = () => {
 
                 <div className='pagination_section'>
                     <PageList>
-                        {pageNumbers.map((item) => (
-                            <PaginationItem key={`${item}-${Math.random()} `} active={item === currentPage}>
-                                <PaginationLink onClick={() => {
-                                    let result = sliceData(temp2, item)
-                                    setTempData(result)
-                                    setCurrentPage(item)
-                                }} >{item}</PaginationLink>
-                            </PaginationItem>
-                        ))}
+                        {pageNumbers.map((item) => {
+                            return (
+                                <PaginationItem key={`${item}-${Math.random()} `} active={item === currentPage}>
+                                    <PaginationLink onClick={() => {
+                                        let result = sliceData(temp2, item)
+                                        setTempData(result)
+                                        setCurrentPage(item)
+                                    }} >{item}</PaginationLink>
+                                </PaginationItem>
+                            )
+                        })}
                     </PageList>
                 </div>
             </Row>

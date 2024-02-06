@@ -154,7 +154,7 @@ const DetailCourse = () => {
                                         <DetailWidget icon={<VscSymbolField />} title='Branş' value={courseDetailData?.branch.name} />
                                     </Col>
                                     <Col sm={6} >
-                                        <DetailWidget icon={<FaChalkboardTeacher />} title='Eğitmen' value={`${courseDetailData?.teacher.name} ${courseDetailData?.teacher.surname} `} />
+                                        <DetailWidget icon={<FaChalkboardTeacher />} title='Eğitmen' value={courseDetailData?.teacher ? `${courseDetailData?.teacher?.name} ${courseDetailData?.teacher?.surname}` : "Seçilmedi"} />
                                     </Col>
                                 </Row>
                                 <Row className='mb-4'>

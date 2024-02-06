@@ -1,16 +1,21 @@
 import React, { useEffect, useMemo, useState } from 'react'
-import { Button, Table } from 'reactstrap'
+import { Button, Modal, ModalBody, ModalFooter, ModalHeader, Table } from 'reactstrap'
 import { Link, useNavigate } from "react-router-dom"
-
 import "./index.scss"
 import { ColumnDef, ColumnFiltersState, flexRender, getCoreRowModel, getFilteredRowModel, getPaginationRowModel, getSortedRowModel, useReactTable } from '@tanstack/react-table'
 import { getUserByRoleApi } from '../../../api/User/Teacher/TeacherApi'
 import { ITeacherType } from '../../../api/User/Teacher/teacherType'
+import { deleteUserApi } from '../../../api/User/UserApi'
+import { toast } from 'react-toastify'
 
 const TeacherDashboard = () => {
     const [globalFilter, setGlobalFilter] = useState<string>('');
     const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
     const [teacher, setTeachers] = useState<ITeacherType[]>([])
+    const [deleteModal, setDeleteModal] = useState<{
+        show: boolean,
+        id: string
+    }>()
     const navigate = useNavigate()
 
     const getAllTeacher = async () => {
@@ -27,6 +32,25 @@ const TeacherDashboard = () => {
     const editTeacher = (id: string) => {
         navigate(`/egitmen/duzenle/${id}`)
     }
+
+
+    const deleteTeacher = async (id: string) => {
+        try {
+            const response = await deleteUserApi(id)
+            console.log("iddd ==>", id)
+            console.log("teacher ==>", teacher)
+            setTeachers(teacher.filter(el => el._id !== id))
+            toast.success("Eğitmen silindi", {
+                autoClose: 1000
+            })
+        }
+        catch (err: any) {
+            toast.error(err.response.data.message, {
+                autoClose: 1000
+            })
+        }
+    }
+
 
     const columns = useMemo<ColumnDef<any>[]>(() => {
         return [
@@ -64,10 +88,16 @@ const TeacherDashboard = () => {
                         <div>
                             <Button color="warning" style={{ marginRight: "10px" }} onClick={() => {
                                 navigate(`/egitmen/duzenle/${getValue()}`)
+
                             }} >
                                 Düzenle
                             </Button>
-                            <Button color="danger">
+                            <Button color="danger" onClick={() => {
+                                setDeleteModal({
+                                    show: true,
+                                    id: getValue() as string
+                                })
+                            }} >
                                 Sil
                             </Button>
                         </div>
@@ -75,7 +105,7 @@ const TeacherDashboard = () => {
                 }
             }
         ]
-    }, [])
+    }, [teacher])
 
     const data = useMemo(() => {
         return teacher.map(item => {
@@ -113,6 +143,43 @@ const TeacherDashboard = () => {
 
     return (
         <div className="">
+
+            <div>
+                <Modal isOpen={deleteModal?.show} toggle={() => {
+                    setDeleteModal({
+                        show: false,
+                        id: deleteModal?.id ?? ""
+                    })
+                }} >
+                    <ModalHeader toggle={() => {
+                        setDeleteModal({
+                            show: false,
+                            id: deleteModal?.id ?? ""
+                        })
+                    }}>Onay</ModalHeader>
+                    <ModalBody>
+                        <h5>
+                            Silmek istediğinize emin misiniz ?
+                        </h5>
+                    </ModalBody>
+                    <ModalFooter>
+                        <Button color="danger" onClick={()=>{
+                            deleteTeacher(deleteModal?.id as string)
+                        }} >
+                            Sil
+                        </Button>{' '}
+                        <Button color="secondary" onClick={() => {
+                            setDeleteModal({
+                                id: "",
+                                show: false
+                            })
+                        }} >
+                            Vazgeç
+                        </Button>
+                    </ModalFooter>
+                </Modal>
+            </div>
+
 
             <div className="d-flex mb-3 border border-dashed" >
 

@@ -7,16 +7,7 @@ export interface ICourseType {
     description: string
     schedule: any[]
     endDate: string
-    files: Array<{
-        createdAt: string
-        createdBy: any
-        extension: string,
-        path: string,
-        name: string
-        type: string
-        updatedAt: string
-        _id: string
-    }>
+    files: Array<IFiles>
     quota: number
     startDate: string
     teacher: any
@@ -24,7 +15,19 @@ export interface ICourseType {
 
 }
 
-export interface IPhoto {
+export interface ICourseUpdateType {
+    courseId: string
+    branch: string
+    description: string
+    endDate: string
+    quota: number
+    startDate: string
+    teacher: string
+    title: string
+}
+
+
+export interface IFiles {
     _id: string
     path: string
     name: string
@@ -34,47 +37,16 @@ export interface IPhoto {
         name: string
         surname: string
     },
+    type: "photo" | "document"
     createdAt: string
     updatedAt: string
 }
-export interface IDocument {
-    _id: string
-    path: string
-    extension: string
-    name: string
-    createdBy: {
-        _id: string
-        name: string
-        surname: string
-    }
-    createdAt: string
-    updatedAt: string
-
-}
-
-interface ITeacher {
-    _id: string
-    name: string
-    surname: string
-    gender: string
-    profileImg: string
-    role: string
-}
-
-
-interface IBranch {
-    _id: string
-    name: string
-    description: string
-}
-
 
 export interface IDeletePhoto {
     imgName: string
     courseId: string
     imgId: string
 }
-
 
 export interface IDeleteDocument {
     documentName: string
