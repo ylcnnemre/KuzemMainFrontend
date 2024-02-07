@@ -2,11 +2,11 @@ import { useFormik } from 'formik'
 import React from 'react'
 import { Col, Form, FormFeedback, Input, Label, Row } from 'reactstrap'
 import * as yup from "yup"
-import { createStudentApi, createTeacherApi } from '../../../api/User/UserApi';
 import { toast } from 'react-toastify';
 import withRouter from '../../Common/withRouter';
 import { withTranslation } from 'react-i18next';
 import { ICreateUserType } from '../../../api/User/UserType';
+import { createUserApi } from '../../../api/User/UserApi';
 
 const today = new Date();
 const eighteenYearsAgo = new Date(today.getFullYear() - 18, today.getMonth(), today.getDate());
@@ -43,21 +43,19 @@ const AddStudent = ({ t }: any) => {
             try {
                 console.log("valuee ==>", value)
                 const { gender, tcNo, birthDate, ...rest } = value
-                const responseBody = {
+                const requestBody = {
                     ...rest,
                     tcNo: `${tcNo}`,
                     gender: gender as ICreateUserType["gender"],
-                    birthDate: new Date(birthDate).toISOString().split('T')[0]
+                    birthDate: new Date(birthDate).toISOString().split('T')[0],
+                    role: "student"
                 }
-                await createStudentApi(responseBody)
-                /* await createTeacherApi({
-                    ...rest,
-                    gender: gender as ICreateTeacherType["gender"]
-                }) */
+                const response = await createUserApi(requestBody)
+                console.log("response ==>", response)
                 toast.success("Öğrenci kayıt edildi", {
-                    autoClose: 1500
+                    autoClose: 1000
                 })
-                /*   resetForm() */
+                resetForm()
             }
             catch (err: any) {
                 console.log("err =>", err)

@@ -14,6 +14,7 @@ import { Autoplay, EffectCreative, EffectFade, Pagination } from 'swiper/modules
 import { CircleLoader } from 'react-spinners'
 import { Col, PaginationItem, PaginationLink, Row, Pagination as PageList, Input, Button } from 'reactstrap'
 import { toast } from 'react-toastify';
+import useUserStore from '../../../zustand/useUserStore';
 
 
 
@@ -24,7 +25,8 @@ const CourseDashboard = () => {
     const [temp2, setTemp2] = useState<ICourseType[]>([])
     const [loading, setLoading] = useState<boolean>(false)
     const [currentPage, setCurrentPage] = useState(1);
-
+    const { user } = useUserStore()
+    console.log("user ==>", user)
     const getCourseList = async () => {
         try {
             setLoading(true)
@@ -60,25 +62,6 @@ const CourseDashboard = () => {
     }, [])
 
 
-    const photoList = useMemo(() => {
-        return courseData.map(el => {
-            return {
-                ...el,
-                files: el.files.filter(item => item.type == "photo")
-            }
-        })
-    }, [courseData])
-
-    const documentList = useMemo(() => {
-        return courseData.map(el => {
-            return {
-                ...el,
-                files: el.files.filter(item => item.type == "document")
-            }
-        })
-    }, [courseData])
-
-
     const sliceData = (elemens: Array<any>, currentIndex: number) => {
         var sliceLength = 8
         var startIndex = (currentIndex - 1) * sliceLength
@@ -104,14 +87,17 @@ const CourseDashboard = () => {
                 return item
             }
         })
-        console.log("result ==>", result)
         let res = sliceData(result, currentPage)
         setTempData(res)
         setTemp2(result)
         let pagev = Array.from({ length: result.length / 8 }, (_, index) => index + 1)
-        console.log("pag3evv0=>>", pagev)
         setPageNumbers(divideChunks(result.length))
     }
+
+    const permission = useMemo(() => {
+        const roles = ["superadmin", "admin"]
+        return roles.includes(user.role)
+    }, [user])
 
     if (loading) {
         return <CircleLoader />
@@ -120,9 +106,13 @@ const CourseDashboard = () => {
         <div className='course_container mx-2 mt-2'>
             <div className='filter_section'  >
                 <Input placeholder='search' className='search_input' onChange={searchOnChange} />
-                <Link className='btn btn-success px-4 py-1 brans_link' to={"/kurs/ekle"} >
-                    Kurs Ekle
-                </Link>
+                {
+                    permission && (
+                        <Link className='btn btn-success px-4 py-1 brans_link' to={"/kurs/ekle"} >
+                            Kurs Ekle
+                        </Link>
+                    )
+                }
             </div>
             <Row style={{ marginTop: "10px" }}  >
                 {

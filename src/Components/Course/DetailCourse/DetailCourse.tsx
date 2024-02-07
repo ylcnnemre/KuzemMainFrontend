@@ -11,7 +11,7 @@ import { getDetailCourseApi } from '../../../api/Course/courseApi';
 import { ICourseType } from '../../../api/Course/CourseTypes';
 import { CircleLoader } from 'react-spinners';
 import { toast } from 'react-toastify';
-import { Card, CardBody, Col, Row } from 'reactstrap';
+import { Button, Card, CardBody, Col, Row } from 'reactstrap';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Autoplay, EffectCreative, FreeMode, Navigation, Pagination, Thumbs } from 'swiper/modules';
 import { IoTimeOutline } from "react-icons/io5";
@@ -25,11 +25,13 @@ import { BsFiletypeJson } from "react-icons/bs";
 import { FaRegFilePdf } from "react-icons/fa";
 import { FaRegFileWord } from "react-icons/fa";
 import { FaFile } from "react-icons/fa";
+import useUserStore from '../../../zustand/useUserStore';
 
 const DetailCourse = () => {
     const [loading, setLoading] = useState<boolean>(false)
     const [courseDetailData, setCourseDetailData] = useState<ICourseType>()
     const { id } = useParams();
+    const { user } = useUserStore()
     const navigation = useNavigate()
     const DetailCourseRequest = async () => {
         try {
@@ -97,6 +99,11 @@ const DetailCourse = () => {
         window.open(fullFilePath, '_blank');
     };
 
+    const permission = useMemo(() => {
+        const roles = ["admin", "superadmin"]
+        return roles.includes(user.role)
+    }, [user])
+
     if (loading) {
         return <div style={{ width: "100%", textAlign: "center", display: "flex", justifyContent: "center" }}>
             <CircleLoader color='orange' />
@@ -131,10 +138,19 @@ const DetailCourse = () => {
                                     <Col sm={12}>
                                         <div className='course_detail_header'>
                                             <h4 className='course_title'> {courseDetailData?.title} </h4>
-                                            <Link to={`/kurs/duzenle/${id}`} className='edit_button'>
-                                                <FiEdit className='edit_icon' />
-                                                Düzenle
-                                            </Link>
+                                            <div style={{display:"flex",alignItems:"center"}}>
+                                                <Button size='sm' className='save_button'  >
+                                                    Kursa Kaydol
+                                                </Button>
+                                                {
+                                                    permission && (
+                                                        <Link to={`/kurs/duzenle/${id}`} className='edit_button'>
+                                                            <FiEdit className='edit_icon' />
+                                                            Düzenle
+                                                        </Link>
+                                                    )
+                                                }
+                                            </div>
                                         </div>
                                     </Col>
 

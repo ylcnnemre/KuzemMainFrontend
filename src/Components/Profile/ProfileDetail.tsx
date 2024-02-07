@@ -8,13 +8,13 @@ import { toast } from 'react-toastify';
 import { useFormik } from 'formik';
 import * as yup from "yup"
 import { cityList } from '../../common/constants/city';
-import { IProfileData } from '../../api/User/UserType';
+import { IUserData } from '../../api/User/UserType';
 
 const today = new Date();
 const eighteenYearsAgo = new Date(today.getFullYear() - 18, today.getMonth(), today.getDate());
 const eightyYearsAgo = new Date(today.getFullYear() - 80, today.getMonth(), today.getDate());
 
-const ProfileDetail: FC<{ t: any, user: IProfileData, setUser: Function }> = ({ t, setUser, user }) => {
+const ProfileDetail: FC<{ t: any, user: IUserData, setUser: Function }> = ({ t, setUser, user }) => {
     const [region, setRegion] = useState<Array<string>>([])
 
     const getUserProfileData = async () => {

@@ -8,9 +8,9 @@ import { useFormik } from 'formik'
 import * as yup from "yup"
 import withRouter from '../../Common/withRouter'
 import { withTranslation } from 'react-i18next'
-import { useParams } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 import { CircleLoader, DotLoader, PropagateLoader } from 'react-spinners'
-import { IUser } from '../../../api/User/UserType'
+import { IUserData } from '../../../api/User/UserType'
 import { getAllBranch } from '../../../api/Branch/BranchApi'
 
 const today = new Date();
@@ -18,11 +18,12 @@ const eighteenYearsAgo = new Date(today.getFullYear() - 18, today.getMonth(), to
 const eightyYearsAgo = new Date(today.getFullYear() - 80, today.getMonth(), today.getDate());
 
 const EditTeacherComponent: FC<{ t: Function }> = ({ t }) => {
+    const navigate = useNavigate()
     const { id } = useParams()
     const [loading, setLoading] = useState<boolean>(false)
     const [region, setRegion] = useState<Array<string>>([])
     const [branchList, setBranchList] = useState<string[]>([])
-    const setTeacherProfileData = async (data: IUser) => {
+    const setTeacherProfileData = async (data: IUserData) => {
         try {
             console.log("dataa ==> ", data)
             const { profileImg, birthDate, branch, ...rest } = data
@@ -49,23 +50,28 @@ const EditTeacherComponent: FC<{ t: Function }> = ({ t }) => {
         }
     }
 
+    const apiRequest = async () => {
+        try {
+            setLoading(true)
+            const responseTeacher = await getUserByIdApi(id as string)
+            setTeacherProfileData(responseTeacher.data)
+            const responseBranch = await getAllBranch()
+            setBranchList(responseBranch.data.map(item => item.name))
+        }
+        catch (err: any) {
+            toast.error(err.response.data.message, {
+                autoClose: 1000
+            })
+            navigate("/egitmen")
+        }
+        finally {
+            setLoading(false)
+        }
+    }
+
+
     useEffect(() => {
-        setLoading(true)
-        getUserByIdApi(id as string).then(val => {
-            setTeacherProfileData(val.data)
-        }).catch(err => {
-            toast.error("Bir Sorun oluştu", {
-                autoClose: 2000
-            })
-        })
-        getAllBranch().then(val => {
-            setBranchList(val.data.map(item => item.name))
-        }).catch(err => {
-            toast.error("Bir Sorun oluştu", {
-                autoClose: 2000
-            })
-        })
-        setLoading(false)
+        apiRequest()
     }, [id])
 
 

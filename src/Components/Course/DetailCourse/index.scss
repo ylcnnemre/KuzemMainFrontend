@@ -14,6 +14,20 @@
         align-items: center;
         justify-content: space-between;
 
+        .save_button {
+            display: flex;
+            align-items: center;
+            color: white;
+            padding: 4px 12px;
+            font-size: .9rem;
+            transition: .5s all;
+            border-radius: 5px;
+            margin-right: 15px;
+            &:hover {
+                opacity: .7;
+            }
+        }
+
         .edit_button {
             display: flex;
             align-items: center;
@@ -23,13 +37,14 @@
             font-size: .9rem;
             transition: .5s all;
             border-radius: 5px;
+
             .edit_icon {
                 font-size: 1rem;
                 cursor: pointer;
                 margin-right: 5px;
             }
 
-            &:hover{
+            &:hover {
                 opacity: .7;
             }
         }

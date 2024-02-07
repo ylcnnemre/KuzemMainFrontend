@@ -1,16 +1,36 @@
 import classNames from 'classnames';
-import React, { useMemo, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import { Row, Col, Card, Nav, NavItem, NavLink } from 'reactstrap'
 import StudentTable from './StudentTable';
+import { getStudentListApi } from '../../../api/User/UserApi';
+import { IUserData } from '../../../api/User/UserType';
+import { toast } from 'react-toastify';
 
 const StudentDasboard = () => {
   const [activeTab, setActiveTab] = useState<any>("1");
-
+  const [studentList, setStudentList] = useState<IUserData[]>([])
   const toggleTab = (tab: any) => {
     if (activeTab !== tab) {
       setActiveTab(tab);
     }
   };
+
+  const getUserDataList = async () => {
+    try {
+      const response = await getStudentListApi()
+      setStudentList(response.data)
+    }
+    catch (err: any) {
+      toast.error(err.response.data.message, {
+        autoClose: 1000
+      })
+    }
+  }
+
+  useEffect(() => {
+    getUserDataList()
+  }, [])
+
 
   return (
     <Row>
@@ -67,7 +87,7 @@ const StudentDasboard = () => {
           <div className="card-body pt-0">
             {
               activeTab == "1" && (
-                <StudentTable />
+                <StudentTable data={studentList} />
               )
             }
             {

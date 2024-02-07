@@ -12,13 +12,13 @@ import { getUserByIdApi } from '../../../api/User/UserApi';
 import useUserStore from '../../../zustand/useUserStore';
 import { CircleLoader } from 'react-spinners';
 import { toast } from 'react-toastify';
-import { IProfileData } from '../../../api/User/UserType';
+import { IUserData } from '../../../api/User/UserType';
 
 
 const Settings = ({ t }: any) => {
 
     const [activeTab, setActiveTab] = useState("1");
-    const [userData, setUserData] = useState<IProfileData>()
+    const [userData, setUserData] = useState<IUserData>()
     const { user } = useUserStore()
     const tabChange = (tab: any) => {
         if (activeTab !== tab) setActiveTab(tab);

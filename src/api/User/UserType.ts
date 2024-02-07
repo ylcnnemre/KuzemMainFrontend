@@ -11,12 +11,12 @@ export interface IJwtDecode {
     exp: string
 }
 
-export interface IProfileData {
+export interface IUserData {
     _id: string
     name: string
     surname: string
     email: string
-    gender: string
+    gender: "erkek" | "kadın",
     phone: string
     role: string
     tcNo: string
@@ -33,9 +33,15 @@ export interface IProfileData {
     },
     profileImg?: {
         path: string
+        name: string
+        extension: string
+        type: string
+        _id: string
+        createdAt: string
+        createdBy: any
+        updatedAt: string
     }
 }
-
 
 
 
@@ -52,9 +58,6 @@ export interface ICreateUserType {
     branch?: string
 }
 
-export interface ICreateTeacherType extends Omit<ICreateUserType, "password"> {
-    branch: string
-}
 
 
 export interface IUpdateUserType {

@@ -1,11 +1,12 @@
 import React, { FC, useEffect, useMemo, useState } from 'react'
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { Button, CardBody, Col, Row, Table } from 'reactstrap'
 import { Column, Table as ReactTable, ColumnDef, ColumnFiltersState, flexRender, getCoreRowModel, getFilteredRowModel, getPaginationRowModel, getSortedRowModel, useReactTable, FilterFn } from "@tanstack/react-table"
 import { rankItem } from '@tanstack/match-sorter-utils';
 import { BsTrash } from 'react-icons/bs';
 import { FiEdit } from 'react-icons/fi';
-
+import { IUserData } from '../../../api/User/UserType';
+import aykut from "../../../assets/images/aykut.jpg";
 
 
 
@@ -17,65 +18,57 @@ interface IStudentTableProps {
 }
 
 
-const StudentTable = () => {
+const StudentTable: FC<{ data: IUserData[] }> = ({ data }) => {
     const [globalFilter, setGlobalFilter] = useState<string>('');
     const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
-    const [studentList, setStudentList] = useState<any>([{
-        name: "emre",
-        tcNo: "37150160766",
-        phone: "505005765"
-      }, {
-        name: "derya",
-        tcNo: "37150160761231236",
-        phone: "505005765"
-      },
-      {
-        name: "emre",
-        tcNo: "37150160766",
-        phone: "505005765"
-      }, {
-        name: "derya",
-        tcNo: "37150160761231236",
-        phone: "505005765"
-      },
-      {
-        name: "emre",
-        tcNo: "37150160766",
-        phone: "505005765"
-      }, {
-        name: "derya",
-        tcNo: "37150160761231236",
-        phone: "505005765"
-      },{
-        name: "emre",
-        tcNo: "37150160766",
-        phone: "505005765"
-      }, {
-        name: "derya",
-        tcNo: "37150160761231236",
-        phone: "505005765"
-      },{
-        name: "emre",
-        tcNo: "37150160766",
-        phone: "505005765"
-      }, {
-        name: "derya",
-        tcNo: "37150160761231236",
-        phone: "505005765"
-      },{
-        name: "emre",
-        tcNo: "37150160766",
-        phone: "505005765"
-      }, {
-        name: "kemal",
-        tcNo: "123",
-        phone: "789"
-      }]);
-
+    const navigate = useNavigate()
     const columns = useMemo(() => [
+        {
+            header: "#",
+            accessorKey: "profileImg",
+            enableColumnFilter: false,
+            cell: (cell: any) => {
+                const imgUrl = cell.getValue() ? `${import.meta.env.VITE_BASEURL}${cell.getValue().path}` : aykut
+                return (
+                    <div className="d-flex align-items-center">
+                        <img src={imgUrl} style={{ width: "40px", height: "40px", borderRadius: "50%" }} alt="" />
+                    </div>
+                )
+            },
+        },
         {
             header: "İsim",
             accessorKey: "name",
+            enableColumnFilter: false,
+            cell: (cell: any) => {
+                return (
+                    <div className="d-flex align-items-center">
+                        <h5 className="fs-14 mb-1" style={{ textTransform: "capitalize" }} >
+                            {cell.getValue()}
+                        </h5>
+                    </div>
+                )
+            },
+        },
+        {
+            header: "Soyisim",
+            accessorKey: "surname",
+            enableColumnFilter: false,
+            cell: (cell: any) => (
+                <>
+                    <div className="d-flex align-items-center">
+
+                        <h5 className="fs-14 mb-1" style={{ textTransform: "capitalize" }} >
+                            {cell.getValue()}
+                        </h5>
+
+                    </div>
+                </>
+            ),
+        },
+        {
+            header: "Email",
+            accessorKey: "email",
             enableColumnFilter: false,
             cell: (cell: any) => (
                 <>
@@ -95,6 +88,27 @@ const StudentTable = () => {
             enableColumnFilter: false,
         },
         {
+            header: "Cinsiyet",
+            accessorKey: "gender",
+            enableColumnFilter: false,
+        },
+        {
+            header: "Doğum Tarihi",
+            accessorKey: "birthDate",
+            enableColumnFilter: false,
+            cell: (cell) => (
+                <>
+                    <div className="d-flex align-items-center">
+
+                        <h5 className="fs-14 mb-1">
+                            {new Date(cell.getValue()).toLocaleDateString()}
+                        </h5>
+
+                    </div>
+                </>
+            ),
+        },
+        {
             header: "Telefon",
             accessorKey: "phone",
             enableColumnFilter: false,
@@ -106,13 +120,17 @@ const StudentTable = () => {
         },
         {
             header: "Action",
+            accessorKey: "_id",
             cell: (cell: any) => {
+
                 return (
                     <div>
                         <Button color='danger' style={{ marginRight: "30px" }}>
                             <BsTrash />
                         </Button>
-                        <Button color='warning'>
+                        <Button color='warning' onClick={() => {
+                            navigate(`/ogrenci/${cell.getValue()}`)
+                        }} >
                             <FiEdit />
                         </Button>
                     </div>
@@ -124,8 +142,12 @@ const StudentTable = () => {
         []
     );
 
+
+
+
+
     const table = useReactTable({
-        data: studentList,
+        data: data,
         columns,
         getCoreRowModel: getCoreRowModel(),
         state: {

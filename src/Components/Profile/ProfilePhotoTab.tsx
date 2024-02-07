@@ -5,9 +5,9 @@ import useUserStore from '../../zustand/useUserStore';
 import { uploadProfileImgApi } from '../../api/User/UserApi';
 import { toast } from 'react-toastify';
 import { IoCamera } from 'react-icons/io5';
-import { IProfileData } from '../../api/User/UserType';
+import { IUserData } from '../../api/User/UserType';
 
-const ProfilePhotoTab: FC<{ user: IProfileData, setUser: React.Dispatch<React.SetStateAction<IProfileData | undefined>> }> = ({ user, setUser }) => {
+const ProfilePhotoTab: FC<{ user: IUserData, setUser: React.Dispatch<React.SetStateAction<IUserData | undefined>> }> = ({ user, setUser }) => {
 
     console.log("user ==>", user)
     const handleFileChange = async (event: any) => {
@@ -17,13 +17,15 @@ const ProfilePhotoTab: FC<{ user: IProfileData, setUser: React.Dispatch<React.Se
             formData.append("file", file)
             try {
                 let response = await uploadProfileImgApi(formData)
-                console.log("resp ==>", response)
-                setUser({
-                    ...user,
-                    profileImg: {
-                        path: response.data.path
-                    }
-                })
+                if (response.data) {
+                    setUser({
+                        ...user,
+                        profileImg: {
+                            ...response.data
+                        }
+                    })
+                }
+
             }
             catch (err: any) {
                 console.log("err ==>", err)
