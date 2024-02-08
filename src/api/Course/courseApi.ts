@@ -42,6 +42,8 @@ const addDocumentApi = (data: FormData): Promise<AxiosResponse<{ _id: string, fi
 })
 
 
+const joinCourseApi = (id: string) => axiosInstance.post(`/course/join/${id}`)
+
 export {
     createCourseApi,
     getAllCourseApi,
@@ -50,5 +52,6 @@ export {
     addPhotoApi,
     deleteDocumentApi,
     addDocumentApi,
-    updateCourseApi
+    updateCourseApi,
+    joinCourseApi
 }

@@ -128,7 +128,7 @@ const CourseDashboard = () => {
                                             {
                                                 item.files.filter(el => el.type == "photo").map(el => {
                                                     return (
-                                                        <SwiperSlide><img src={`${import.meta.env.VITE_BASEURL}${el.path}`} alt="" className="img-fluid" style={{ width: "100%", height: "200px", borderRadius: "10px" }} /></SwiperSlide>
+                                                        <SwiperSlide key={`${el._id + Math.random().toString()}`} ><img src={`${import.meta.env.VITE_BASEURL}${el.path}`} alt="" className="img-fluid" style={{ width: "100%", height: "200px", borderRadius: "10px" }} /></SwiperSlide>
                                                     )
                                                 })
                                             }

@@ -7,7 +7,7 @@ import "swiper/css/effect-fade";
 import "swiper/css/effect-flip";
 import "./index.scss"
 import { Link, Navigate, useNavigate, useNavigation, useParams } from 'react-router-dom';
-import { getDetailCourseApi } from '../../../api/Course/courseApi';
+import { getDetailCourseApi, joinCourseApi } from '../../../api/Course/courseApi';
 import { ICourseType } from '../../../api/Course/CourseTypes';
 import { CircleLoader } from 'react-spinners';
 import { toast } from 'react-toastify';
@@ -99,10 +99,33 @@ const DetailCourse = () => {
         window.open(fullFilePath, '_blank');
     };
 
+    const joinCourse = async () => {
+        try {
+            await joinCourseApi(id as string)
+            toast.success("Kayıt işlemi başarılı", {
+                autoClose: 1000
+            })
+            setCourseDetailData({
+                ...courseDetailData as ICourseType,
+                joinUserList: [...courseDetailData?.joinUserList as any[], user]
+            })
+        }
+        catch (err: any) {
+            toast.error(err.response.data.message, {
+                autoClose: 1000
+            })
+        }
+    }
+
+
     const permission = useMemo(() => {
         const roles = ["admin", "superadmin"]
         return roles.includes(user.role)
     }, [user])
+
+    const courseJoinControl = useMemo(() => {
+        return courseDetailData?.joinUserList.map(el => el._id).includes(user._id)
+    }, [user, courseDetailData?.joinUserList])
 
     if (loading) {
         return <div style={{ width: "100%", textAlign: "center", display: "flex", justifyContent: "center" }}>
@@ -124,9 +147,9 @@ const DetailCourse = () => {
                                     }} modules={[EffectCreative, Pagination, Autoplay]} loop={true} autoplay={{ delay: 2500, disableOnInteraction: false }} className="mySwiper swiper effect-creative-swiper rounded">
                                     <div className="swiper-wrapper">
                                         {
-                                            photoList?.map(item => {
+                                            photoList?.map((item, index) => {
                                                 return (
-                                                    <SwiperSlide key={`${item}`} ><img src={`${import.meta.env.VITE_BASEURL}${item.path}`} alt="" className="img-fluid" style={{ width: "100%", borderRadius: "10px", height: "280px" }} /></SwiperSlide>
+                                                    <SwiperSlide key={`${index}`} ><img src={`${import.meta.env.VITE_BASEURL}${item.path}`} alt="" className="img-fluid" style={{ width: "100%", borderRadius: "10px", height: "280px" }} /></SwiperSlide>
                                                 )
                                             })
                                         }
@@ -138,10 +161,18 @@ const DetailCourse = () => {
                                     <Col sm={12}>
                                         <div className='course_detail_header'>
                                             <h4 className='course_title'> {courseDetailData?.title} </h4>
-                                            <div style={{display:"flex",alignItems:"center"}}>
-                                                <Button size='sm' className='save_button'  >
-                                                    Kursa Kaydol
-                                                </Button>
+                                            <div style={{ display: "flex", alignItems: "center" }}>
+                                                {
+                                                    !courseJoinControl ? (
+                                                        <Button size='sm' className='save_button' onClick={joinCourse}  >
+                                                            Kursa Kaydol
+                                                        </Button>
+                                                    ) : (
+                                                        <Button size='sm' disabled className='save_button' style={{ cursor: "not-allowed" }}  >
+                                                            Bu kursa kayıtlısınız
+                                                        </Button>
+                                                    )
+                                                }
                                                 {
                                                     permission && (
                                                         <Link to={`/kurs/duzenle/${id}`} className='edit_button'>
@@ -186,9 +217,9 @@ const DetailCourse = () => {
 
                                 <Row>
                                     {
-                                        documentList?.map(item => {
+                                        documentList?.map((item, index) => {
                                             return (
-                                                <Col sm={4}>
+                                                <Col sm={4} key={`${index.toString()}`} >
                                                     <DetailWidget icon={item.icon} title='Dosya' value={item.name.split("-")[0]} onClick={() => {
                                                         openFile(item.path)
                                                     }} />

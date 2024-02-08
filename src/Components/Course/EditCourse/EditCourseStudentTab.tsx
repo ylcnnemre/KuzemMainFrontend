@@ -1,33 +1,20 @@
-import React, { FC, useEffect, useMemo, useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom';
-import { Button, CardBody, Col, Row, Table } from 'reactstrap'
-import { Column, Table as ReactTable, ColumnDef, ColumnFiltersState, flexRender, getCoreRowModel, getFilteredRowModel, getPaginationRowModel, getSortedRowModel, useReactTable, FilterFn } from "@tanstack/react-table"
-import { rankItem } from '@tanstack/match-sorter-utils';
+import { ColumnFiltersState, flexRender, getCoreRowModel, getFilteredRowModel, getPaginationRowModel, getSortedRowModel, useReactTable } from '@tanstack/react-table';
+import React, { FC, useMemo, useState } from 'react'
 import { BsTrash } from 'react-icons/bs';
 import { FiEdit } from 'react-icons/fi';
-import { IUserData } from '../../../api/User/UserType';
-import aykut from "../../../assets/images/aykut.jpg";
-
-
-
-interface IStudentTableProps {
-    isGlobalFilter: boolean
-    isStudentsFilter: boolean
-    columns: any,
-    data: any[]
-}
-
-
-const StudentTable: FC<{ data: IUserData[] }> = ({ data }) => {
+import { Button, Table } from 'reactstrap';
+import aykut from "../../../assets/images/aykut.jpg"
+const EditCourseStudentTab: FC<{ userList: any[] }> = ({ userList }) => {
     const [globalFilter, setGlobalFilter] = useState<string>('');
     const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
-    const navigate = useNavigate()
+    console.log("ıserList =>", userList)
     const columns = useMemo(() => [
         {
             header: "#",
             accessorKey: "profileImg",
             enableColumnFilter: false,
             cell: (cell: any) => {
+                console.log("cell ==>", cell.getValue())
                 const imgUrl = cell.getValue() ? `${import.meta.env.VITE_BASEURL}${cell.getValue().path}` : aykut
                 return (
                     <div className="d-flex align-items-center">
@@ -128,11 +115,6 @@ const StudentTable: FC<{ data: IUserData[] }> = ({ data }) => {
                         <Button color='danger' style={{ marginRight: "30px" }}>
                             <BsTrash />
                         </Button>
-                        <Button color='warning' onClick={() => {
-                            navigate(`/ogrenci/${cell.getValue()}`)
-                        }} >
-                            <FiEdit />
-                        </Button>
                     </div>
                 )
 
@@ -142,12 +124,15 @@ const StudentTable: FC<{ data: IUserData[] }> = ({ data }) => {
         []
     );
 
-
-    console.log("selamm ==>")
-
+    const dataField = useMemo(() => {
+        return [{
+            name: "emre",
+            surname: "aasd"
+        }]
+    }, [])
 
     const table = useReactTable({
-        data: data,
+        data: userList,
         columns,
         getCoreRowModel: getCoreRowModel(),
         state: {
@@ -165,22 +150,17 @@ const StudentTable: FC<{ data: IUserData[] }> = ({ data }) => {
         getPaginationRowModel: getPaginationRowModel(),
         getSortedRowModel: getSortedRowModel()
     });
+
+    /*  console.log("tal =>",table.getRowModel()) */
+
     return (
         <div className="">
-
             <div className="d-flex my-3 border border-dashed" >
 
                 <input placeholder="ara" className="form-control" style={{ width: "max-content" }} onChange={e => {
                     setGlobalFilter(e.target.value)
                 }} />
-                <div className="col-sm-auto ms-auto">
-                    <Link
-                        to="/ogrenci/ekle"
-                        className="btn btn-primary"
-                    >
-                        Öğrenci Ekle
-                    </Link>
-                </div>
+
             </div>
             <div className={"table-responsive mb-1"}>
                 <Table hover className={"mb-0 align-middle table-borderless"}>
@@ -214,7 +194,7 @@ const StudentTable: FC<{ data: IUserData[] }> = ({ data }) => {
                     <tbody>
                         {table.getRowModel().rows.map((row: any) => {
                             return (
-                                <tr key={row.id}>
+                                <tr >
                                     {row.getVisibleCells().map((cell: any) => {
                                         return (
                                             <td key={cell.id}>
@@ -230,58 +210,58 @@ const StudentTable: FC<{ data: IUserData[] }> = ({ data }) => {
                         })}
                     </tbody>
                 </Table>
-                {
-                    <div style={{ display: "flex", flexDirection: "row-reverse", justifyContent: "space-between" }} >
-                        <div >
-                            <span className="mx-2">Sayfa Başına Kayıt</span>
-                            <select
 
-                                value={table.getState().pagination.pageSize}
-                                onChange={(e) => {
-                                    table.setPageSize(Number(e.target.value));
-                                }}
-                            >
-                                {[2, 4, 6, 8].map((pageSize) => (
-                                    <option key={pageSize} value={pageSize}>
-                                        {pageSize}
-                                    </option>
-                                ))}
-                            </select>
-                        </div>
-                        <div >
+                <div style={{ display: "flex", flexDirection: "row-reverse", justifyContent: "space-between" }} >
+                    <div >
+                        <span className="mx-2">Sayfa Başına Kayıt</span>
+                        <select
 
-                            <button
-                                style={{ padding: "3px", marginRight: "5px" }}
-                                onClick={() => table.previousPage()}
-                                disabled={!table.getCanPreviousPage()}
-                            >
-                                <span >{'<'}</span>
-                            </button>
-                            <span>
-                                <input
-                                    min={1}
-                                    max={table.getPageCount()}
-                                    type="number"
-                                    value={table.getState().pagination.pageIndex + 1}
-                                    onChange={(e) => {
-                                        const page = e.target.value ? Number(e.target.value) - 1 : 0;
-                                        table.setPageIndex(page);
-                                    }}
-
-                                />
-                                to {table.getPageCount()}
-                            </span>
-                            <button
-                                style={{ padding: "3px", marginLeft: "5px" }}
-                                onClick={() => table.nextPage()}
-                                disabled={!table.getCanNextPage()}
-                            >
-                                <span >{'>'}</span>
-                            </button>
-
-                        </div>
+                            value={table.getState().pagination.pageSize}
+                            onChange={(e) => {
+                                table.setPageSize(Number(e.target.value));
+                            }}
+                        >
+                            {[2, 4, 6, 8].map((pageSize) => (
+                                <option key={pageSize} value={pageSize}>
+                                    {pageSize}
+                                </option>
+                            ))}
+                        </select>
                     </div>
-                }
+                    <div >
+
+                        <button
+                            style={{ padding: "3px", marginRight: "5px" }}
+                            onClick={() => table.previousPage()}
+                            disabled={!table.getCanPreviousPage()}
+                        >
+                            <span >{'<'}</span>
+                        </button>
+                        <span>
+                            <input
+                                min={1}
+                                max={table.getPageCount()}
+                                type="number"
+                                value={table.getState().pagination.pageIndex + 1}
+                                onChange={(e) => {
+                                    const page = e.target.value ? Number(e.target.value) - 1 : 0;
+                                    table.setPageIndex(page);
+                                }}
+
+                            />
+                            to {table.getPageCount()}
+                        </span>
+                        <button
+                            style={{ padding: "3px", marginLeft: "5px" }}
+                            onClick={() => table.nextPage()}
+                            disabled={!table.getCanNextPage()}
+                        >
+                            <span >{'>'}</span>
+                        </button>
+
+                    </div>
+                </div>
+
 
             </div>
 
@@ -289,4 +269,4 @@ const StudentTable: FC<{ data: IUserData[] }> = ({ data }) => {
     )
 }
 
-export default StudentTable
+export default EditCourseStudentTab

@@ -12,7 +12,7 @@ export interface ICourseType {
     startDate: string
     teacher: any
     title: string
-
+    joinUserList: any[]
 }
 
 export interface ICourseUpdateType {

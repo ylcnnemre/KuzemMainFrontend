@@ -84,7 +84,7 @@ const Navdata = () => {
             id: "Kurslar",
             label: "Kurslar",
             link: "/kurs",
-            role: ["admin", "teacher", "superadmin"],
+            role: ["admin", "teacher", "superadmin","student"],
             icon: <MdCastForEducation />
         },
         {
