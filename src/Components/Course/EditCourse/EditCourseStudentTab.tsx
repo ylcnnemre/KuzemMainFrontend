@@ -4,10 +4,21 @@ import { BsTrash } from 'react-icons/bs';
 import { FiEdit } from 'react-icons/fi';
 import { Button, Table } from 'reactstrap';
 import aykut from "../../../assets/images/aykut.jpg"
-const EditCourseStudentTab: FC<{ userList: any[] }> = ({ userList }) => {
+import { deleteEnrollerUserApi } from '../../../api/Course/courseApi';
+import { useParams } from 'react-router-dom';
+import { toast } from 'react-toastify';
+import { ICourseType } from '../../../api/Course/CourseTypes';
+const EditCourseStudentTab: FC<{ userList: ICourseType, setUserList: Function }> = ({ userList, setUserList }) => {
     const [globalFilter, setGlobalFilter] = useState<string>('');
     const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
-    console.log("ıserList =>", userList)
+    const { id } = useParams()
+
+
+    const userData = useMemo(() => {
+        return userList.joinUserList
+    }, [userList])
+
+
     const columns = useMemo(() => [
         {
             header: "#",
@@ -112,7 +123,26 @@ const EditCourseStudentTab: FC<{ userList: any[] }> = ({ userList }) => {
 
                 return (
                     <div>
-                        <Button color='danger' style={{ marginRight: "30px" }}>
+                        <Button color='danger' style={{ marginRight: "30px" }} onClick={async () => {
+                            try {
+
+                                await deleteEnrollerUserApi({ userId: cell.getValue(), courseId: id as string })
+                                setUserList({
+                                    ...userList,
+                                    joinUserList: userList.joinUserList.filter(el => el._id !== cell.getValue())
+                                })
+
+                                toast.success("kullanıcı kurstan silindi", {
+                                    autoClose: 1000
+                                })
+                            }
+                            catch (err: any) {
+                                console.log("err ==>", err)
+                                toast.error("bir hata oluştu", {
+                                    autoClose: 1000
+                                })
+                            }
+                        }} >
                             <BsTrash />
                         </Button>
                     </div>
@@ -124,15 +154,10 @@ const EditCourseStudentTab: FC<{ userList: any[] }> = ({ userList }) => {
         []
     );
 
-    const dataField = useMemo(() => {
-        return [{
-            name: "emre",
-            surname: "aasd"
-        }]
-    }, [])
+
 
     const table = useReactTable({
-        data: userList,
+        data: userData,
         columns,
         getCoreRowModel: getCoreRowModel(),
         state: {
@@ -151,11 +176,10 @@ const EditCourseStudentTab: FC<{ userList: any[] }> = ({ userList }) => {
         getSortedRowModel: getSortedRowModel()
     });
 
-    /*  console.log("tal =>",table.getRowModel()) */
 
     return (
         <div className="">
-            <div className="d-flex my-3 border border-dashed" >
+            <div className="d-flex my-3 " >
 
                 <input placeholder="ara" className="form-control" style={{ width: "max-content" }} onChange={e => {
                     setGlobalFilter(e.target.value)

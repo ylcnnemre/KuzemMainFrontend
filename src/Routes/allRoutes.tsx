@@ -1,27 +1,28 @@
-import React from "react";
+import React, { lazy } from "react";
 import { Navigate } from "react-router-dom";
-import Dashboard from "../pages/Dashboard";
-import Login from "../pages/Authentication/Login";
-import ForgetPasswordPage from "../pages/Authentication/ForgetPassword";
-import Register from "../pages/Authentication/Register";
-import UserProfile from "../pages/Authentication/user-profile";
-import Settings from "../pages/Profile/Settings/Settings";
-import Faqs from "../pages/Faqs/Faqs";
-import TeacherPage from "../pages/Teacher/TeacherPage";
-import BranchesPage from "../pages/Branches/BranchesPage";
-import AddBranchPage from "../pages/Branches/AddBranchPage";
-import AddTeacherPage from "../pages/Teacher/AddTeacherPage";
-import EditTeacherPage from "../pages/Teacher/EditTeacherPage";
-import CoursePage from "../pages/Course/CoursePage";
-import AddCoursePage from "../pages/Course/AddCoursePage";
-import TestPage from "../pages/TestPage";
-import DetailCourse from "../Components/Course/DetailCourse/DetailCourse";
-import CourseDetailPage from "../pages/Course/CourseDetailPage";
-import EditCoursePage from "../pages/Course/EditCoursePage";
-import StudentDashboardPage from "../pages/Student/StudentDashboardPage";
-import AddStudentPage from "../pages/Student/AddStudentPage";
-import EditStudent from "../Components/Student/EditStudent/EditStudent";
-import EditStudentPage from "../pages/Student/EditStudentPage";
+
+const Dashboard = lazy(() => import("../pages/Dashboard"));
+const Login = lazy(() => import("../pages/Authentication/Login"));
+const ForgetPasswordPage = lazy(() => import("../pages/Authentication/ForgetPassword"));
+const Register = lazy(() => import("../pages/Authentication/Register"));
+const UserProfile = lazy(() => import("../pages/Authentication/user-profile"));
+const Settings = lazy(() => import("../pages/Profile/Settings/Settings"));
+const Faqs = lazy(() => import("../pages/Faqs/Faqs"));
+const TeacherPage = lazy(() => import("../pages/Teacher/TeacherPage"));
+const BranchesPage = lazy(() => import("../pages/Branches/BranchesPage"));
+const AddBranchPage = lazy(() => import("../pages/Branches/AddBranchPage"));
+const AddTeacherPage = lazy(() => import("../pages/Teacher/AddTeacherPage"));
+const EditTeacherPage = lazy(() => import("../pages/Teacher/EditTeacherPage"));
+const CoursePage = lazy(() => import("../pages/Course/CoursePage"));
+const AddCoursePage = lazy(() => import("../pages/Course/AddCoursePage"));
+const TestPage = lazy(() => import("../pages/TestPage"));
+const DetailCourse = lazy(() => import("../Components/Course/DetailCourse/DetailCourse"));
+const CourseDetailPage = lazy(() => import("../pages/Course/CourseDetailPage"));
+const EditCoursePage = lazy(() => import("../pages/Course/EditCoursePage"));
+const StudentDashboardPage = lazy(() => import("../pages/Student/StudentDashboardPage"));
+const AddStudentPage = lazy(() => import("../pages/Student/AddStudentPage"));
+const EditStudent = lazy(() => import("../Components/Student/EditStudent/EditStudent"));
+const EditStudentPage = lazy(() => import("../pages/Student/EditStudentPage"));
 
 type role = "admin" | "student" | "teacher" | "superadmin"
 

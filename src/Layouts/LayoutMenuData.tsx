@@ -4,6 +4,7 @@ import { MdOutlineDashboard, MdApps, MdCastForEducation } from "react-icons/md";
 import { PiChalkboardTeacherDuotone } from "react-icons/pi";
 import { GoGitBranch } from "react-icons/go";
 import { PiStudent } from "react-icons/pi";
+import { RiAdminLine } from "react-icons/ri";
 
 const Navdata = () => {
     const history = useNavigate();
@@ -74,6 +75,13 @@ const Navdata = () => {
             icon: <PiChalkboardTeacherDuotone />
         },
         {
+            id: "Admin",
+            label: "Admin",
+            link: "/admin",
+            role: ["superadmin"],
+            icon: <RiAdminLine />
+        },
+        {
             id: "Brans",
             label: "Branşlar",
             link: "/brans",
@@ -84,14 +92,14 @@ const Navdata = () => {
             id: "Kurslar",
             label: "Kurslar",
             link: "/kurs",
-            role: ["admin", "teacher", "superadmin","student"],
+            role: ["admin", "teacher", "superadmin", "student"],
             icon: <MdCastForEducation />
         },
         {
             id: "Ogrenci",
             label: "Öğrenciler",
             link: "/ogrenci",
-            role: ["admin","superadmin"],
+            role: ["admin", "superadmin"],
             icon: <PiStudent />
         }
         /* {

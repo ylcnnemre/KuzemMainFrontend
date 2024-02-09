@@ -5,27 +5,17 @@ import "swiper/css/scrollbar";
 import "swiper/css/effect-fade";
 import "swiper/css/effect-flip";
 import "./index.scss"
-import React, { useEffect, useMemo, useRef, useState } from 'react'
-import { Button, Card, CardText, CardTitle, Col, Form, FormFeedback, Input, Label, Modal, ModalBody, ModalFooter, ModalHeader, Nav, NavItem, NavLink, Row, TabContent, TabPane } from 'reactstrap';
-import { useFormik } from 'formik';
-import * as yup from "yup"
+import React, { useEffect, useState } from 'react'
+import { Nav, NavItem, NavLink, TabContent, TabPane } from 'reactstrap';
 import { toast } from 'react-toastify';
-import { addDocumentApi, addPhotoApi, createCourseApi, deleteDocumentApi, deletePhotoApi, getDetailCourseApi, updateCourseApi } from '../../../api/Course/courseApi';
-import { getAllBranch } from '../../../api/Branch/BranchApi';
-import { getTeacherListApi } from '../../../api/User/UserApi';
-import { FaRegFilePdf } from 'react-icons/fa';
-import { useNavigate, useNavigation, useParams } from 'react-router-dom';
-import { ICourseType, IFiles } from '../../../api/Course/CourseTypes';
-import { Swiper, SwiperSlide } from 'swiper/react';
-import { Autoplay, Grid, Navigation, Pagination } from 'swiper/modules';
-import classNames from "classnames";
-import { TfiZoomIn } from "react-icons/tfi";
-import { ITeacherType } from "../../../api/User/Teacher/teacherType";
+import { getDetailCourseApi } from '../../../api/Course/courseApi';
+import { useNavigate, useParams } from 'react-router-dom';
+import { ICourseType, } from '../../../api/Course/CourseTypes';
 import EditCourseInfo from "./EditCourseInfo";
-import { CircleLoader, PropagateLoader } from "react-spinners";
 import EditCoursePhoto from "./EditCoursePhoto";
 import EditCourseDocumentTab from "./EditCourseDocumentTab";
 import EditCourseStudentTab from "./EditCourseStudentTab";
+import { PropagateLoader } from "react-spinners";
 
 
 const EditCourse = () => {
@@ -58,12 +48,7 @@ const EditCourse = () => {
         detailCourseApiRequest()
     }, [])
 
-    const studentData = useMemo(() => {
-        if (mainData) {
-            return mainData?.joinUserList
-        }
 
-    }, [mainData?.joinUserList])
 
     if (!mainData) {
         return (
@@ -128,7 +113,7 @@ const EditCourse = () => {
                     <EditCourseDocumentTab documentList={documentList} setDocumentList={setDocumentList} />
                 </TabPane>
                 <TabPane tabId={4}>
-                    <EditCourseStudentTab userList={studentData as any[]} />
+                    <EditCourseStudentTab userList={mainData} setUserList={setMainData} />
                 </TabPane>
             </TabContent>
 

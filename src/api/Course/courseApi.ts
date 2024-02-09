@@ -42,10 +42,19 @@ const addDocumentApi = (data: FormData): Promise<AxiosResponse<{ _id: string, fi
 })
 
 
+const deleteEnrollerUserApi = (data: { userId: string, courseId: string }) => axiosInstance.delete("/course/enrolleduser", {
+    data : {
+        ...data
+    }
+})
+
+
+
 const joinCourseApi = (id: string) => axiosInstance.post(`/course/join/${id}`)
 
 export {
     createCourseApi,
+    deleteEnrollerUserApi,
     getAllCourseApi,
     getDetailCourseApi,
     deletePhotoApi,

@@ -1,22 +1,19 @@
 import React from 'react';
 import { Routes, Route } from "react-router-dom";
-
-//Layouts
 import NonAuthLayout from "../Layouts/NonAuthLayout";
 import VerticalLayout from "../Layouts/index";
-
-//routes
 import { authProtectedRoutes, publicRoutes } from "./allRoutes";
 import AuthProtected from './AuthProtected';
 import { ToastContainer } from 'react-toastify';
 import useUserStore from '../zustand/useUserStore';
+import { DotLoader } from 'react-spinners';
 
 const Index = () => {
 
     const { user: { role } } = useUserStore()
 
     return (
-        <React.Fragment>
+        <React.Suspense fallback={<DotLoader />}  >
             <ToastContainer />
             <Routes>
 
@@ -50,7 +47,7 @@ const Index = () => {
                     })}
                 </Route>
             </Routes>
-        </React.Fragment>
+        </React.Suspense>
     );
 };
 

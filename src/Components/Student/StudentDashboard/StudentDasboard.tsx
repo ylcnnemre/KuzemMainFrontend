@@ -1,5 +1,5 @@
 import classNames from 'classnames';
-import React, { useEffect, useMemo, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Row, Col, Card, Nav, NavItem, NavLink } from 'reactstrap'
 import StudentTable from './StudentTable';
 import { getStudentListApi } from '../../../api/User/UserApi';
