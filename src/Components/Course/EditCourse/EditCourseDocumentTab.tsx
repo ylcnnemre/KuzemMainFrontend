@@ -75,7 +75,7 @@ const EditCourseDocumentTab: FC<{ documentList: ICourseType["files"], setDocumen
                                                 <span>İsim :</span> {el.name.split("-")[0]}
                                             </p>
                                             <p className="document_createdBy">
-                                                <span>Oluşturan :</span> {el.createdBy.name + " " + el.createdBy.surname}
+                                                <span>Oluşturan :</span> {el.createdBy?.name + " " + el.createdBy?.surname}
                                             </p>
                                             <TfiZoomIn className="zoom_icon" />
 

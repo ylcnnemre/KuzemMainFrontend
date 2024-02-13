@@ -1,25 +1,86 @@
-import React, { FC, useEffect, useMemo, useState } from 'react'
-import { Col, Form, FormFeedback, Input, Label, Row } from 'reactstrap'
-import withRouter from '../Common/withRouter';
-import { withTranslation } from 'react-i18next';
-import { updateUserApi } from '../../api/User/UserApi';
-import useUserStore from '../../zustand/useUserStore';
-import { toast } from 'react-toastify';
-import { useFormik } from 'formik';
+import React, { useEffect, useMemo, useState } from 'react'
+import { useNavigate, useParams } from 'react-router-dom'
+import { IUserData } from '../../../api/User/UserType'
+import { cityList } from '../../../common/constants/city'
+import { getUserByIdApi, updateUserApi } from '../../../api/User/UserApi'
+import { toast } from 'react-toastify'
+import { useFormik } from 'formik'
 import * as yup from "yup"
-import { cityList } from '../../common/constants/city';
-import { IUserData } from '../../api/User/UserType';
-
+import { PropagateLoader } from 'react-spinners'
+import { Col, Form, FormFeedback, Input, Label, Row } from 'reactstrap'
+import withRouter from '../../Common/withRouter'
+import { withTranslation } from 'react-i18next'
+import Select from "react-select"
+import { Permission } from '../../../common/constants/PermissionList'
 const today = new Date();
 const eighteenYearsAgo = new Date(today.getFullYear() - 18, today.getMonth(), today.getDate());
 const eightyYearsAgo = new Date(today.getFullYear() - 80, today.getMonth(), today.getDate());
 
-const ProfileDetail: FC<{ t: any, user: IUserData, setUser: Function }> = ({ t, setUser, user }) => {
+
+const EditAdmin = ({ t }: any) => {
+    const navigate = useNavigate()
+    const { id } = useParams()
+    const [loading, setLoading] = useState<boolean>(false)
     const [region, setRegion] = useState<Array<string>>([])
 
-    const getUserProfileData = async () => {
+    const permissionOptions = useMemo(() => {
+        return [
+            {
+                label: "Öğrenci Düzenle",
+                value: Permission.STUDENT_EDIT,
+            },
+            {
+                label: "Öğrenci Silme",
+                value: Permission.STUDENT_DELETE
+            },
+            {
+                label: "Öğrenci Ekle",
+                value: Permission.STUDENT_ADD
+            },
+            {
+                label: "Eğitmen Düzenleme",
+                value: Permission.TEACHER_EDIT
+            },
+            {
+                label: "Eğitmen Silme",
+                value: Permission.TEACHER_DELETE
+            },
+            {
+                label: "Eğitmen Ekle",
+                value: Permission.TEACHER_ADD
+            },
+            {
+                label: "Kurs Düzenle",
+                value: Permission.COURSE_EDIT
+            },
+            {
+                label: "Kurs Sil",
+                value: Permission.COURSE_DELETE
+            },
+            {
+                label: "Kurs Ekle",
+                value: Permission.COURSE_ADD
+            },
+            {
+                label: "Admin Düzenle",
+                value: Permission.ADMIN_EDIT
+            },
+            {
+                label: "Admin Sİl",
+                value: Permission.ADMIN_DELETE
+            },
+            {
+                label: "Admin Ekle",
+                value: Permission.ADMIN_ADD
+            }
+        ]
+
+    }, [])
+
+    const setAdminProfileData = async (data: IUserData) => {
         try {
-            const { profileImg, branch, ...rest } = user
+            console.log("dataa ==> ", data)
+            const { profileImg, birthDate, branch, permission, ...rest } = data
             Object.entries(rest).map(([key, val]) => {
                 if (key != "address") {
                     formik.setFieldValue(key, val)
@@ -34,17 +95,45 @@ const ProfileDetail: FC<{ t: any, user: IUserData, setUser: Function }> = ({ t, 
                     }
                 }
             })
-            const birthDate = new Date(user.birthDate).toISOString().split('T')[0];
-            formik.setFieldValue('birthDate', birthDate);
+            console.log("permission ==>", permission)
+            const formatBirthDate = new Date(birthDate).toISOString().split('T')[0];
+            formik.setFieldValue('birthDate', formatBirthDate);
+            formik.setFieldValue("branch", branch?.name)
+
+            formik.setFieldValue("permission", [...permission.map(item => {
+                return {
+                    label: permissionOptions.find(el => el.value == item)?.label,
+                    value: item
+                }
+            })])
         }
         catch (err: any) {
             toast.error(err.response.data.message)
         }
     }
 
+    const apiRequest = async () => {
+        try {
+            setLoading(true)
+            const responseAdmin = await getUserByIdApi(id as string)
+            console.log("responsead ==>", responseAdmin)
+            setAdminProfileData(responseAdmin.data)
+        }
+        catch (err: any) {
+            toast.error(err.response.data.message, {
+                autoClose: 1000
+            })
+            navigate("/egitmen")
+        }
+        finally {
+            setLoading(false)
+        }
+    }
+
+
     useEffect(() => {
-        getUserProfileData()
-    }, [user])
+        apiRequest()
+    }, [id])
 
 
     const formik = useFormik({
@@ -60,60 +149,65 @@ const ProfileDetail: FC<{ t: any, user: IUserData, setUser: Function }> = ({ t, 
             tcNo: "",
             city: "",
             region: "",
+            courses: [],
             postalCode: 0,
-            courses: []
+            permission: [{
+                label: "",
+                value: ""
+            }]
         },
         validationSchema: yup.object({
             email: yup.string().email().required(),
             name: yup.string().required(),
             surname: yup.string().required(),
             phone: yup.string(),
+            permission: yup.array().min(1).required(),
             birthDate: yup.date().max(eighteenYearsAgo, 'You must be at least 18 years old.').min(eightyYearsAgo, 'You must be at most 80 years old.').required("Doğum Tarihi Seçiniz"),
 
         }),
         onSubmit: async (value) => {
             try {
-                const { city, region, postalCode, email, phone, tcNo, courses, role, ...rest } = value
-                console.log("valuee ==>", value)
-                const requestBody = {
+                const { city, region, postalCode, email, phone, tcNo, role, courses, permission, ...rest } = value
+                console.log("vall =>", value)
+                let response = await updateUserApi({
                     ...rest,
+                    permission: permission.map(el => el.value),
                     address: {
                         city,
-                        additionalInfo: "",
+                        region,
                         postalCode,
-                        region
+                        additionalInfo: ""
                     }
-                }
-                let data = await updateUserApi(requestBody)
-                setUser({
-                    ...user,
-                    address: {
-                        city,
-                        additonalInfo: "",
-                        postalCode,
-                        region
-                    },
-                    name: value.name,
-                    surname: value.surname,
-                    birthDate: value.birthDate,
-                    gender: value.gender as typeof user.gender
                 })
-                toast.success("Güncelleme Başarılı", {
-                    autoClose: 1000
+                toast.success("güncelleme başarılı", {
+                    autoClose: 1500
                 })
             }
             catch (err: any) {
+                console.log("err =>>", err)
                 toast.error(err.response.data.message, {
-                    autoClose: 1000
+                    autoClose: 1500
                 })
             }
-
-
         }
     })
+    console.log("formik =>", formik.values)
     const postalCodeDisableControl = useMemo(() => {
         return formik.values.city == "" || formik.values.region == ""
     }, [formik.values.city, formik.values.region])
+
+    console.log("formil er =>", formik.errors)
+
+
+
+
+    if (loading) {
+        return (
+            <div style={{ display: "flex", justifyContent: "center", marginTop: "50px" }} >
+                <PropagateLoader color="#36d7b7" />
+            </div>
+        )
+    }
 
     return (
         <Form onSubmit={formik.handleSubmit}>
@@ -229,6 +323,7 @@ const ProfileDetail: FC<{ t: any, user: IUserData, setUser: Function }> = ({ t, 
                         />
                     </div>
                 </Col>
+
                 <Col lg={4}>
                     <div className="mb-3">
                         <Label htmlFor="city" className="form-label">
@@ -295,6 +390,27 @@ const ProfileDetail: FC<{ t: any, user: IUserData, setUser: Function }> = ({ t, 
                     </div>
                 </Col>
                 <Col lg={12}>
+                    <div className="mb-3">
+                        <Label htmlFor="emailInput" className="form-label">
+                            İzinler
+                        </Label>
+                        <Select
+                            isMulti
+                            options={permissionOptions}
+                            value={formik.values.permission}
+                            className={`basic-multi-select ${formik.touched.permission && formik.errors.permission ? 'is-invalid' : ''}`}
+
+                            classNamePrefix="select"
+                            onChange={(e) => {
+                                formik.setFieldValue("permission", e)
+                            }} onBlur={formik.handleBlur}
+                        />
+                        {formik.touched.permission && formik.errors.permission ? (
+                            <FormFeedback type="invalid"><div>{formik.errors.permission as string}</div></FormFeedback>
+                        ) : null}
+                    </div>
+                </Col>
+                <Col lg={12}>
                     <div className="hstack gap-2 justify-content-end">
                         <button type="submit"
                             className="btn btn-primary">
@@ -314,6 +430,4 @@ const ProfileDetail: FC<{ t: any, user: IUserData, setUser: Function }> = ({ t, 
     )
 }
 
-export default withRouter(withTranslation()(ProfileDetail))
-
-
+export default withRouter(withTranslation()(EditAdmin))

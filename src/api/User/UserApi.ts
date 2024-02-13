@@ -16,6 +16,8 @@ const getTeacherListApi = (id: string): Promise<AxiosResponse<any[]>> => axiosIn
 
 const getStudentListApi = (): Promise<AxiosResponse<IUserData[]>> => axiosInstance.get("/user/all/student")
 
+const getAdminListApi = () => axiosInstance.get("/user/all/admin")
+
 export {
     getUserByIdApi,
     uploadProfileImgApi,
@@ -23,5 +25,6 @@ export {
     updateUserApi,
     createUserApi,
     deleteUserApi,
-    getStudentListApi
+    getStudentListApi,
+    getAdminListApi
 }

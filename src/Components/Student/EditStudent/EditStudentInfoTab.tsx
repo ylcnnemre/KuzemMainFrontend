@@ -63,6 +63,7 @@ const EditStudentInfoTab = ({ t }: any) => {
             tcNo: "",
             city: "",
             region: "",
+            courses: [],
             postalCode: 0
         },
         validationSchema: yup.object({
@@ -74,7 +75,7 @@ const EditStudentInfoTab = ({ t }: any) => {
         }),
         onSubmit: async (value) => {
             try {
-                const { city, region, postalCode, email, phone, tcNo, role, ...rest } = value
+                const { city, region, postalCode, email, phone, tcNo, role, courses, ...rest } = value
                 console.log("vall =>", value)
                 let response = await updateUserApi({
                     ...rest,
@@ -102,7 +103,7 @@ const EditStudentInfoTab = ({ t }: any) => {
         try {
             setLoading(true)
             const responseStudent = await getUserByIdApi(id as string)
-            console.log("responseStudent ==>",responseStudent)
+            console.log("responseStudent ==>", responseStudent)
             setStudentProfileData(responseStudent.data)
         }
         catch (err: any) {

@@ -124,7 +124,9 @@ const DetailCourse = () => {
     }, [user])
 
     const courseJoinControl = useMemo(() => {
-        return courseDetailData?.joinUserList.map(el => el._id).includes(user._id)
+        console.log("user==>", user)
+        console.log("courseDetail ==>", courseDetailData)
+        return courseDetailData?.joinUserList.map(el => el?._id).includes(user._id)
     }, [user, courseDetailData?.joinUserList])
 
     if (loading) {

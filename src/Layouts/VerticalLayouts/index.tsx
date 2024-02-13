@@ -12,7 +12,7 @@ import useUserStore from '../../zustand/useUserStore';
 const VerticalLayout = (props: any) => {
     const navData = navdata().props.children;
 
-    const { user: { role } } = useUserStore()
+    const { user: { role, permission } } = useUserStore()
     const { leftsidbarSizeType, sidebarVisibilitytype, layoutType } = useLayoutStore()
 
 
@@ -133,10 +133,8 @@ const VerticalLayout = (props: any) => {
     return (
         <React.Fragment>
             {(navData || []).map((item: any, key: any) => {
-
-                return item?.role?.includes(role) ? (
+                return permission.includes(item.permission) || item.permission == "all" ? (
                     <React.Fragment key={key}>
-                        {/* Main Header */}
                         {item['isHeader'] ?
                             <li className="menu-title"><span data-key="t-menu">{props.t(item.label)} </span></li>
                             : (

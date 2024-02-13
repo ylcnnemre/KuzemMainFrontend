@@ -18,14 +18,21 @@ axiosInstance.interceptors.request.use((config) => {
 axiosInstance.interceptors.response.use((response) => response, (error) => {
     if (error.response.status === 401) {
         localStorage.removeItem("token")
-        if (window.location.pathname !== "/giris"){
+        if (window.location.pathname !== "/giris") {
             window.location.href = "/giris"
         }
         toast.error(error.response.data?.message, {
             autoClose: 2000
         })
 
-    } else {
+    }
+   /*  else if (error.response.status === 403) {
+        window.location.href = "/anasayfa"
+        toast.error(error.response.data.message,{
+            autoClose : 1000
+        })
+    } */
+    else {
         return Promise.reject(error)
     }
 

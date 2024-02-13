@@ -1,5 +1,10 @@
 import React, { lazy } from "react";
 import { Navigate } from "react-router-dom";
+import AdminPage from "../pages/Admin/AdminPage";
+import AddAdmin from "../Components/Admin/AddAdmin/AddAdmin";
+import AddAdminPage from "../pages/Admin/AddAdminPage";
+import { Permission } from "../common/constants/PermissionList";
+import EditAdminPage from "../pages/Admin/EditAdminPage";
 
 const Dashboard = lazy(() => import("../pages/Dashboard"));
 const Login = lazy(() => import("../pages/Authentication/Login"));
@@ -26,31 +31,36 @@ const EditStudentPage = lazy(() => import("../pages/Student/EditStudentPage"));
 
 type role = "admin" | "student" | "teacher" | "superadmin"
 
-const authProtectedRoutes: Array<{ path: string, component: React.ReactNode, exact?: boolean, role: role[] }> = [
-  { path: "/anasayfa", component: <Dashboard />, role: ["student", "admin", "teacher", "superadmin"] },
-  { path: "/profile", component: <UserProfile />, role: ["student", "admin", "teacher", "superadmin"] },
-  { path: "/brans", component: <BranchesPage />, role: ["admin", "superadmin"] },
-  { path: "/egitmen", component: <TeacherPage />, role: ["admin", "superadmin"] },
-  { path: "/egitmen/ekle", component: <AddTeacherPage />, role: ["admin", "superadmin"] },
-  { path: "/egitmen/duzenle/:id", component: <EditTeacherPage />, role: ["admin", "superadmin"] },
-  { path: "/ogrenci", component: <StudentDashboardPage />, role: ["admin", "superadmin"] },
-  { path: "/ogrenci/ekle", component: <AddStudentPage />, role: ["admin", "superadmin"] },
-  { path: "/ogrenci/:id", component: <EditStudentPage />, role: ["admin", "superadmin"] },
-  { path: "/brans/ekle", component: <AddBranchPage />, role: ["admin", "superadmin"] },
-  { path: "/kurs", component: <CoursePage />, role: ["admin", "teacher", "superadmin","student"] },
-  { path: "/kurs/ekle", component: <AddCoursePage />, role: ["admin", "superadmin"] },
-  { path: "/kurs/:id", component: <CourseDetailPage />, role: ["admin", "student", "teacher", "superadmin"] },
-  { path: "/kurs/duzenle/:id", component: <EditCoursePage />, role: ["admin", "superadmin"] },
-  { path: "/profil", component: <Settings />, role: ["admin", "student", "teacher", "superadmin"] },
-  { path: "/pages-faqs", component: <Faqs />, role: ["admin", "student", "teacher", "superadmin"] },
-  { path: "/test", component: <TestPage />, role: ["admin", "student", "teacher", "superadmin"] },
+const authProtectedRoutes: Array<{ path: string, component: React.ReactNode, exact?: boolean, permission: Permission }> = [
+  { path: "/anasayfa", component: <Dashboard />, permission: Permission.all },
+  { path: "/profile", component: <UserProfile />, permission: Permission.SHOW_PROFILE },
+  { path: "/brans", component: <BranchesPage />, permission: Permission.BRANCH_SHOW },
+  { path: "/egitmen", component: <TeacherPage />, permission: Permission.TEACHER_SHOW },
+  { path: "/egitmen/ekle", component: <AddTeacherPage />, permission: Permission.TEACHER_ADD },
+  { path: "/egitmen/duzenle/:id", component: <EditTeacherPage />, permission: Permission.TEACHER_EDIT },
+  { path: "/ogrenci", component: <StudentDashboardPage />, permission: Permission.STUDENT_SHOW },
+  { path: "/ogrenci/ekle", component: <AddStudentPage />, permission: Permission.STUDENT_ADD },
+  { path: "/ogrenci/:id", component: <EditStudentPage />, permission: Permission.STUDENT_EDIT },
+  { path: "/brans/ekle", component: <AddBranchPage />, permission: Permission.BRANCH_EDIT },
+  { path: "/admin", component: <AdminPage />, permission: Permission.ADMIN_SHOW },
+  { path: "/admin/ekle", component: <AddAdminPage />, permission: Permission.ADMIN_ADD },
+  {
+    path: "/admin/:id", component: <EditAdminPage />, permission: Permission.ADMIN_EDIT
+  },
+  { path: "/kurs", component: <CoursePage />, permission: Permission.COURSE_SHOW },
+  { path: "/kurs/ekle", component: <AddCoursePage />, permission: Permission.COURSE_ADD },
+  { path: "/kurs/:id", component: <CourseDetailPage />, permission: Permission.all },
+  { path: "/kurs/duzenle/:id", component: <EditCoursePage />, permission: Permission.COURSE_EDIT },
+  { path: "/profil", component: <Settings />, permission: Permission.all },
+  { path: "/pages-faqs", component: <Faqs />, permission: Permission.all },
+  { path: "/test", component: <TestPage />, permission: Permission.all },
   {
     path: "/",
     exact: true,
     component: <Navigate to="/anasayfa" />,
-    role: ["admin", "student", "teacher"]
+    permission: Permission.all
   },
-  { path: "*", component: <Navigate to="/anasayfa" />, role: ["superadmin", "admin", "teacher", "student"] },
+  { path: "*", component: <Navigate to="/anasayfa" />, permission: Permission.all },
 ];
 
 const publicRoutes = [

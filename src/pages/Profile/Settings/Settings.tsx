@@ -13,6 +13,7 @@ import useUserStore from '../../../zustand/useUserStore';
 import { CircleLoader } from 'react-spinners';
 import { toast } from 'react-toastify';
 import { IUserData } from '../../../api/User/UserType';
+import { useNavigate } from 'react-router-dom';
 
 
 const Settings = ({ t }: any) => {
@@ -20,6 +21,7 @@ const Settings = ({ t }: any) => {
     const [activeTab, setActiveTab] = useState("1");
     const [userData, setUserData] = useState<IUserData>()
     const { user } = useUserStore()
+    const navigate = useNavigate()
     const tabChange = (tab: any) => {
         if (activeTab !== tab) setActiveTab(tab);
     };
@@ -31,13 +33,24 @@ const Settings = ({ t }: any) => {
             setUserData(response.data)
         }
         catch (err: any) {
-            toast.error(err.response.data.message)
+
+            console.log("err ==>", err)
+            if (err.response.status == 403) {
+                navigate("/anasayfa")
+            }
+            toast.error(err.response.data.message, {
+                autoClose: 1000
+            })
         }
     }
     useEffect(() => {
         getUserProfileData()
     }, [])
 
+
+    /* if (!userData) {
+        return <CircleLoader />
+    } */
 
     return (
         <React.Fragment>

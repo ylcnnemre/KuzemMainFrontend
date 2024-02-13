@@ -1,3 +1,4 @@
+import { Permission } from "../../common/constants/PermissionList"
 import { IBranch } from "../Branch/BranchType"
 
 
@@ -7,6 +8,7 @@ export interface IJwtDecode {
     surname: string
     email: string
     role: "student" | "teacher" | "admin"
+    permission: Permission[]
     iat: string
     exp: string
 }
@@ -40,7 +42,8 @@ export interface IUserData {
         createdAt: string
         createdBy: any
         updatedAt: string
-    }
+    },
+    permission: Permission[]
 }
 
 
@@ -55,7 +58,8 @@ export interface ICreateUserType {
     phone: string
     birthDate: string
     gender: "erkek" | "kadın",
-    branch?: string
+    branch?: string,
+    permission?: Permission[]
 }
 
 
@@ -72,5 +76,6 @@ export interface IUpdateUserType {
         region: string
         postalCode: number
         additionalInfo: string
-    }
+    },
+    permission?: string[]
 }

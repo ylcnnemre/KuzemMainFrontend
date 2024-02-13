@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import "./index.scss"
 import "swiper/css";
 import "swiper/css/pagination";
@@ -15,6 +15,7 @@ import { CircleLoader } from 'react-spinners'
 import { Col, PaginationItem, PaginationLink, Row, Pagination as PageList, Input, Button } from 'reactstrap'
 import { toast } from 'react-toastify';
 import useUserStore from '../../../zustand/useUserStore';
+import { Permission } from '../../../common/constants/PermissionList';
 
 
 
@@ -25,8 +26,9 @@ const CourseDashboard = () => {
     const [temp2, setTemp2] = useState<ICourseType[]>([])
     const [loading, setLoading] = useState<boolean>(false)
     const [currentPage, setCurrentPage] = useState(1);
-    const { user } = useUserStore()
-    console.log("user ==>", user)
+    const { user: { permission } } = useUserStore()
+    const navigate = useNavigate()
+
     const getCourseList = async () => {
         try {
             setLoading(true)
@@ -94,10 +96,9 @@ const CourseDashboard = () => {
         setPageNumbers(divideChunks(result.length))
     }
 
-    const permission = useMemo(() => {
-        const roles = ["superadmin", "admin"]
-        return roles.includes(user.role)
-    }, [user])
+    const permissionControl = useMemo(() => {
+        return permission.includes(Permission.COURSE_ADD)
+    }, [permission])
 
     if (loading) {
         return <CircleLoader />
@@ -107,7 +108,7 @@ const CourseDashboard = () => {
             <div className='filter_section'  >
                 <Input placeholder='search' className='search_input' onChange={searchOnChange} />
                 {
-                    permission && (
+                    permissionControl && (
                         <Link className='btn btn-success px-4 py-1 brans_link' to={"/kurs/ekle"} >
                             Kurs Ekle
                         </Link>

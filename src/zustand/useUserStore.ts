@@ -24,7 +24,8 @@ const useUserStore = create<UserState>((set) => ({
         email: "",
         name: "",
         role: "admin",
-        surname: ""
+        surname: "",
+        permission: []
     },
     isLoggedIn: localStorage.getItem("token") ? true : false,
     setUser: (data) => {

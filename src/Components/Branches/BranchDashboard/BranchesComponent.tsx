@@ -73,11 +73,12 @@ const BranchDashboard = () => {
 
 
     const data = useMemo(() => {
+        console.log("brd ==>",branch)
         return branch.map(el => {
             return {
                 name: el.name,
                 description: el.description,
-                createdByUser: el.createdByUser[0].name,
+                createdByUser: el.createdByUser[0]?.name,
                 updatedAt: el.updatedAt
             }
         })
@@ -118,7 +119,7 @@ const BranchDashboard = () => {
                         to="/brans/ekle"
                         className="btn btn-primary"
                     >
-                       Branş Ekle
+                        Branş Ekle
                     </Link>
                 </div>
             </div>

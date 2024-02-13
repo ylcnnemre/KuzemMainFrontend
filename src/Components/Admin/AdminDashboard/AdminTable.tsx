@@ -1,30 +1,20 @@
-import React, { FC, useEffect, useMemo, useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom';
-import { Button, CardBody, Col, Row, Table } from 'reactstrap'
-import { Column, Table as ReactTable, ColumnDef, ColumnFiltersState, flexRender, getCoreRowModel, getFilteredRowModel, getPaginationRowModel, getSortedRowModel, useReactTable, FilterFn } from "@tanstack/react-table"
-import { rankItem } from '@tanstack/match-sorter-utils';
+import { ColumnFiltersState, flexRender, getCoreRowModel, getFilteredRowModel, getPaginationRowModel, getSortedRowModel, useReactTable } from '@tanstack/react-table';
+import React, { FC, useMemo, useState } from 'react'
 import { BsTrash } from 'react-icons/bs';
 import { FiEdit } from 'react-icons/fi';
-import { IUserData } from '../../../api/User/UserType';
+import { Link, useNavigate } from 'react-router-dom';
+import { Button, Table } from 'reactstrap';
 import aykut from "../../../assets/images/aykut.jpg";
+import { IUserData } from '../../../api/User/UserType';
 import useUserStore from '../../../zustand/useUserStore';
 import { Permission } from '../../../common/constants/PermissionList';
 
-
-
-interface IStudentTableProps {
-    isGlobalFilter: boolean
-    isStudentsFilter: boolean
-    columns: any,
-    data: any[]
-}
-
-
-const StudentTable: FC<{ data: IUserData[] }> = ({ data }) => {
+const AdminTable: FC<{ adminData: IUserData[] }> = ({ adminData }) => {
     const [globalFilter, setGlobalFilter] = useState<string>('');
     const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
     const navigate = useNavigate()
     const { user: { permission } } = useUserStore()
+
     const columns = useMemo(() => [
         {
             header: "#",
@@ -129,16 +119,16 @@ const StudentTable: FC<{ data: IUserData[] }> = ({ data }) => {
                 return (
                     <div>
                         {
-                            permission.includes(Permission.STUDENT_DELETE) && (
+                            permission.includes(Permission.ADMIN_DELETE) && (
                                 <Button color='danger' style={{ marginRight: "30px" }}>
                                     <BsTrash />
                                 </Button>
                             )
                         }
                         {
-                            permission.includes(Permission.STUDENT_EDIT) && (
+                            permission.includes(Permission.ADMIN_EDIT) && (
                                 <Button color='warning' onClick={() => {
-                                    navigate(`/ogrenci/${cell.getValue()}`)
+                                    navigate(`/admin/${cell.getValue()}`)
                                 }} >
                                     <FiEdit />
                                 </Button>
@@ -153,8 +143,12 @@ const StudentTable: FC<{ data: IUserData[] }> = ({ data }) => {
         []
     );
 
+    const mainData = useMemo(() => {
+        return adminData
+    }, [adminData])
+
     const table = useReactTable({
-        data: data,
+        data: mainData,
         columns,
         getCoreRowModel: getCoreRowModel(),
         state: {
@@ -181,13 +175,13 @@ const StudentTable: FC<{ data: IUserData[] }> = ({ data }) => {
                     setGlobalFilter(e.target.value)
                 }} />
                 {
-                    permission.includes(Permission.STUDENT_ADD) && (
+                    permission.includes(Permission.ADMIN_ADD) && (
                         <div className="col-sm-auto ms-auto">
                             <Link
-                                to="/ogrenci/ekle"
+                                to="/admin/ekle"
                                 className="btn btn-primary"
                             >
-                                Öğrenci Ekle
+                                Admin Ekle
                             </Link>
                         </div>
                     )
@@ -300,4 +294,4 @@ const StudentTable: FC<{ data: IUserData[] }> = ({ data }) => {
     )
 }
 
-export default StudentTable
+export default AdminTable

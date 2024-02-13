@@ -5,6 +5,7 @@ import { PiChalkboardTeacherDuotone } from "react-icons/pi";
 import { GoGitBranch } from "react-icons/go";
 import { PiStudent } from "react-icons/pi";
 import { RiAdminLine } from "react-icons/ri";
+import { Permission } from "../common/constants/PermissionList";
 
 const Navdata = () => {
     const history = useNavigate();
@@ -49,7 +50,7 @@ const Navdata = () => {
             label: "Dashboards",
             icon: <MdOutlineDashboard />,
             link: "/anasayfa",
-            role: ["admin", "teacher", "student", "superadmin"],
+            permission: Permission.all,
             stateVariables: isDashboard,
             click: function (e: any) {
                 console.log("selamm ", e)
@@ -71,35 +72,35 @@ const Navdata = () => {
             id: "Eğitmen",
             label: "Eğitmenler",
             link: "/egitmen",
-            role: ["admin", "superadmin"],
+            permission: Permission.STUDENT_SHOW,
             icon: <PiChalkboardTeacherDuotone />
         },
         {
             id: "Admin",
             label: "Admin",
             link: "/admin",
-            role: ["superadmin"],
+            permission: Permission.ADMIN_SHOW,
             icon: <RiAdminLine />
         },
         {
             id: "Brans",
             label: "Branşlar",
             link: "/brans",
-            role: ["admin", "superadmin"],
+            role: Permission.BRANCH_SHOW,
             icon: <GoGitBranch />
         },
         {
             id: "Kurslar",
             label: "Kurslar",
             link: "/kurs",
-            role: ["admin", "teacher", "superadmin", "student"],
+            permission: Permission.COURSE_SHOW,
             icon: <MdCastForEducation />
         },
         {
             id: "Ogrenci",
             label: "Öğrenciler",
             link: "/ogrenci",
-            role: ["admin", "superadmin"],
+            permission: Permission.STUDENT_SHOW,
             icon: <PiStudent />
         }
         /* {

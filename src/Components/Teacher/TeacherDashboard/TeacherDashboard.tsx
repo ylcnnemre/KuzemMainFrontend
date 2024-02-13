@@ -7,6 +7,8 @@ import { getUserByRoleApi } from '../../../api/User/Teacher/TeacherApi'
 import { ITeacherType } from '../../../api/User/Teacher/teacherType'
 import { deleteUserApi } from '../../../api/User/UserApi'
 import { toast } from 'react-toastify'
+import useUserStore from '../../../zustand/useUserStore'
+import { Permission } from '../../../common/constants/PermissionList'
 
 const TeacherDashboard = () => {
     const [globalFilter, setGlobalFilter] = useState<string>('');
@@ -17,7 +19,7 @@ const TeacherDashboard = () => {
         id: string
     }>()
     const navigate = useNavigate()
-
+    const { user: { permission } } = useUserStore()
     const getAllTeacher = async () => {
         const response = await getUserByRoleApi("teacher")
         console.log("responseTeacher ==>", response)
@@ -86,20 +88,28 @@ const TeacherDashboard = () => {
                 cell: function render({ getValue }) {
                     return (
                         <div>
-                            <Button color="warning" style={{ marginRight: "10px" }} onClick={() => {
-                                navigate(`/egitmen/duzenle/${getValue()}`)
+                            {
+                                permission.includes(Permission.TEACHER_EDIT) && (
+                                    <Button color="warning" style={{ marginRight: "10px" }} onClick={() => {
+                                        navigate(`/egitmen/duzenle/${getValue()}`)
 
-                            }} >
-                                Düzenle
-                            </Button>
-                            <Button color="danger" onClick={() => {
-                                setDeleteModal({
-                                    show: true,
-                                    id: getValue() as string
-                                })
-                            }} >
-                                Sil
-                            </Button>
+                                    }} >
+                                        Düzenle
+                                    </Button>
+                                )
+                            }
+                            {
+                                permission.includes(Permission.TEACHER_DELETE) && (
+                                    <Button color="danger" onClick={() => {
+                                        setDeleteModal({
+                                            show: true,
+                                            id: getValue() as string
+                                        })
+                                    }} >
+                                        Sil
+                                    </Button>
+                                )
+                            }
                         </div>
                     )
                 }
@@ -120,7 +130,7 @@ const TeacherDashboard = () => {
         })
 
     }, [teacher])
-    console.log("selam ==>")
+
     const table = useReactTable({
         data: data,
         columns,
@@ -163,7 +173,7 @@ const TeacherDashboard = () => {
                         </h5>
                     </ModalBody>
                     <ModalFooter>
-                        <Button color="danger" onClick={()=>{
+                        <Button color="danger" onClick={() => {
                             deleteTeacher(deleteModal?.id as string)
                         }} >
                             Sil
@@ -181,19 +191,23 @@ const TeacherDashboard = () => {
             </div>
 
 
-            <div className="d-flex mb-3 border border-dashed" >
+            <div className={`d-flex mb-3  ${permission.includes(Permission.TEACHER_ADD) ? "border border-dashed" : null}`} >
 
                 <input placeholder="ara" className="form-control" style={{ width: "max-content" }} onChange={e => {
                     setGlobalFilter(e.target.value)
                 }} />
-                <div className="col-sm-auto ms-auto">
-                    <Link
-                        to="/egitmen/ekle"
-                        className="btn btn-primary"
-                    >
-                        Eğitmen Ekle
-                    </Link>
-                </div>
+                {
+                    permission.includes(Permission.TEACHER_ADD) && (
+                        <div className="col-sm-auto ms-auto">
+                            <Link
+                                to="/egitmen/ekle"
+                                className="btn btn-primary"
+                            >
+                                Eğitmen Ekle
+                            </Link>
+                        </div>
+                    )
+                }
             </div>
             <div className={"table-responsive mb-1"}>
                 <Table hover className={"mb-0 align-middle table-borderless"}>

@@ -89,7 +89,9 @@ const EditTeacherComponent: FC<{ t: Function }> = ({ t }) => {
             tcNo: "",
             city: "",
             region: "",
-            postalCode: 0
+            courses: [],
+            postalCode: 0,
+            permission: []
         },
         validationSchema: yup.object({
             email: yup.string().email().required(),
@@ -102,7 +104,7 @@ const EditTeacherComponent: FC<{ t: Function }> = ({ t }) => {
         }),
         onSubmit: async (value) => {
             try {
-                const { city, region, postalCode, email, phone, tcNo, role, ...rest } = value
+                const { city, region, postalCode, email, phone, tcNo, role, courses, permission, ...rest } = value
                 console.log("vall =>", value)
                 let response = await updateUserApi({
                     ...rest,
