@@ -6,6 +6,7 @@ import { GoGitBranch } from "react-icons/go";
 import { PiStudent } from "react-icons/pi";
 import { RiAdminLine } from "react-icons/ri";
 import { Permission } from "../common/constants/PermissionList";
+import { IoCalendarOutline } from "react-icons/io5";
 
 const Navdata = () => {
     const history = useNavigate();
@@ -86,8 +87,15 @@ const Navdata = () => {
             id: "Brans",
             label: "Branşlar",
             link: "/brans",
-            role: Permission.BRANCH_SHOW,
+            permission: Permission.BRANCH_SHOW,
             icon: <GoGitBranch />
+        },
+        {
+            id: "Donem",
+            label: "Dönemler",
+            link: "/donem",
+            permission: Permission.all,
+            icon: <IoCalendarOutline />
         },
         {
             id: "Kurslar",

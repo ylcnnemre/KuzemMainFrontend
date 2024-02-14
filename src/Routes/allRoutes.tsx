@@ -5,6 +5,7 @@ import AddAdmin from "../Components/Admin/AddAdmin/AddAdmin";
 import AddAdminPage from "../pages/Admin/AddAdminPage";
 import { Permission } from "../common/constants/PermissionList";
 import EditAdminPage from "../pages/Admin/EditAdminPage";
+import SemesterPage from "../pages/Semester/SemesterPage";
 
 const Dashboard = lazy(() => import("../pages/Dashboard"));
 const Login = lazy(() => import("../pages/Authentication/Login"));
@@ -51,6 +52,7 @@ const authProtectedRoutes: Array<{ path: string, component: React.ReactNode, exa
   { path: "/kurs/ekle", component: <AddCoursePage />, permission: Permission.COURSE_ADD },
   { path: "/kurs/:id", component: <CourseDetailPage />, permission: Permission.all },
   { path: "/kurs/duzenle/:id", component: <EditCoursePage />, permission: Permission.COURSE_EDIT },
+  { path: "/donem", component: <SemesterPage />, permission: Permission.all },
   { path: "/profil", component: <Settings />, permission: Permission.all },
   { path: "/pages-faqs", component: <Faqs />, permission: Permission.all },
   { path: "/test", component: <TestPage />, permission: Permission.all },

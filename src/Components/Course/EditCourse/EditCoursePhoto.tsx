@@ -74,7 +74,6 @@ const EditCoursePhoto: FC<{ photoList: any[], setPhotoList: Function }> = ({ pho
                         )
                     })
                 }
-
             </Swiper>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: "30px" }}>
                 <input ref={photoInputRef} accept='image/png image/jpg image/jpeg' onChange={handleAddCourseImage} style={{ display: "none" }} className='form-control' type='file' multiple />

@@ -72,6 +72,18 @@ const EditAdmin = ({ t }: any) => {
             {
                 label: "Admin Ekle",
                 value: Permission.ADMIN_ADD
+            },
+            {
+                label: "Branş Düzenle",
+                value: Permission.BRANCH_EDIT
+            },
+            {
+                label: "Branş Ekle",
+                value: Permission.BRANCH_ADD
+            },
+            {
+                label: "Branş Sil",
+                value: Permission.BRANCH_DELETE
             }
         ]
 
@@ -79,7 +91,6 @@ const EditAdmin = ({ t }: any) => {
 
     const setAdminProfileData = async (data: IUserData) => {
         try {
-            console.log("dataa ==> ", data)
             const { profileImg, birthDate, branch, permission, ...rest } = data
             Object.entries(rest).map(([key, val]) => {
                 if (key != "address") {
@@ -95,11 +106,10 @@ const EditAdmin = ({ t }: any) => {
                     }
                 }
             })
-            console.log("permission ==>", permission)
             const formatBirthDate = new Date(birthDate).toISOString().split('T')[0];
             formik.setFieldValue('birthDate', formatBirthDate);
             formik.setFieldValue("branch", branch?.name)
-
+            console.log("permm ==>",permission)
             formik.setFieldValue("permission", [...permission.map(item => {
                 return {
                     label: permissionOptions.find(el => el.value == item)?.label,
@@ -191,14 +201,10 @@ const EditAdmin = ({ t }: any) => {
             }
         }
     })
-    console.log("formik =>", formik.values)
+
     const postalCodeDisableControl = useMemo(() => {
         return formik.values.city == "" || formik.values.region == ""
     }, [formik.values.city, formik.values.region])
-
-    console.log("formil er =>", formik.errors)
-
-
 
 
     if (loading) {
@@ -399,7 +405,6 @@ const EditAdmin = ({ t }: any) => {
                             options={permissionOptions}
                             value={formik.values.permission}
                             className={`basic-multi-select ${formik.touched.permission && formik.errors.permission ? 'is-invalid' : ''}`}
-
                             classNamePrefix="select"
                             onChange={(e) => {
                                 formik.setFieldValue("permission", e)

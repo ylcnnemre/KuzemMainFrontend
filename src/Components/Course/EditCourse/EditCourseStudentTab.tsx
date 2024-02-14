@@ -15,21 +15,20 @@ const EditCourseStudentTab: FC<{ userList: ICourseType, setUserList: Function }>
 
 
     const userData = useMemo(() => {
-        return userList.joinUserList
+        return userList.joinUserList.filter(item => item != null || item != undefined)
     }, [userList])
 
-
+    console.log("userData ==>", userData)
     const columns = useMemo(() => [
         {
             header: "#",
             accessorKey: "profileImg",
             enableColumnFilter: false,
             cell: (cell: any) => {
-                console.log("cell ==>", cell.getValue())
-                const imgUrl = cell.getValue() ? `${import.meta.env.VITE_BASEURL}${cell.getValue().path}` : aykut
+                 const imgUrl = cell.getValue() ? `${import.meta.env.VITE_BASEURL}${cell.getValue()?.path}` : aykut 
                 return (
                     <div className="d-flex align-items-center">
-                        <img src={imgUrl} style={{ width: "40px", height: "40px", borderRadius: "50%" }} alt="" />
+                         <img src={imgUrl} style={{ width: "40px", height: "40px", borderRadius: "50%" }} alt="" />
                     </div>
                 )
             },
