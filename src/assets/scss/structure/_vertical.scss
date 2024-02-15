@@ -81,7 +81,7 @@
                     fill: rgba($primary, 0.16);
                 }
             }
-
+            // vertical layout icon
             &[data-bs-toggle=collapse] {
                 &:after {
                     display: block;

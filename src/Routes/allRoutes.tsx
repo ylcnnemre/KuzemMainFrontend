@@ -34,7 +34,7 @@ type role = "admin" | "student" | "teacher" | "superadmin"
 
 const authProtectedRoutes: Array<{ path: string, component: React.ReactNode, exact?: boolean, permission: Permission }> = [
   { path: "/anasayfa", component: <Dashboard />, permission: Permission.all },
-  { path: "/profile", component: <UserProfile />, permission: Permission.SHOW_PROFILE },
+  { path: "/profile", component: <UserProfile />, permission: Permission.all },
   { path: "/brans", component: <BranchesPage />, permission: Permission.BRANCH_SHOW },
   { path: "/egitmen", component: <TeacherPage />, permission: Permission.TEACHER_SHOW },
   { path: "/egitmen/ekle", component: <AddTeacherPage />, permission: Permission.TEACHER_ADD },

@@ -10,12 +10,14 @@ import { FaRegFilePdf } from "react-icons/fa";
 import { LuFileJson } from "react-icons/lu";
 import "./index.scss"
 import { ITeacherType } from '../../../api/User/Teacher/teacherType'
+import { getAllSemesterApi } from '../../../api/Semester/SemesterApi'
+import { ISemester } from '../../../api/Semester/SemesterType'
 const AddCourseForm = () => {
   const [branchList, setBranchList] = useState<Array<{ id: string, name: string }>>([])
   const [teacherList, setTeacherList] = useState<ITeacherType[]>([])
   const [selectedImageFiles, setSelectedFiles] = useState<File[]>([]);
   const [selectedDocumentFiles, setSelectedDocumentFiles] = useState<File[]>([])
-
+  const [semesterList, setSemesterList] = useState<ISemester[]>([])
   const handleCourseImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
       const filesArray: File[] = Array.from(e.target.files);
@@ -40,12 +42,16 @@ const AddCourseForm = () => {
       quota: 0,
       teacher: "",
       startDate: "",
-      endDate: ""
+      endDate: "",
+      semester: "",
+      active: ""
     },
     validationSchema: yup.object({
       title: yup.string().required("Bu alan boş bırakılamaz"),
       description: yup.string().required(),
       branch: yup.string().required(),
+      semester: yup.string().required(),
+      active: yup.string().required(),
       startDate: yup
         .date()
         .required()
@@ -64,7 +70,7 @@ const AddCourseForm = () => {
       teacher: yup.string().required()
     }),
     onSubmit: async (value, { resetForm }) => {
-      console.log("valuee ==>", value)
+
       if (!selectedImageFiles.length) {
         toast.error("en az bir tane fotoğraf seçiniz", {
           autoClose: 1000
@@ -152,9 +158,20 @@ const AddCourseForm = () => {
     }
   }
 
+
+  const getSemesterAll = async () => {
+    try {
+      const response = await getAllSemesterApi()
+      setSemesterList(response.data)
+    }
+    catch (err) {
+
+    }
+  }
+
   useEffect(() => {
     getBranchList()
-
+    getSemesterAll()
   }, [])
 
   return (
@@ -288,7 +305,7 @@ const AddCourseForm = () => {
             ) : null}
           </div>
         </Col>
-        <Col lg={12}>
+        <Col lg={6}>
           <div className="mb-3">
             <Label className="form-label">
               Açıklama
@@ -302,6 +319,55 @@ const AddCourseForm = () => {
 
             {formik.touched.description && formik.errors.description ? (
               <FormFeedback type="invalid"><div>{formik.errors.description}</div></FormFeedback>
+            ) : null}
+          </div>
+        </Col>
+        <Col lg={3}>
+          <div className="mb-3">
+            <Label className="form-label">
+              Dönem
+            </Label>
+            <select onChange={formik.handleChange} className={`form-control ${formik.touched.semester && formik.errors.semester ? 'is-invalid' : ''} `} value={formik.values.semester} onBlur={formik.handleBlur} name="semester" id="semester">
+              <option value="">
+                Seçim Yapınız
+              </option>
+              {
+                semesterList.map((el, index) => {
+                  return (
+                    <option key={`${index}`} value={el._id}  >
+                      {el.name}
+                    </option>
+                  )
+                })
+              }
+            </select>
+            {formik.touched.semester && formik.errors.semester ? (
+              <FormFeedback type="invalid"><div>{formik.errors.semester}</div></FormFeedback>
+            ) : null}
+          </div>
+        </Col>
+        <Col lg={3}>
+          <div className="mb-3">
+            <Label className="form-label">
+              Aktiflik
+            </Label>
+            <select onChange={formik.handleChange} className={`form-control ${formik.touched.active && formik.errors.active ? 'is-invalid' : ''} `} value={formik.values.active} onBlur={formik.handleBlur} name="active" id="active">
+              <option value="">
+                Seçim Yapınız
+              </option>
+              {
+                ["aktif", "pasif"].map((el, index) => {
+                  return (
+                    <option value={el} key={`${index}`} >
+                      {el}
+                    </option>
+                  )
+                })
+
+              }
+            </select>
+            {formik.touched.active && formik.errors.active ? (
+              <FormFeedback type="invalid"><div>{formik.errors.active}</div></FormFeedback>
             ) : null}
           </div>
         </Col>

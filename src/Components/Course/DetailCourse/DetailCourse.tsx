@@ -11,9 +11,9 @@ import { getDetailCourseApi, joinCourseApi } from '../../../api/Course/courseApi
 import { ICourseType } from '../../../api/Course/CourseTypes';
 import { CircleLoader } from 'react-spinners';
 import { toast } from 'react-toastify';
-import { Button, Card, CardBody, Col, Row } from 'reactstrap';
+import { Button, Card, CardBody, Col, Nav, NavItem, NavLink, Row, TabContent, TabPane } from 'reactstrap';
 import { Swiper, SwiperSlide } from 'swiper/react';
-import { Autoplay, EffectCreative, FreeMode, Navigation, Pagination, Thumbs } from 'swiper/modules';
+import { Autoplay, EffectCreative, FreeMode, Grid, Navigation, Pagination, Thumbs } from 'swiper/modules';
 import { IoTimeOutline } from "react-icons/io5";
 import DetailWidget from './DetailWidget';
 import { IoMdTime } from 'react-icons/io';
@@ -25,13 +25,16 @@ import { BsFiletypeJson } from "react-icons/bs";
 import { FaRegFilePdf } from "react-icons/fa";
 import { FaRegFileWord } from "react-icons/fa";
 import { FaFile } from "react-icons/fa";
+import { TbFileDescription } from "react-icons/tb";
 import useUserStore from '../../../zustand/useUserStore';
+import { TfiZoomIn } from 'react-icons/tfi';
 
 const DetailCourse = () => {
     const [loading, setLoading] = useState<boolean>(false)
     const [courseDetailData, setCourseDetailData] = useState<ICourseType>()
     const { id } = useParams();
     const { user } = useUserStore()
+    const [activeTab, setActiveTab] = useState(1);
     const navigation = useNavigate()
     const DetailCourseRequest = async () => {
         try {
@@ -129,6 +132,9 @@ const DetailCourse = () => {
         return courseDetailData?.joinUserList.map(el => el?._id).includes(user._id)
     }, [user, courseDetailData?.joinUserList])
 
+
+
+
     if (loading) {
         return <div style={{ width: "100%", textAlign: "center", display: "flex", justifyContent: "center" }}>
             <CircleLoader color='orange' />
@@ -205,19 +211,13 @@ const DetailCourse = () => {
                                     <Col sm={6} >
                                         <DetailWidget icon={<FaChalkboardTeacher />} title='Eğitmen' value={courseDetailData?.teacher ? `${courseDetailData?.teacher?.name} ${courseDetailData?.teacher?.surname}` : "Seçilmedi"} />
                                     </Col>
-                                </Row>
-                                <Row className='mb-4'>
-                                    <Col sm={12}>
-                                        <div className="mt-4 text-muted">
-                                            <h5 className="fs-14">Açıklama :</h5>
-                                            <p>
-                                                {courseDetailData?.description}
-                                            </p>
-                                        </div>
+                                    <Col sm={12} >
+                                        <DetailWidget icon={<TbFileDescription />} title='Açıklama' value={courseDetailData?.description} />
                                     </Col>
                                 </Row>
 
-                                <Row>
+
+                                {/*  <Row>
                                     {
                                         documentList?.map((item, index) => {
                                             return (
@@ -230,11 +230,107 @@ const DetailCourse = () => {
                                         })
                                     }
 
-                                </Row>
+                                </Row> */}
                             </Col>
                         </Row>
                     </CardBody>
                 </Card>
+            </Col>
+            <Col lg={12}>
+                <Nav tabs>
+                    <NavItem>
+                        <NavLink
+                            className={`${activeTab == 1 && "active"}`}
+                            onClick={() => {
+                                setActiveTab(1)
+                            }}
+                        >
+                            Dökümanlar
+                        </NavLink>
+                    </NavItem>
+                    <NavItem>
+                        <NavLink
+                            className={`${activeTab == 2 && "active"}`}
+                            onClick={() => {
+                                setActiveTab(2)
+                            }}
+                        >
+                            Fotoğraflar
+                        </NavLink>
+                    </NavItem>
+                    <NavItem>
+                        <NavLink
+                            className={`${activeTab == 3 && "active"}`}
+                            onClick={() => {
+                                setActiveTab(3)
+                            }}
+                        >
+                            Dökümanlar
+                        </NavLink>
+                    </NavItem>
+                    <NavItem>
+                        <NavLink
+                            className={`${activeTab == 4 && "active"}`}
+                            onClick={() => {
+                                setActiveTab(4)
+                            }}
+                        >
+                            Öğrenciler
+                        </NavLink>
+                    </NavItem>
+                </Nav>
+                <TabContent activeTab={activeTab} style={{ paddingTop: "20px" }} className="tab_content" >
+                    <TabPane tabId={1}>
+                        <Swiper className="swiper_container" slidesPerView={3} grid={{ rows: 1 }} spaceBetween={30} pagination={{ clickable: true }} modules={[Grid]} >
+                            {
+                                documentList?.map((el) => {
+                                    return (
+                                        <SwiperSlide className="document_slide">
+                                            <div className="document_section">
+                                                <div className="document_section_container">
+                                                    <FaRegFilePdf style={{ fontSize: "52px" }} />
+                                                    <div className="document_section_content">
+                                                        <p className="document_name">
+                                                            <span>İsim :</span> {el.name.split("-")[0]}
+                                                        </p>
+                                                        <TfiZoomIn className="zoom_icon" />
+
+                                                    </div>
+                                                </div>
+                                                <div className="delete_btn_container">
+                                                    <div>
+                                                        <Button size="sm" className="delete_btn" color="primary" style={{ marginRight: "10px" }} onClick={() => {
+                                                            openFile(el.path)
+                                                        }} >
+                                                            İncele
+                                                        </Button>
+                                                    </div>
+                                                </div>
+
+                                            </div>
+                                        </SwiperSlide>
+                                    )
+                                })
+                            }
+
+                        </Swiper>
+                    </TabPane>
+                    <TabPane tabId={2}>
+                        <h1>
+                            asbasd
+                        </h1>
+                    </TabPane>
+                    <TabPane tabId={3}>
+                        <h1>
+                            123123545
+                        </h1>
+                    </TabPane>
+                    <TabPane tabId={4}>
+                        <h1>
+                            asdasdadasd
+                        </h1>
+                    </TabPane>
+                </TabContent>
             </Col>
         </Row>
     )

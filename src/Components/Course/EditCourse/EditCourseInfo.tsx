@@ -9,11 +9,15 @@ import { ITeacherType } from '../../../api/User/Teacher/teacherType';
 import { getTeacherListApi } from '../../../api/User/UserApi';
 import { getAllBranch } from '../../../api/Branch/BranchApi';
 import { ICourseType } from '../../../api/Course/CourseTypes';
+import { ISemester } from '../../../api/Semester/SemesterType';
+import { getAllSemesterApi } from '../../../api/Semester/SemesterApi';
 
 const EditCourseInfo: FC<{ data: ICourseType }> = ({ data }) => {
+    console.log("editInf ==>", data)
     const { id } = useParams()
     const [branchList, setBranchList] = useState<Array<{ id: string, name: string }>>([])
     const [teacherList, setTeacherList] = useState<ITeacherType[]>([])
+    const [semesterList, setSemesterList] = useState<ISemester[]>([])
     const navigate = useNavigate()
     const formik = useFormik({
         initialValues: {
@@ -23,12 +27,16 @@ const EditCourseInfo: FC<{ data: ICourseType }> = ({ data }) => {
             quota: 0,
             teacher: "",
             startDate: "",
-            endDate: ""
+            endDate: "",
+            active: "",
+            semester: "",
         },
         validationSchema: yup.object({
             title: yup.string().required("Bu alan boş bırakılamaz"),
             description: yup.string().required(),
             branch: yup.string().required(),
+            semester: yup.string().required(),
+            active: yup.string().required(),
             startDate: yup
                 .date()
                 .required()
@@ -48,7 +56,6 @@ const EditCourseInfo: FC<{ data: ICourseType }> = ({ data }) => {
         }),
         onSubmit: async (value, { resetForm }) => {
             try {
-                const { quota, ...rest } = value
                 const response = await updateCourseApi({
                     ...value,
                     courseId: id as string
@@ -125,9 +132,11 @@ const EditCourseInfo: FC<{ data: ICourseType }> = ({ data }) => {
             formik.setFieldValue("description", data.description)
             formik.setFieldValue("startDate", startDate)
             formik.setFieldValue("endDate", endDate)
+            formik.setFieldValue("semester", data.semester._id)
+            formik.setFieldValue("active", data.active)
         }
         catch (err: any) {
-            console.log("err ==>",err)
+            console.log("err ==>", err)
             /* navigate("/kurs") */
             toast.error(err.response?.data.message, {
                 autoClose: 1500
@@ -135,9 +144,20 @@ const EditCourseInfo: FC<{ data: ICourseType }> = ({ data }) => {
         }
     }
 
+    const getSemesterAll = async () => {
+        try {
+            const response = await getAllSemesterApi()
+            setSemesterList(response.data)
+        }
+        catch (err) {
+
+        }
+    }
+
     useEffect(() => {
         getBranchList()
         detailCourseApiRequest()
+        getSemesterAll()
     }, [data])
     return (
         <Form onSubmit={formik.handleSubmit} >
@@ -267,6 +287,54 @@ const EditCourseInfo: FC<{ data: ICourseType }> = ({ data }) => {
 
                         {formik.touched.endDate && formik.errors.endDate ? (
                             <FormFeedback type="invalid"><div>{formik.errors.endDate}</div></FormFeedback>
+                        ) : null}
+                    </div>
+                </Col>
+                <Col lg={6}>
+                    <div className="mb-3">
+                        <Label className="form-label">
+                            Dönem
+                        </Label>
+                        <select className={`form-control ${formik.touched.semester && formik.errors.semester ? 'is-invalid' : ''} `} value={formik.values.semester} onChange={formik.handleChange} onBlur={formik.handleBlur} name="semester" id="semester">
+                            <option value="">
+                                Dönem Seçiniz
+                            </option>
+                            {
+                                semesterList.map((item, index) => {
+                                    return (
+                                        <option key={`${index}`} value={item._id}>
+                                            {item.name}
+                                        </option>
+                                    )
+                                })
+                            }
+                        </select>
+                        {formik.touched.semester && formik.errors.semester ? (
+                            <FormFeedback type="invalid"><div>{formik.errors.semester}</div></FormFeedback>
+                        ) : null}
+                    </div>
+                </Col>
+                <Col lg={6}>
+                    <div className="mb-3">
+                        <Label className="form-label">
+                            Aktiflik
+                        </Label>
+                        <select className={`form-control ${formik.touched.active && formik.errors.active ? 'is-invalid' : ''} `} value={formik.values.active} onChange={formik.handleChange} onBlur={formik.handleBlur} name="active" id="active">
+                            <option value="">
+                                Seçim yapınız
+                            </option>
+                            {
+                                ["aktif", "pasif"].map((item, index) => {
+                                    return (
+                                        <option key={`${index}`} value={item}>
+                                            {item}
+                                        </option>
+                                    )
+                                })
+                            }
+                        </select>
+                        {formik.touched.active && formik.errors.active ? (
+                            <FormFeedback type="invalid"><div>{formik.errors.active}</div></FormFeedback>
                         ) : null}
                     </div>
                 </Col>

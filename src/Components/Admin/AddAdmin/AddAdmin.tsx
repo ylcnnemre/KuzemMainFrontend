@@ -124,6 +124,18 @@ const AddAdmin = ({ t }: any) => {
       {
         label: "Admin Ekle",
         value: Permission.ADMIN_ADD
+      },
+      {
+        label: "Dönem Ekle",
+        value: Permission.SEMESTER_ADD
+      },
+      {
+        label: "Dönem Düzenle",
+        value: Permission.SEMESTER_EDIT,
+      },
+      {
+        label: "Dönem Sil",
+        value: Permission.SEMESTER_DELETE
       }
     ]
 

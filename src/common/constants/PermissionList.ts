@@ -20,7 +20,10 @@ enum Permission {
     COURSE_EDIT = "course_edit",
     COURSE_DELETE = "course_delete",
     COURSE_ADD = "course_add",
-    SHOW_PROFILE = "show_profile"
+    SEMESTER_ADD = "semester_add",
+    SEMESTER_EDIT = "semester_edit",
+    SEMESTER_DELETE = "semester_delete",
+    SEMESTER_SHOW = "semester_show"
 }
 
 // Enum kullanımı

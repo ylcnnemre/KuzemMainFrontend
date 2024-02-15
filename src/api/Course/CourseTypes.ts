@@ -12,6 +12,17 @@ export interface ICourseType {
     startDate: string
     teacher: any
     title: string
+    semester: {
+        active: boolean,
+        description: string
+        name: string
+        period: string
+        year: number
+        _id: string
+        createdAt: string
+        updatedAt: string
+    },
+    active: "aktif" | "pasif"
     joinUserList: any[]
 }
 

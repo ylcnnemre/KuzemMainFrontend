@@ -7,15 +7,15 @@ import { authProtectedRoutes, publicRoutes } from "./allRoutes";
 import AuthProtected from './AuthProtected';
 import { ToastContainer, toast } from 'react-toastify';
 import useUserStore from '../zustand/useUserStore';
-import { DotLoader } from 'react-spinners';
+import { DotLoader, PropagateLoader } from 'react-spinners';
 import { Permission } from '../common/constants/PermissionList';
 
 const Index = () => {
 
     const { user: { role, permission } } = useUserStore()
-    console.log("permis =>", permission)
+
     return (
-        <React.Suspense fallback={<DotLoader />}  >
+        <React.Suspense fallback={<PropagateLoader color='red' style={{color:"red"}} />}  >
             <ToastContainer />
             <Routes>
 

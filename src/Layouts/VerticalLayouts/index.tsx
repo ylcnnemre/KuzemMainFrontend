@@ -1,5 +1,4 @@
 import React, { useEffect, useCallback } from 'react';
-import PropTypes from "prop-types";
 import { Link } from "react-router-dom";
 import withRouter from "../../Components/Common/withRouter";
 import { Collapse } from 'reactstrap';
@@ -7,6 +6,7 @@ import navdata from "../LayoutMenuData";
 import { withTranslation } from "react-i18next";
 import useLayoutStore from '../../zustand/useLayoutStore';
 import useUserStore from '../../zustand/useUserStore';
+import { IoIosArrowDown } from 'react-icons/io';
 
 
 const VerticalLayout = (props: any) => {
@@ -14,8 +14,6 @@ const VerticalLayout = (props: any) => {
 
     const { user: { role, permission } } = useUserStore()
     const { leftsidbarSizeType, sidebarVisibilitytype, layoutType } = useLayoutStore()
-
-
     //vertical and semibox resize events
     const resizeSidebarMenu = useCallback(() => {
         var windowSize = document.documentElement.clientWidth;
@@ -61,74 +59,7 @@ const VerticalLayout = (props: any) => {
         }
     }, [leftsidbarSizeType, sidebarVisibilitytype, layoutType]);
 
-    useEffect(() => {
-        window.addEventListener("resize", resizeSidebarMenu, true);
-    }, [resizeSidebarMenu]);
 
-    useEffect(() => {
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-        const initMenu = () => {
-            const pathName = import.meta.env.VITE_PUBLICURL + props.router.location.pathname;
-            const ul: any = document.getElementById("navbar-nav");
-            const items: any = ul.getElementsByTagName("a");
-            let itemsArray = [...items]; // converts NodeList to Array
-            removeActivation(itemsArray);
-            let matchingMenuItem = itemsArray.find((x) => {
-                return x.pathname === pathName;
-            });
-            if (matchingMenuItem) {
-                activateParentDropdown(matchingMenuItem);
-            }
-        };
-        if (props.layoutType === "vertical") {
-            initMenu();
-        }
-    }, [props.router.location.pathname, props.layoutType]);
-
-    function activateParentDropdown(item: any) {
-        item.classList.add("active");
-        let parentCollapseDiv = item.closest(".collapse.menu-dropdown");
-
-        if (parentCollapseDiv) {
-            // to set aria expand true remaining
-            parentCollapseDiv.classList.add("show");
-            parentCollapseDiv.parentElement.children[0].classList.add("active");
-            parentCollapseDiv.parentElement.children[0].setAttribute("aria-expanded", "true");
-            if (parentCollapseDiv.parentElement.closest(".collapse.menu-dropdown")) {
-                parentCollapseDiv.parentElement.closest(".collapse").classList.add("show");
-                if (parentCollapseDiv.parentElement.closest(".collapse").previousElementSibling)
-                    parentCollapseDiv.parentElement.closest(".collapse").previousElementSibling.classList.add("active");
-                if (parentCollapseDiv.parentElement.closest(".collapse").previousElementSibling.closest(".collapse")) {
-                    parentCollapseDiv.parentElement.closest(".collapse").previousElementSibling.closest(".collapse").classList.add("show");
-                    parentCollapseDiv.parentElement.closest(".collapse").previousElementSibling.closest(".collapse").previousElementSibling.classList.add("active");
-                }
-            }
-            return false;
-        }
-        return false;
-    }
-
-    const removeActivation = (items: any) => {
-        let actiItems = items.filter((x: any) => x.classList.contains("active"));
-
-        actiItems.forEach((item: any) => {
-            if (item.classList.contains("menu-link")) {
-                if (!item.classList.contains("active")) {
-                    item.setAttribute("aria-expanded", false);
-                }
-                if (item.nextElementSibling) {
-                    item.nextElementSibling.classList.remove("show");
-                }
-            }
-            if (item.classList.contains("nav-link")) {
-                if (item.nextElementSibling) {
-                    item.nextElementSibling.classList.remove("show");
-                }
-                item.setAttribute("aria-expanded", false);
-            }
-            item.classList.remove("active");
-        });
-    };
 
     return (
         <React.Fragment>
@@ -144,10 +75,15 @@ const VerticalLayout = (props: any) => {
                                             onClick={item.click}
                                             className="nav-link menu-link"
                                             to={item.link ? item.link : "/#"}
-                                            data-bs-toggle="collapse"
                                         >
-                                            {item.icon}
-                                            <span data-key="t-apps">{props.t(item.label)}</span>
+                                            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", width: "100%" }}>
+                                                <div>
+                                                    {item.icon}
+                                                    <span data-key="t-apps">{props.t(item.label)}</span>
+                                                </div>
+                                                <IoIosArrowDown />
+                                            </div>
+
 
                                         </Link>
                                         <Collapse
@@ -182,7 +118,7 @@ const VerticalLayout = (props: any) => {
                                                                         <span className={"badge badge-pill bg-" + subItem.badgeColor} data-key="t-new">{subItem.badgeName}</span>
                                                                         : null}
                                                                 </Link>
-                                                                <Collapse className="menu-dropdown" isOpen={subItem.stateVariables} id="sidebarEcommerce">
+                                                                <Collapse className="menu-dropdown" isOpen={subItem.stateVariables} >
                                                                     <ul className="nav nav-sm flex-column">
                                                                         {/* child subItms  */}
                                                                         {subItem.childItems && (

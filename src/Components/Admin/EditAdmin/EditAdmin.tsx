@@ -84,6 +84,18 @@ const EditAdmin = ({ t }: any) => {
             {
                 label: "Branş Sil",
                 value: Permission.BRANCH_DELETE
+            },
+            {
+                label: "Dönem Ekle",
+                value: Permission.SEMESTER_ADD
+            },
+            {
+                label: "Dönem Düzenle",
+                value: Permission.SEMESTER_EDIT,
+            },
+            {
+                label: "Dönem Sil",
+                value: Permission.SEMESTER_DELETE
             }
         ]
 
@@ -109,7 +121,7 @@ const EditAdmin = ({ t }: any) => {
             const formatBirthDate = new Date(birthDate).toISOString().split('T')[0];
             formik.setFieldValue('birthDate', formatBirthDate);
             formik.setFieldValue("branch", branch?.name)
-            console.log("permm ==>",permission)
+            console.log("permm ==>", permission)
             formik.setFieldValue("permission", [...permission.map(item => {
                 return {
                     label: permissionOptions.find(el => el.value == item)?.label,

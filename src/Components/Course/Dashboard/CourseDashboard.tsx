@@ -16,6 +16,7 @@ import { Col, PaginationItem, PaginationLink, Row, Pagination as PageList, Input
 import { toast } from 'react-toastify';
 import useUserStore from '../../../zustand/useUserStore';
 import { Permission } from '../../../common/constants/PermissionList';
+import { FaUser } from 'react-icons/fa';
 
 
 
@@ -141,8 +142,10 @@ const CourseDashboard = () => {
                                                 {item.title}
                                             </h5>
 
-                                            <p className='test_quota'>
-                                                {item.quota}
+                                            <p className='test_quota' style={{ display: "flex", alignItems: "center" }} >
+                                                <FaUser /> <span style={{marginLeft:"3px"}} >
+                                                    {item.quota}
+                                                </span>
                                             </p>
                                         </div>
                                         <div className='test_footer'>
