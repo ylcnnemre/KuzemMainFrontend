@@ -129,7 +129,7 @@ const DetailCourse = () => {
     const courseJoinControl = useMemo(() => {
         console.log("user==>", user)
         console.log("courseDetail ==>", courseDetailData)
-        return courseDetailData?.joinUserList.map(el => el?._id).includes(user._id)
+        return courseDetailData?.joinUserList?.map(el => el?._id).includes(user._id)
     }, [user, courseDetailData?.joinUserList])
 
 
@@ -281,39 +281,49 @@ const DetailCourse = () => {
                 </Nav>
                 <TabContent activeTab={activeTab} style={{ paddingTop: "20px" }} className="tab_content" >
                     <TabPane tabId={1}>
-                        <Swiper className="swiper_container" slidesPerView={3} grid={{ rows: 1 }} spaceBetween={30} pagination={{ clickable: true }} modules={[Grid]} >
-                            {
-                                documentList?.map((el) => {
-                                    return (
-                                        <SwiperSlide className="document_slide">
-                                            <div className="document_section">
-                                                <div className="document_section_container">
-                                                    <FaRegFilePdf style={{ fontSize: "52px" }} />
-                                                    <div className="document_section_content">
-                                                        <p className="document_name">
-                                                            <span>İsim :</span> {el.name.split("-")[0]}
-                                                        </p>
-                                                        <TfiZoomIn className="zoom_icon" />
+                        {
+                            documentList?.length !== 0 ? (
+                                <Swiper className="swiper_container" slidesPerView={3} grid={{ rows: 1 }} spaceBetween={30} pagination={{ clickable: true }} modules={[Grid]} >
+                                    {
+                                        documentList?.map((el) => {
+                                            return (
+                                                <SwiperSlide className="document_slide">
+                                                    <div className="document_section">
+                                                        <div className="document_section_container">
+                                                            <FaRegFilePdf style={{ fontSize: "52px" }} />
+                                                            <div className="document_section_content">
+                                                                <p className="document_name">
+                                                                    <span>İsim :</span> {el.name.split("-")[0]}
+                                                                </p>
+                                                                <TfiZoomIn className="zoom_icon" />
+
+                                                            </div>
+                                                        </div>
+                                                        <div className="delete_btn_container">
+                                                            <div>
+                                                                <Button size="sm" className="delete_btn" color="primary" style={{ marginRight: "10px" }} onClick={() => {
+                                                                    openFile(el.path)
+                                                                }} >
+                                                                    İncele
+                                                                </Button>
+                                                            </div>
+                                                        </div>
 
                                                     </div>
-                                                </div>
-                                                <div className="delete_btn_container">
-                                                    <div>
-                                                        <Button size="sm" className="delete_btn" color="primary" style={{ marginRight: "10px" }} onClick={() => {
-                                                            openFile(el.path)
-                                                        }} >
-                                                            İncele
-                                                        </Button>
-                                                    </div>
-                                                </div>
+                                                </SwiperSlide>
+                                            )
+                                        })
+                                    }
 
-                                            </div>
-                                        </SwiperSlide>
-                                    )
-                                })
-                            }
-
-                        </Swiper>
+                                </Swiper>
+                            ) : (
+                                <div style={{ height: "300px", display: "flex", justifyContent: "start" }} >
+                                    <h5 style={{textTransform:"capitalize"}}>
+                                        herhangi bir döküman yok
+                                    </h5>
+                                </div>
+                            )
+                        }
                     </TabPane>
                     <TabPane tabId={2}>
                         <h1>
@@ -332,7 +342,7 @@ const DetailCourse = () => {
                     </TabPane>
                 </TabContent>
             </Col>
-        </Row>
+        </Row >
     )
 }
 

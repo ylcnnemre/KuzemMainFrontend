@@ -18,6 +18,7 @@ const EditCourseDocumentTab: FC<{ documentList: ICourseType["files"], setDocumen
     };
     const deleteDocument = async (item: IFiles) => {
         try {
+
             await deleteDocumentApi({
                 courseId: id as string,
                 documentId: item._id,

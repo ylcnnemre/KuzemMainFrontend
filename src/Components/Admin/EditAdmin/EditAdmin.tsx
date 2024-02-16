@@ -62,18 +62,6 @@ const EditAdmin = ({ t }: any) => {
                 value: Permission.COURSE_ADD
             },
             {
-                label: "Admin Düzenle",
-                value: Permission.ADMIN_EDIT
-            },
-            {
-                label: "Admin Sİl",
-                value: Permission.ADMIN_DELETE
-            },
-            {
-                label: "Admin Ekle",
-                value: Permission.ADMIN_ADD
-            },
-            {
                 label: "Branş Düzenle",
                 value: Permission.BRANCH_EDIT
             },

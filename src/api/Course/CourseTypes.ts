@@ -1,7 +1,16 @@
+import { IUserData } from "../User/UserType"
 
 export interface ICourseType {
     _id: string
-    branch: any
+    branch: {
+        _id: string
+        name: string
+        description: string
+        createdBy: any
+        updatedBy: any
+        createdAt: string
+        updatedAt: string
+    },
     createdAt: string
     updatedAt: string
     description: string
@@ -10,7 +19,7 @@ export interface ICourseType {
     files: Array<IFiles>
     quota: number
     startDate: string
-    teacher: any
+    teacher: IUserData
     title: string
     semester: {
         active: boolean,
@@ -23,7 +32,7 @@ export interface ICourseType {
         updatedAt: string
     },
     active: "aktif" | "pasif"
-    joinUserList: any[]
+    joinUserList?: any[]
 }
 
 export interface ICourseUpdateType {

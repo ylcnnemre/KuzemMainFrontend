@@ -15,7 +15,9 @@ const Index = () => {
     const { user: { role, permission } } = useUserStore()
 
     return (
-        <React.Suspense fallback={<PropagateLoader color='red' style={{color:"red"}} />}  >
+        <React.Suspense fallback={<div style={{position:"absolute",right:"50%",left:"50%",top:"50%" }} >
+            <PropagateLoader color='yellow' />
+        </div>}  >
             <ToastContainer />
             <Routes>
 
@@ -48,7 +50,7 @@ const Index = () => {
                                 />
                             )
                         }
-                      
+
                     })}
                 </Route>
             </Routes>

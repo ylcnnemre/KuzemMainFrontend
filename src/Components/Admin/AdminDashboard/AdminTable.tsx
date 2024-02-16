@@ -1,4 +1,4 @@
-import { ColumnFiltersState, flexRender, getCoreRowModel, getFilteredRowModel, getPaginationRowModel, getSortedRowModel, useReactTable } from '@tanstack/react-table';
+import { ColumnDef, ColumnFiltersState, flexRender, getCoreRowModel, getFilteredRowModel, getPaginationRowModel, getSortedRowModel, useReactTable } from '@tanstack/react-table';
 import React, { FC, useMemo, useState } from 'react'
 import { BsTrash } from 'react-icons/bs';
 import { FiEdit } from 'react-icons/fi';
@@ -13,133 +13,139 @@ const AdminTable: FC<{ adminData: IUserData[] }> = ({ adminData }) => {
     const [globalFilter, setGlobalFilter] = useState<string>('');
     const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
     const navigate = useNavigate()
-    const { user: { permission } } = useUserStore()
+    const { user: { permission, role } } = useUserStore()
 
-    const columns = useMemo(() => [
-        {
-            header: "#",
-            accessorKey: "profileImg",
-            enableColumnFilter: false,
-            cell: (cell: any) => {
-                const imgUrl = cell.getValue() ? `${import.meta.env.VITE_BASEURL}${cell.getValue().path}` : aykut
-                return (
-                    <div className="d-flex align-items-center">
-                        <img src={imgUrl} style={{ width: "40px", height: "40px", borderRadius: "50%" }} alt="" />
-                    </div>
-                )
+    const columns = useMemo(() => {
+        const columnArray: ColumnDef<any>[] = [
+            {
+                header: "#",
+                accessorKey: "profileImg",
+                enableColumnFilter: false,
+                cell: (cell: any) => {
+                    const imgUrl = cell.getValue() ? `${import.meta.env.VITE_BASEURL}${cell.getValue().path}` : aykut
+                    return (
+                        <div className="d-flex align-items-center">
+                            <img src={imgUrl} style={{ width: "40px", height: "40px", borderRadius: "50%" }} alt="" />
+                        </div>
+                    )
+                },
             },
-        },
-        {
-            header: "İsim",
-            accessorKey: "name",
-            enableColumnFilter: false,
-            cell: (cell: any) => {
-                return (
-                    <div className="d-flex align-items-center">
-                        <h5 className="fs-14 mb-1" style={{ textTransform: "capitalize" }} >
-                            {cell.getValue()}
-                        </h5>
-                    </div>
-                )
+            {
+                header: "İsim",
+                accessorKey: "name",
+                enableColumnFilter: false,
+                cell: (cell: any) => {
+                    return (
+                        <div className="d-flex align-items-center">
+                            <h5 className="fs-14 mb-1" style={{ textTransform: "capitalize" }} >
+                                {cell.getValue()}
+                            </h5>
+                        </div>
+                    )
+                },
             },
-        },
-        {
-            header: "Soyisim",
-            accessorKey: "surname",
-            enableColumnFilter: false,
-            cell: (cell: any) => (
-                <>
-                    <div className="d-flex align-items-center">
+            {
+                header: "Soyisim",
+                accessorKey: "surname",
+                enableColumnFilter: false,
+                cell: (cell: any) => (
+                    <>
+                        <div className="d-flex align-items-center">
 
-                        <h5 className="fs-14 mb-1" style={{ textTransform: "capitalize" }} >
-                            {cell.getValue()}
-                        </h5>
+                            <h5 className="fs-14 mb-1" style={{ textTransform: "capitalize" }} >
+                                {cell.getValue()}
+                            </h5>
 
-                    </div>
-                </>
-            ),
-        },
-        {
-            header: "Email",
-            accessorKey: "email",
-            enableColumnFilter: false,
-            cell: (cell: any) => (
-                <>
-                    <div className="d-flex align-items-center">
-
-                        <h5 className="fs-14 mb-1">
-                            {cell.getValue()}
-                        </h5>
-
-                    </div>
-                </>
-            ),
-        },
-        {
-            header: "Tc No",
-            accessorKey: "tcNo",
-            enableColumnFilter: false,
-        },
-        {
-            header: "Cinsiyet",
-            accessorKey: "gender",
-            enableColumnFilter: false,
-        },
-        {
-            header: "Doğum Tarihi",
-            accessorKey: "birthDate",
-            enableColumnFilter: false,
-            cell: (cell) => (
-                <>
-                    <div className="d-flex align-items-center">
-
-                        <h5 className="fs-14 mb-1">
-                            {new Date(cell.getValue()).toLocaleDateString()}
-                        </h5>
-
-                    </div>
-                </>
-            ),
-        },
-        {
-            header: "Telefon",
-            accessorKey: "phone",
-            enableColumnFilter: false,
-            cell: (cell: any) => {
-                return <p>
-                    {cell.getValue()}
-                </p>
+                        </div>
+                    </>
+                ),
             },
-        },
-        {
-            header: "Action",
-            accessorKey: "_id",
-            cell: (cell: any) => {
+            {
+                header: "Email",
+                accessorKey: "email",
+                enableColumnFilter: false,
+                cell: (cell: any) => (
+                    <>
+                        <div className="d-flex align-items-center">
 
-                return (
-                    <div>
-                        {
-                            permission.includes(Permission.ADMIN_DELETE) && (
-                                <Button color='danger' style={{ marginRight: "30px" }}>
-                                    <BsTrash />
-                                </Button>
-                            )
-                        }
-                        {
-                            permission.includes(Permission.ADMIN_EDIT) && (
-                                <Button color='warning' onClick={() => {
-                                    navigate(`/admin/${cell.getValue()}`)
-                                }} >
-                                    <FiEdit />
-                                </Button>
-                            )
-                        }
-                    </div>
-                )
+                            <h5 className="fs-14 mb-1">
+                                {cell.getValue()}
+                            </h5>
 
+                        </div>
+                    </>
+                ),
             },
-        },
-    ],
+            {
+                header: "Tc No",
+                accessorKey: "tcNo",
+                enableColumnFilter: false,
+            },
+            {
+                header: "Cinsiyet",
+                accessorKey: "gender",
+                enableColumnFilter: false,
+            },
+            {
+                header: "Doğum Tarihi",
+                accessorKey: "birthDate",
+                enableColumnFilter: false,
+                cell: (cell: any) => (
+                    <>
+                        <div className="d-flex align-items-center">
+
+                            <h5 className="fs-14 mb-1">
+                                {new Date(cell.getValue()).toLocaleDateString()}
+                            </h5>
+
+                        </div>
+                    </>
+                ),
+            },
+            {
+                header: "Telefon",
+                accessorKey: "phone",
+                enableColumnFilter: false,
+                cell: (cell: any) => {
+                    return <p>
+                        {cell.getValue()}
+                    </p>
+                },
+            },
+
+        ]
+        if (role == "superadmin") {
+            columnArray.push({
+                header: "Action",
+                accessorKey: "_id",
+                cell: (cell: any) => {
+
+                    return (
+                        <div>
+                            {
+                                permission.includes(Permission.ADMIN_DELETE) && (
+                                    <Button color='danger' style={{ marginRight: "30px" }}>
+                                        <BsTrash />
+                                    </Button>
+                                )
+                            }
+                            {
+                                permission.includes(Permission.ADMIN_EDIT) && (
+                                    <Button color='warning' onClick={() => {
+                                        navigate(`/admin/${cell.getValue()}`)
+                                    }} >
+                                        <FiEdit />
+                                    </Button>
+                                )
+                            }
+                        </div>
+                    )
+
+                },
+            })
+        }
+        return columnArray
+    },
         []
     );
 
@@ -166,16 +172,21 @@ const AdminTable: FC<{ adminData: IUserData[] }> = ({ adminData }) => {
         getPaginationRowModel: getPaginationRowModel(),
         getSortedRowModel: getSortedRowModel()
     });
+
+    const roleControl = useMemo(() => {
+        return role == "superadmin"
+    }, [role])
+
     return (
         <div className="">
 
-            <div className="d-flex my-3 border border-dashed" >
+            <div className={`d-flex my-3 ${role == "superadmin" ? "border border-dashed" : ""} `} >
 
                 <input placeholder="ara" className="form-control" style={{ width: "max-content" }} onChange={e => {
                     setGlobalFilter(e.target.value)
                 }} />
                 {
-                    permission.includes(Permission.ADMIN_ADD) && (
+                    roleControl && (
                         <div className="col-sm-auto ms-auto">
                             <Link
                                 to="/admin/ekle"

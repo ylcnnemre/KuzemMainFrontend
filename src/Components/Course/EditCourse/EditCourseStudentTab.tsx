@@ -1,21 +1,24 @@
 import { ColumnFiltersState, flexRender, getCoreRowModel, getFilteredRowModel, getPaginationRowModel, getSortedRowModel, useReactTable } from '@tanstack/react-table';
 import React, { FC, useMemo, useState } from 'react'
 import { BsTrash } from 'react-icons/bs';
-import { FiEdit } from 'react-icons/fi';
+import { FiEdit, FiUser } from 'react-icons/fi';
 import { Button, Table } from 'reactstrap';
 import aykut from "../../../assets/images/aykut.jpg"
 import { deleteEnrollerUserApi } from '../../../api/Course/courseApi';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { ICourseType } from '../../../api/Course/CourseTypes';
 const EditCourseStudentTab: FC<{ userList: ICourseType, setUserList: Function }> = ({ userList, setUserList }) => {
     const [globalFilter, setGlobalFilter] = useState<string>('');
     const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
     const { id } = useParams()
-
+    const navigate = useNavigate()
 
     const userData = useMemo(() => {
-        return userList.joinUserList.filter(item => item != null || item != undefined)
+        if (userList) {
+            return userList.joinUserList?.filter(item => item != null || item != undefined)
+        }
+
     }, [userList])
 
     console.log("userData ==>", userData)
@@ -25,10 +28,10 @@ const EditCourseStudentTab: FC<{ userList: ICourseType, setUserList: Function }>
             accessorKey: "profileImg",
             enableColumnFilter: false,
             cell: (cell: any) => {
-                 const imgUrl = cell.getValue() ? `${import.meta.env.VITE_BASEURL}${cell.getValue()?.path}` : aykut 
+                const imgUrl = cell.getValue() ? `${import.meta.env.VITE_BASEURL}${cell.getValue()?.path}` : aykut
                 return (
                     <div className="d-flex align-items-center">
-                         <img src={imgUrl} style={{ width: "40px", height: "40px", borderRadius: "50%" }} alt="" />
+                        <img src={imgUrl} style={{ width: "40px", height: "40px", borderRadius: "50%" }} alt="" />
                     </div>
                 )
             },
@@ -128,7 +131,7 @@ const EditCourseStudentTab: FC<{ userList: ICourseType, setUserList: Function }>
                                 await deleteEnrollerUserApi({ userId: cell.getValue(), courseId: id as string })
                                 setUserList({
                                     ...userList,
-                                    joinUserList: userList.joinUserList.filter(el => el._id !== cell.getValue())
+                                    joinUserList: userList.joinUserList?.filter(el => el._id !== cell.getValue())
                                 })
 
                                 toast.success("kullanıcı kurstan silindi", {
@@ -144,6 +147,11 @@ const EditCourseStudentTab: FC<{ userList: ICourseType, setUserList: Function }>
                         }} >
                             <BsTrash />
                         </Button>
+                        <Button color='warning' style={{ marginRight: "30px" }}  >
+                            <FiEdit onClick={() => {
+                                navigate(`/ogrenci/${cell.getValue()}`)
+                            }} />
+                        </Button>
                     </div>
                 )
 
@@ -156,7 +164,7 @@ const EditCourseStudentTab: FC<{ userList: ICourseType, setUserList: Function }>
 
 
     const table = useReactTable({
-        data: userData,
+        data: userData ?? [],
         columns,
         getCoreRowModel: getCoreRowModel(),
         state: {
@@ -178,12 +186,14 @@ const EditCourseStudentTab: FC<{ userList: ICourseType, setUserList: Function }>
 
     return (
         <div className="">
-            <div className="d-flex my-3 " >
+            <div className="d-flex my-3 justify-content-between align-items-center" >
 
                 <input placeholder="ara" className="form-control" style={{ width: "max-content" }} onChange={e => {
                     setGlobalFilter(e.target.value)
                 }} />
-
+                <p  style={{ color: "white" , backgroundColor:"green",padding:"4px 10px", borderRadius:"10px" }}    >
+                    Toplam: {userData?.length}
+                </p>
             </div>
             <div className={"table-responsive mb-1"}>
                 <Table hover className={"mb-0 align-middle table-borderless"}>

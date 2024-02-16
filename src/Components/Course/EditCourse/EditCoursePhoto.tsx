@@ -14,6 +14,13 @@ const EditCoursePhoto: FC<{ photoList: any[], setPhotoList: Function }> = ({ pho
     const { id } = useParams()
     const deletePhoto = async (item: IFiles) => {
         try {
+            if (photoList.length == 1) {
+                toast.error("en az bir adet fotoğraf olmalı",{
+                    autoClose : 1000
+                })
+                return;
+            }
+
             await deletePhotoApi({
                 courseId: id as string,
                 imgName: item.name,

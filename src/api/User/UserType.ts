@@ -1,5 +1,6 @@
 import { Permission } from "../../common/constants/PermissionList"
 import { IBranch } from "../Branch/BranchType"
+import { ICourseType } from "../Course/CourseTypes"
 
 
 export interface IJwtDecode {
@@ -7,7 +8,7 @@ export interface IJwtDecode {
     name: string,
     surname: string
     email: string
-    role: "student" | "teacher" | "admin"
+    role: "student" | "teacher" | "admin" | "superadmin"
     permission: Permission[]
     iat: string
     exp: string
@@ -78,4 +79,13 @@ export interface IUpdateUserType {
         additionalInfo: string
     },
     permission?: string[]
+}
+
+
+export interface IUserCourseResponse {  // öğrencinin aldığı kursları tanımlayan interface
+    _id: string
+    user: string
+    course: ICourseType
+    createdAt: string
+    updatedAt: string
 }

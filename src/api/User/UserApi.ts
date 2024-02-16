@@ -1,6 +1,6 @@
-import { AxiosResponse } from "axios"
+import axios, { AxiosResponse } from "axios"
 import { axiosInstance } from "../AxiosInstance"
-import { ICreateUserType, IUpdateUserType, IUserData } from "./UserType"
+import { ICreateUserType, IUpdateUserType, IUserCourseResponse, IUserData } from "./UserType"
 
 const createUserApi = (data: ICreateUserType) => axiosInstance.post("/user/register", data)
 
@@ -18,6 +18,9 @@ const getStudentListApi = (): Promise<AxiosResponse<IUserData[]>> => axiosInstan
 
 const getAdminListApi = () => axiosInstance.get("/user/all/admin")
 
+const getStudentCourseApi = (id: string): Promise<AxiosResponse<IUserCourseResponse[]>> => axiosInstance.get(`/user/enrollmentcourse/${id}`) //öğrencinin katıldığı kursları getirir
+
+
 export {
     getUserByIdApi,
     uploadProfileImgApi,
@@ -26,5 +29,6 @@ export {
     createUserApi,
     deleteUserApi,
     getStudentListApi,
-    getAdminListApi
+    getAdminListApi,
+    getStudentCourseApi
 }
