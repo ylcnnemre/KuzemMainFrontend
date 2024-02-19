@@ -1,5 +1,116 @@
-.photo_list{
+.photo_list {
     display: grid;
     grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
     row-gap: 15px;
+}
+
+.ant-steps-item-title {
+    color: #4788FF !important;
+
+    &::after {
+        background-color: #4788FF !important;
+    }
+}
+
+
+.ant-steps-item-icon {
+    background-color: #4788FF !important;
+    border: none !important;
+
+    .ant-steps-icon {
+        color: white !important;
+    }
+}
+
+.custom-time-picker {
+    background-color: #061E39 !important;
+    border-color: #2A4562;
+    height: 100%;
+    width: 100%;
+    padding-top: 8px;
+    padding-bottom: 8px;
+
+    &:hover {
+        background-color: #061E39;
+    }
+
+    .ant-picker-input {
+        color: white;
+    }
+
+    .anticon-clock-circle {
+        color: white;
+    }
+}
+
+.custom-time-picker .ant-picker-input input::placeholder {
+    color: white;
+    /* Değiştirmek istediğiniz placeholder rengi */
+}
+
+.swiper_add_course_container {
+    margin: 20px 0;
+
+    .course_photo_img {
+        max-height: 200px;
+        width: 90%;
+        border-radius: 20px;
+    }
+
+}
+
+.addCoursePhoto_bottom {
+    display: flex;
+    justify-content: space-between;
+}
+
+.add_course_document {
+
+
+    .document_slide {
+        border-radius: 20px;
+        padding: 20px;
+        background-color: rgba(gray, .2);
+    }
+
+    &_bottom {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+}
+
+
+.program_card {
+    display: flex;
+    flex-direction: column;
+    background-color: rgba(#061E39, $alpha: .8);
+    border-radius: 20px;
+    padding: 10px 20px;
+    position: relative;
+    &_header{   
+        display: flex;
+        align-items: center;
+        margin-bottom: 15px;
+    }
+
+    &_footer{
+        display: flex;
+        justify-content: space-between;
+    }
+
+    .program_card_close_icon{
+        position: absolute;
+        right: 0;
+        top: 0;
+        background-color: white;
+        border-radius: 50%;
+        font-size: 20px;
+        padding: 4px;
+        cursor: pointer;
+        transition: .5s all;
+        &:hover{
+            opacity: .7;
+        }
+    }
 }
