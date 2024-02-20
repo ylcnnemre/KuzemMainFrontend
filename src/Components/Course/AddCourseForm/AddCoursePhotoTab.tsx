@@ -8,6 +8,7 @@ import "swiper/css/navigation";
 import "swiper/css/scrollbar";
 import "swiper/css/effect-fade";
 import "swiper/css/effect-flip";
+import { toast } from 'react-toastify';
 const AddCoursePhotoTab: FC<{ setCurrent: any, selectedImageFiles: any[], handleCourseImageChange: any }> = ({ setCurrent, selectedImageFiles, handleCourseImageChange }) => {
 
     return (
@@ -31,18 +32,26 @@ const AddCoursePhotoTab: FC<{ setCurrent: any, selectedImageFiles: any[], handle
             <div className='addCoursePhoto_bottom'>
                 <div>
                     <Button className='btn btn-warning' style={{ marginRight: "10px" }} onClick={() => {
-                        setCurrent(0)
+                        setCurrent(1)
                     }}>
                         geri
                     </Button>
                     <Button onClick={() => {
-                        setCurrent(2)
+                        if (selectedImageFiles.length == 0) {
+                            toast.error("en az bir adet fotoğraf seçilmeli", {
+                                autoClose: 1000
+                            })
+                        }
+                        else {
+                            setCurrent(3)
+                        }
+
                     }}>
                         ileri
                     </Button>
                 </div>
                 <p>
-                    Seçilen Dosya Sayısı : <strong style={{color:"yellow"}} >{selectedImageFiles.length}</strong>
+                    Seçilen Dosya Sayısı : <strong style={{ color: "yellow" }} >{selectedImageFiles.length}</strong>
                 </p>
             </div>
         </div>

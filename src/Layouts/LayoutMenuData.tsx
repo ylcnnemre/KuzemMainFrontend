@@ -9,7 +9,10 @@ import { Permission } from "../common/constants/PermissionList";
 import { IoCalendarOutline } from "react-icons/io5";
 
 const Navdata = () => {
-    const [isDashboard, setIsDashboard] = useState(false);
+    const [isOpen, setIsOpen] = useState({
+        dashboard: false,
+        course: false
+    });
     const [iscurrentState, setIscurrentState] = useState('Dashboard');
 
     const menuItems: any = [
@@ -19,22 +22,24 @@ const Navdata = () => {
             icon: <MdOutlineDashboard />,
             link: "/anasayfa",
             permission: Permission.all,
-            stateVariables: isDashboard,
+            stateVariables: isOpen.dashboard,
             click: function (e: any) {
                 console.log("selamm ", e)
                 e.preventDefault();
-                setIsDashboard(!isDashboard);
-                setIscurrentState('Dashboard');
-         
+                setIsOpen({
+                    ...isOpen,
+                    dashboard: true
+                });
+
             },
-             subItems: [
-                 {
-                     id: "analytics",
-                     label: "Analytics",
-                     link: "/dashboard-analytics",
-                     parentId: "dashboard",
-                 },
-             ],
+            /* subItems: [
+                {
+                    id: "analytics",
+                    label: "Analytics",
+                    link: "/dashboard-analytics",
+                    parentId: "dashboard",
+                },
+            ], */
         },
         {
             id: "Eğitmen",
@@ -61,7 +66,7 @@ const Navdata = () => {
             id: "Donem",
             label: "Dönemler",
             link: "/donem",
-            permission: Permission.all,
+            permission: Permission.SEMESTER_SHOW,
             icon: <IoCalendarOutline />
         },
         {
@@ -69,7 +74,23 @@ const Navdata = () => {
             label: "Kurslar",
             link: "/kurs",
             permission: Permission.COURSE_SHOW,
-            icon: <MdCastForEducation />
+            stateVariables: isOpen.course,
+            icon: <MdCastForEducation />,
+            click: function (e: any) {
+                e.preventDefault();
+                setIsOpen({
+                    ...isOpen,
+                    course: !isOpen.course
+                })
+            },
+            subItems: [
+                {
+                    id: "analytics",
+                    label: "Aktif Kurslar",
+                    link: "/kurs",
+                    parentId: "Kurslar",
+                },
+            ],
         },
         {
             id: "Ogrenci",

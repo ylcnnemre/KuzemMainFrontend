@@ -7,8 +7,9 @@ import { Swiper, SwiperSlide } from 'swiper/react';
 import { createCourseApi } from '../../../api/Course/courseApi';
 import { toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
+import { IProgram } from './AddCourseForm';
 
-const AddCourseDocumentTab: FC<{ setCurrent: any, handleCourseDocument: any, selectedDocumentFiles: any[], formik: any, selectedImageFiles: any[] }> = ({ handleCourseDocument, selectedDocumentFiles, formik, selectedImageFiles, setCurrent }) => {
+const AddCourseDocumentTab: FC<{ programList: IProgram[], setCurrent: any, handleCourseDocument: any, selectedDocumentFiles: any[], formik: any, selectedImageFiles: any[] }> = ({ handleCourseDocument, selectedDocumentFiles, formik, selectedImageFiles, setCurrent, programList }) => {
 
   const navigate = useNavigate()
   const extensionIcon = (mimeType: string) => {
@@ -36,19 +37,23 @@ const AddCourseDocumentTab: FC<{ setCurrent: any, handleCourseDocument: any, sel
       formData.append("files[]", item, `courseDocument-ctype-${item.name}`)
     })
 
-    try {
-      let response = await createCourseApi(formData)
-      toast.success(response.data.msg, {
-        autoClose: 1500
-      })
-      formik.resetForm()
-      navigate("/kurs")
-    }
-    catch (err: any) {
-      toast.error(err.response.data.message, {
-        autoClose: 1500
-      })
-    }
+    programList.forEach((el) => {
+      formData.append("program", JSON.stringify(el))
+    })
+    console.log("formData ==>=", formData.get("program"))
+     try {
+       let response = await createCourseApi(formData)
+       toast.success(response.data.msg, {
+         autoClose: 1500
+       })
+       formik.resetForm()
+       navigate("/kurs")
+     }
+     catch (err: any) {
+       toast.error(err.response.data.message, {
+         autoClose: 1500
+       })
+     }
 
   }
 
@@ -75,7 +80,7 @@ const AddCourseDocumentTab: FC<{ setCurrent: any, handleCourseDocument: any, sel
       </Swiper>
       <div className='add_course_document_bottom'>
         <Button onClick={() => {
-          setCurrent(1)
+          setCurrent(2)
         }} className='btn btn-warning'>
           Geri
         </Button>

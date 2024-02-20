@@ -7,7 +7,7 @@ import "swiper/css/navigation";
 import "swiper/css/scrollbar";
 import "swiper/css/effect-fade";
 import "swiper/css/effect-flip";
-import { getAllCourseApi } from '../../../api/Course/courseApi'
+import { getAllCourseByStatusApi } from '../../../api/Course/courseApi'
 import { ICourseType } from '../../../api/Course/CourseTypes'
 import { Swiper, SwiperSlide } from 'swiper/react'
 import { Autoplay, EffectCreative, EffectFade, Pagination } from 'swiper/modules'
@@ -17,6 +17,7 @@ import { toast } from 'react-toastify';
 import useUserStore from '../../../zustand/useUserStore';
 import { Permission } from '../../../common/constants/PermissionList';
 import { FaUser } from 'react-icons/fa';
+import { Select } from 'antd';
 
 
 
@@ -27,14 +28,15 @@ const CourseDashboard = () => {
     const [temp2, setTemp2] = useState<ICourseType[]>([])
     const [loading, setLoading] = useState<boolean>(false)
     const [currentPage, setCurrentPage] = useState(1);
-    const { user: { permission } } = useUserStore()
+    const [active, setActive] = useState<"aktif" | "pasif">("aktif")
+    const { user: { permission, role } } = useUserStore()
     const navigate = useNavigate()
-
-    const getCourseList = async () => {
+   
+    const getCourseList = async (status: "aktif" | "pasif") => {
         try {
             setLoading(true)
             const testList = []
-            const response = await getAllCourseApi()
+            const response = await getAllCourseByStatusApi(status)
             console.log("responseCoursee ==>", response)
             for (let item = 0; item < 5; item++) {
                 testList.push(...response.data.map(el => {
@@ -61,7 +63,7 @@ const CourseDashboard = () => {
     }
 
     useEffect(() => {
-        getCourseList()
+        getCourseList("aktif")
     }, [])
 
 
@@ -93,21 +95,46 @@ const CourseDashboard = () => {
         let res = sliceData(result, currentPage)
         setTempData(res)
         setTemp2(result)
-        let pagev = Array.from({ length: result.length / 8 }, (_, index) => index + 1)
         setPageNumbers(divideChunks(result.length))
+    }
+
+    const activePassiveOnChange = (element: any) => {
+        getCourseList(element)
+        setActive(element)
     }
 
     const permissionControl = useMemo(() => {
         return permission.includes(Permission.COURSE_ADD)
     }, [permission])
 
+
+    const roleControl = useMemo(() => {
+        return role == "admin" || role == "superadmin"
+    }, [role])
+
+
     if (loading) {
-        return <CircleLoader />
+        return <div style={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100%" }}>
+            <CircleLoader color='#FFCE02' />
+        </div>
     }
     return (
         <div className='course_container mx-2 mt-2'>
             <div className='filter_section'  >
-                <Input placeholder='search' className='search_input' onChange={searchOnChange} />
+                <div style={{ display: "flex", alignItems: "center" }} >
+                    <Input placeholder='search' className='search_input' onChange={searchOnChange} />
+                    {
+                        roleControl && (
+                            <select className='form-control' value={active} style={{ marginLeft: "20px",paddingLeft:"30px",paddingRight:"30px"}} onChange={(e) => {
+                                activePassiveOnChange(e.target.value)
+                            }} >
+                                <option value="aktif">Aktif Kurslar</option>
+                                <option value="pasif">Pasif Kurslar</option>
+                            </select>
+                        )
+                    }
+                </div>
+
                 {
                     permissionControl && (
                         <Link className='btn btn-success px-4 py-1 brans_link' to={"/kurs/ekle"} >
@@ -143,7 +170,7 @@ const CourseDashboard = () => {
                                             </h5>
 
                                             <p className='test_quota' style={{ display: "flex", alignItems: "center" }} >
-                                                <FaUser /> <span style={{marginLeft:"3px"}} >
+                                                <FaUser /> <span style={{ marginLeft: "3px" }} >
                                                     {item.quota}
                                                 </span>
                                             </p>

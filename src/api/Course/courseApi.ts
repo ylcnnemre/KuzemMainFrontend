@@ -12,7 +12,7 @@ const createCourseApi = (data: FormData) => axiosInstance.post("/course/create",
 const updateCourseApi = (data: ICourseUpdateType) => axiosInstance.put("/course", data)
 
 
-const getAllCourseApi = (): Promise<AxiosResponse<ICourseType[]>> => axiosInstance.get("/course/all")
+const getAllCourseByStatusApi = (status: "aktif" | "pasif"): Promise<AxiosResponse<ICourseType[]>> => axiosInstance.get(`/course/all/${status}`)
 
 const getDetailCourseApi = (id: string): Promise<AxiosResponse<ICourseType>> => axiosInstance.get(`/course/${id}`)
 
@@ -43,7 +43,7 @@ const addDocumentApi = (data: FormData): Promise<AxiosResponse<{ _id: string, fi
 
 
 const deleteEnrollerUserApi = (data: { userId: string, courseId: string }) => axiosInstance.delete("/course/enrolleduser", {
-    data : {
+    data: {
         ...data
     }
 })
@@ -55,7 +55,7 @@ const joinCourseApi = (id: string) => axiosInstance.post(`/course/join/${id}`)
 export {
     createCourseApi,
     deleteEnrollerUserApi,
-    getAllCourseApi,
+    getAllCourseByStatusApi,
     getDetailCourseApi,
     deletePhotoApi,
     addPhotoApi,

@@ -127,8 +127,6 @@ const DetailCourse = () => {
     }, [user])
 
     const courseJoinControl = useMemo(() => {
-        console.log("user==>", user)
-        console.log("courseDetail ==>", courseDetailData)
         return courseDetailData?.joinUserList?.map(el => el?._id).includes(user._id)
     }, [user, courseDetailData?.joinUserList])
 
@@ -214,6 +212,7 @@ const DetailCourse = () => {
                                     <Col sm={12} >
                                         <DetailWidget icon={<TbFileDescription />} title='Açıklama' value={courseDetailData?.description} />
                                     </Col>
+
                                 </Row>
 
 
@@ -255,29 +254,10 @@ const DetailCourse = () => {
                                 setActiveTab(2)
                             }}
                         >
-                            Fotoğraflar
+                            Kurs Programı
                         </NavLink>
                     </NavItem>
-                    <NavItem>
-                        <NavLink
-                            className={`${activeTab == 3 && "active"}`}
-                            onClick={() => {
-                                setActiveTab(3)
-                            }}
-                        >
-                            Dökümanlar
-                        </NavLink>
-                    </NavItem>
-                    <NavItem>
-                        <NavLink
-                            className={`${activeTab == 4 && "active"}`}
-                            onClick={() => {
-                                setActiveTab(4)
-                            }}
-                        >
-                            Öğrenciler
-                        </NavLink>
-                    </NavItem>
+
                 </Nav>
                 <TabContent activeTab={activeTab} style={{ paddingTop: "20px" }} className="tab_content" >
                     <TabPane tabId={1}>
@@ -318,7 +298,7 @@ const DetailCourse = () => {
                                 </Swiper>
                             ) : (
                                 <div style={{ height: "300px", display: "flex", justifyContent: "start" }} >
-                                    <h5 style={{textTransform:"capitalize"}}>
+                                    <h5 style={{ textTransform: "capitalize" }}>
                                         herhangi bir döküman yok
                                     </h5>
                                 </div>
@@ -326,20 +306,30 @@ const DetailCourse = () => {
                         }
                     </TabPane>
                     <TabPane tabId={2}>
-                        <h1>
-                            asbasd
-                        </h1>
+                        <div className='schedule_card_container'>
+                            {
+                                courseDetailData?.schedules?.map((el, index) => {
+                                    return (
+                                        <div className='schedule_card' key={`${index}`} >
+                                            <p className='schedule_card_day'>
+                                                Gün : <span style={{ color: "#FFCE02" }} >{el.day}</span>
+                                            </p>
+                                            <div className='schedule_card_time'>
+                                                <p>
+                                                    Başlangıç : <span style={{ color: "#FFCE02" }}>{el.startTime}</span>
+                                                </p>
+                                                <p>
+                                                    Bitiş : <span style={{ color: "#FFCE02" }}>{el.endTime}</span>
+                                                </p>
+                                            </div>
+                                        </div>
+                                    )
+                                })
+                            }
+                        </div>
+
                     </TabPane>
-                    <TabPane tabId={3}>
-                        <h1>
-                            123123545
-                        </h1>
-                    </TabPane>
-                    <TabPane tabId={4}>
-                        <h1>
-                            asdasdadasd
-                        </h1>
-                    </TabPane>
+
                 </TabContent>
             </Col>
         </Row >

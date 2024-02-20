@@ -15,7 +15,7 @@ const Index = () => {
     const { user: { role, permission } } = useUserStore()
 
     return (
-        <React.Suspense fallback={<div style={{position:"absolute",right:"50%",left:"50%",top:"50%" }} >
+        <React.Suspense fallback={<div style={{ position: "absolute", right: "50%", left: "50%", top: "50%" }} >
             <PropagateLoader color='yellow' />
         </div>}  >
             <ToastContainer />
@@ -37,6 +37,7 @@ const Index = () => {
                 </Route>
 
                 <Route>
+
                     {authProtectedRoutes.map((route, idx: any) => {
                         if (permission.includes(route.permission) || route.permission == Permission.all) {
                             return (

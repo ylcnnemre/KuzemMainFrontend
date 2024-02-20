@@ -52,7 +52,7 @@ const authProtectedRoutes: Array<{ path: string, component: React.ReactNode, exa
   { path: "/kurs/ekle", component: <AddCoursePage />, permission: Permission.COURSE_ADD },
   { path: "/kurs/:id", component: <CourseDetailPage />, permission: Permission.all },
   { path: "/kurs/duzenle/:id", component: <EditCoursePage />, permission: Permission.COURSE_EDIT },
-  { path: "/donem", component: <SemesterPage />, permission: Permission.all },
+  { path: "/donem", component: <SemesterPage />, permission: Permission.SEMESTER_SHOW },
   { path: "/profil", component: <Settings />, permission: Permission.all },
   { path: "/pages-faqs", component: <Faqs />, permission: Permission.all },
   { path: "/test", component: <TestPage />, permission: Permission.all },

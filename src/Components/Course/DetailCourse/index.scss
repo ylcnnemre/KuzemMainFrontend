@@ -173,3 +173,27 @@
         }
     }
 }
+
+.schedule_card_container {
+    display: flex;
+    align-items: center;
+
+    .schedule_card {
+        display: flex;
+        flex-direction: column;
+        border: 1px dashed rgba($color: gray, $alpha: .7);
+        width: max-content;
+        padding: 10px 30px;
+        margin-right: 30px;
+        &_day {}
+
+        &_time {
+            display: flex;
+            align-items: center;
+            margin-top: 10px;
+            p:nth-child(1){
+                margin-right: 40px;
+            }
+        }
+    }
+}

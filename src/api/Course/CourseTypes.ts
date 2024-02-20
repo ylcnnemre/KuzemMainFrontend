@@ -14,7 +14,14 @@ export interface ICourseType {
     createdAt: string
     updatedAt: string
     description: string
-    schedule: any[]
+    schedules: {
+        day: string
+        endTime: string
+        startTime: string
+        createdAt: string
+        updatedAt: string
+        _id : string
+    }[]
     endDate: string
     files: Array<IFiles>
     quota: number

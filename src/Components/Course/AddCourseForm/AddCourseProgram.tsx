@@ -7,7 +7,7 @@ import { toast } from 'react-toastify'
 import { CgClose, CgViewDay } from 'react-icons/cg'
 import { BsCalendar2Day } from 'react-icons/bs'
 
-const AddCourseProgram: FC<{ programData: IProgram, setProgramData: React.Dispatch<React.SetStateAction<IProgram>>, programList: IProgram[], setProgramList: Function }> = ({ programData, programList, setProgramData, setProgramList }) => {
+const AddCourseProgram: FC<{ setCurrent: any, programData: IProgram, setProgramData: React.Dispatch<React.SetStateAction<IProgram>>, programList: IProgram[], setProgramList: Function }> = ({ programData, programList, setProgramData, setProgramList, setCurrent }) => {
 
 
     const dayList = useMemo(() => {
@@ -96,7 +96,7 @@ const AddCourseProgram: FC<{ programData: IProgram, setProgramData: React.Dispat
                             onChange={(e) => {
                                 setProgramData({
                                     ...programData,
-                                    startTime: `${e.hour()}:${e.minute()}`
+                                    startTime: `${e.hour()}:${e.minute().toString().padStart(2, "0")}`
                                 })
                             }}
 
@@ -115,7 +115,7 @@ const AddCourseProgram: FC<{ programData: IProgram, setProgramData: React.Dispat
                         <TimePicker className='custom-time-picker' onChange={(e) => {
                             setProgramData({
                                 ...programData,
-                                endTime: `${e.hour()}:${e.minute()}`
+                                endTime: `${e.hour()}:${e.minute().toString().padStart(2, "0")}`
                             })
 
                         }} allowClear={false} value={dayjs(programData.endTime, format)} format={format} />
@@ -140,7 +140,7 @@ const AddCourseProgram: FC<{ programData: IProgram, setProgramData: React.Dispat
 
                 </div>
             </Col>
-            <Col lg={12} style={{ marginTop: "30px" }} >
+            <Col lg={12} style={{ marginTop: "30px", marginBottom: "30px" }} >
                 <Row>
                     {
                         programList.map((el, index) => {
@@ -172,6 +172,26 @@ const AddCourseProgram: FC<{ programData: IProgram, setProgramData: React.Dispat
                         })
                     }
                 </Row>
+            </Col>
+            <Col style={{ display: "flex", justifyContent: "flex-end" }} >
+                <Button className='btn btn-warning me-4' onClick={() => {
+                    setCurrent(0)
+                }}  >
+                    Geri
+                </Button>
+                <Button className='btn btn-primary' onClick={() => {
+                    if (programList.length == 0) {
+                        toast.error("en az bir adet seçim yapılmalı", {
+                            autoClose: 1000
+                        })
+                    }
+                    else {
+                        setCurrent(2)
+                    }
+
+                }}  >
+                    İleri
+                </Button>
             </Col>
         </Row>
     )

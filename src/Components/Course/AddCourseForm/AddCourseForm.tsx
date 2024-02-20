@@ -185,7 +185,7 @@ const AddCourseForm = () => {
         }
         {
           current == 1 && (
-            <AddCourseProgram programData={programData} setProgramData={setProgramData} programList={programList} setProgramList={setProgramList} />
+            <AddCourseProgram setCurrent={setCurrent} programData={programData} setProgramData={setProgramData} programList={programList} setProgramList={setProgramList} />
           )
         }
         {
@@ -195,7 +195,7 @@ const AddCourseForm = () => {
         }
         {
           current == 3 && (
-            <AddCourseDocumentTab setCurrent={setCurrent} selectedImageFiles={selectedImageFiles} formik={formik} handleCourseDocument={handleCourseDocument} selectedDocumentFiles={selectedDocumentFiles} />
+            <AddCourseDocumentTab programList={programList} setCurrent={setCurrent} selectedImageFiles={selectedImageFiles} formik={formik} handleCourseDocument={handleCourseDocument} selectedDocumentFiles={selectedDocumentFiles} />
           )
         }
       </div>
