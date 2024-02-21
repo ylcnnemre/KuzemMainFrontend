@@ -25,6 +25,7 @@ export interface IUserData {
     tcNo: string
     birthDate: string,
     branch?: any
+    courses: ICourseType[],
     address?: {
         _id: string
         city: string

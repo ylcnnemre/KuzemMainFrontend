@@ -1,4 +1,4 @@
-import React, { useEffect, useCallback } from 'react';
+import React, { useEffect, useCallback, useMemo } from 'react';
 import { Link } from "react-router-dom";
 import withRouter from "../../Components/Common/withRouter";
 import { Collapse } from 'reactstrap';
@@ -60,11 +60,26 @@ const VerticalLayout = (props: any) => {
     }, [leftsidbarSizeType, sidebarVisibilitytype, layoutType]);
 
 
+    const permissionControl = (item: any) => {
+        return permission.includes(item.permission) || item.permission == "all"
+    }
+
+    const roleControl = (item: any) => {
+        if (!item.role) {
+            if (!item.isChildItem) {
+                return true
+            }
+            return false
+        }
+        else {
+            return item.role == role
+        }
+    }
 
     return (
         <React.Fragment>
             {(navData || []).map((item: any, key: any) => {
-                return permission.includes(item.permission) || item.permission == "all" ? (
+                return permissionControl(item) ? (
                     <React.Fragment key={key}>
                         {item['isHeader'] ?
                             <li className="menu-title"><span data-key="t-menu">{props.t(item.label)} </span></li>
@@ -84,7 +99,6 @@ const VerticalLayout = (props: any) => {
                                                 <IoIosArrowDown />
                                             </div>
 
-
                                         </Link>
                                         <Collapse
                                             className="menu-dropdown"
@@ -94,7 +108,7 @@ const VerticalLayout = (props: any) => {
                                                 {/* subItms  */}
                                                 {item.subItems && ((item.subItems || []).map((subItem: any, key: any) => (
                                                     <React.Fragment key={key}>
-                                                        {!subItem.isChildItem ? (
+                                                        {roleControl(subItem) ? (
                                                             <li className="nav-item">
                                                                 <Link
                                                                     to={subItem.link ? subItem.link : "/#"}
@@ -106,54 +120,7 @@ const VerticalLayout = (props: any) => {
                                                                         : null}
                                                                 </Link>
                                                             </li>
-                                                        ) : (
-                                                            <li className="nav-item">
-                                                                <Link
-                                                                    onClick={subItem.click}
-                                                                    className="nav-link"
-                                                                    to="/#"
-                                                                    data-bs-toggle="collapse"
-                                                                > {props.t(subItem.label)}
-                                                                    {subItem.badgeName ?
-                                                                        <span className={"badge badge-pill bg-" + subItem.badgeColor} data-key="t-new">{subItem.badgeName}</span>
-                                                                        : null}
-                                                                </Link>
-                                                                <Collapse className="menu-dropdown" isOpen={subItem.stateVariables} >
-                                                                    <ul className="nav nav-sm flex-column">
-                                                                        {/* child subItms  */}
-                                                                        {subItem.childItems && (
-                                                                            (subItem.childItems || []).map((childItem: any, key: any) => (
-                                                                                <React.Fragment key={key}>
-                                                                                    {!childItem.childItems ?
-                                                                                        <li className="nav-item">
-                                                                                            <Link
-                                                                                                to={childItem.link ? childItem.link : "/#"}
-                                                                                                className="nav-link">
-                                                                                                {props.t(childItem.label)}
-                                                                                            </Link>
-                                                                                        </li>
-                                                                                        : <li className="nav-item">
-                                                                                            <Link to="/#" className="nav-link" onClick={childItem.click} data-bs-toggle="collapse">
-                                                                                                {props.t(childItem.label)}
-                                                                                            </Link>
-                                                                                            <Collapse className="menu-dropdown" isOpen={childItem.stateVariables} id="sidebaremailTemplates">
-                                                                                                <ul className="nav nav-sm flex-column">
-                                                                                                    {childItem.childItems.map((subChildItem: any, key: any) => (
-                                                                                                        <li className="nav-item" key={key}>
-                                                                                                            <Link to={subChildItem.link} className="nav-link" data-key="t-basic-action">{props.t(subChildItem.label)} </Link>
-                                                                                                        </li>
-                                                                                                    ))}
-                                                                                                </ul>
-                                                                                            </Collapse>
-                                                                                        </li>
-                                                                                    }
-                                                                                </React.Fragment>
-                                                                            ))
-                                                                        )}
-                                                                    </ul>
-                                                                </Collapse>
-                                                            </li>
-                                                        )}
+                                                        ) : null}
                                                     </React.Fragment>
                                                 ))
                                                 )}

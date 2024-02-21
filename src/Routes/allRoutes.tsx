@@ -6,6 +6,10 @@ import AddAdminPage from "../pages/Admin/AddAdminPage";
 import { Permission } from "../common/constants/PermissionList";
 import EditAdminPage from "../pages/Admin/EditAdminPage";
 import SemesterPage from "../pages/Semester/SemesterPage";
+import MyCoursePage from "../pages/Course/MyCoursePage";
+import MyCourseDashboard from "../Components/Course/MyCourse/MyCourseDashboard";
+import { Role } from "../config/constant";
+import TeacherCourseDashboard from "../Components/Course/TeacherCourse/TeacherCourseDashboard";
 
 const Dashboard = lazy(() => import("../pages/Dashboard"));
 const Login = lazy(() => import("../pages/Authentication/Login"));
@@ -32,7 +36,7 @@ const EditStudentPage = lazy(() => import("../pages/Student/EditStudentPage"));
 
 type role = "admin" | "student" | "teacher" | "superadmin"
 
-const authProtectedRoutes: Array<{ path: string, component: React.ReactNode, exact?: boolean, permission: Permission }> = [
+const authProtectedRoutes: Array<{ path: string, component: React.ReactNode, exact?: boolean, permission: Permission, role?: Role[] }> = [
   { path: "/anasayfa", component: <Dashboard />, permission: Permission.all },
   { path: "/profile", component: <UserProfile />, permission: Permission.all },
   { path: "/brans", component: <BranchesPage />, permission: Permission.BRANCH_SHOW },
@@ -52,6 +56,8 @@ const authProtectedRoutes: Array<{ path: string, component: React.ReactNode, exa
   { path: "/kurs/ekle", component: <AddCoursePage />, permission: Permission.COURSE_ADD },
   { path: "/kurs/:id", component: <CourseDetailPage />, permission: Permission.all },
   { path: "/kurs/duzenle/:id", component: <EditCoursePage />, permission: Permission.COURSE_EDIT },
+  { path: "/kurslarim", component: <MyCourseDashboard />, permission: Permission.all },
+  { path: "/egitmen/kurs", component: <TeacherCourseDashboard />, permission: Permission.all, role: [Role.teacher] },
   { path: "/donem", component: <SemesterPage />, permission: Permission.SEMESTER_SHOW },
   { path: "/profil", component: <Settings />, permission: Permission.all },
   { path: "/pages-faqs", component: <Faqs />, permission: Permission.all },

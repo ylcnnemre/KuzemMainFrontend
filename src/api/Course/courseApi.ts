@@ -49,6 +49,7 @@ const deleteEnrollerUserApi = (data: { userId: string, courseId: string }) => ax
 })
 
 
+const courseTeacherListApi = (): Promise<AxiosResponse<ICourseType[]>> => axiosInstance.get("/course/teacher/list")
 
 const joinCourseApi = (id: string) => axiosInstance.post(`/course/join/${id}`)
 
@@ -62,5 +63,6 @@ export {
     deleteDocumentApi,
     addDocumentApi,
     updateCourseApi,
-    joinCourseApi
+    joinCourseApi,
+    courseTeacherListApi
 }

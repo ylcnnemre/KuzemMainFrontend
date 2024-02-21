@@ -1,0 +1,31 @@
+.program_card {
+    display: flex;
+    padding: 10px 15px;
+    border-radius: 10px;
+    background-color: rgba($color: gray, $alpha: .2);
+    flex-direction: column;
+
+    &_date {
+        display: flex;
+        justify-content: space-between;
+    }
+}
+
+.course_document_card {
+    background-color: rgba($color: cadetblue, $alpha: .4);
+    padding: 18px 20px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    transition: .5s all;
+    &:hover{
+        opacity: .7;
+    }
+    p{
+        color: whitesmoke ;
+    }
+    &_content{
+        flex-direction: column;
+    }
+}

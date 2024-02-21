@@ -14,6 +14,16 @@ const Index = () => {
 
     const { user: { role, permission } } = useUserStore()
 
+    const permissionControl = (item: any) => {
+        if (!item.role) {
+            return permission.includes(item.permission) || item.permission == Permission.all
+        }
+        else {
+            return item.role.includes(role)
+        }
+    }
+
+
     return (
         <React.Suspense fallback={<div style={{ position: "absolute", right: "50%", left: "50%", top: "50%" }} >
             <PropagateLoader color='yellow' />
@@ -39,7 +49,7 @@ const Index = () => {
                 <Route>
 
                     {authProtectedRoutes.map((route, idx: any) => {
-                        if (permission.includes(route.permission) || route.permission == Permission.all) {
+                        if (permissionControl(route)) {
                             return (
                                 <Route
                                     path={route.path}

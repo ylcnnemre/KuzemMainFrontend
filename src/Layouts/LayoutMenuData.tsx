@@ -7,6 +7,7 @@ import { PiStudent } from "react-icons/pi";
 import { RiAdminLine } from "react-icons/ri";
 import { Permission } from "../common/constants/PermissionList";
 import { IoCalendarOutline } from "react-icons/io5";
+import { Role } from "../config/constant";
 
 const Navdata = () => {
     const [isOpen, setIsOpen] = useState({
@@ -85,10 +86,23 @@ const Navdata = () => {
             },
             subItems: [
                 {
-                    id: "analytics",
+                    id: "aktifkurs",
                     label: "Aktif Kurslar",
                     link: "/kurs",
                     parentId: "Kurslar",
+                },
+                {
+                    id: "kurslarim",
+                    label: "Aldığım Kurslar",
+                    link: "/kurslarim",
+                    parentId: "Kurslar",
+                },
+                {
+                    id: "verdigimkurs",
+                    label: "Verdiğim Kurslar",
+                    link: "/egitmen/kurs",
+                    parentId: "Kurslar",
+                    role: Role.teacher
                 },
             ],
         },

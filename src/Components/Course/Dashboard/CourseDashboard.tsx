@@ -31,25 +31,32 @@ const CourseDashboard = () => {
     const [active, setActive] = useState<"aktif" | "pasif">("aktif")
     const { user: { permission, role } } = useUserStore()
     const navigate = useNavigate()
-   
+    const showPageCourseCount = 8   //sayfada kaç adet kurs gözükecek  mobil için 4 uygun
+
     const getCourseList = async (status: "aktif" | "pasif") => {
         try {
             setLoading(true)
             const testList = []
             const response = await getAllCourseByStatusApi(status)
             console.log("responseCoursee ==>", response)
-            for (let item = 0; item < 5; item++) {
+            testList.push(...response.data.map(el => {
+                return {
+                    ...el,
+                    title: el.title 
+                }
+            }))
+           /*  for (let item = 0; item < 5; item++) {
                 testList.push(...response.data.map(el => {
                     return {
                         ...el,
                         title: el.title + item
                     }
                 }))
-            }
+            } */
             setCourseData(testList)
             setTempData(sliceData(testList, 1))
             setTemp2(testList)
-            setPageNumbers(Array.from({ length: Math.ceil(testList.length / 8) }, (_, index) => index + 1))
+            setPageNumbers(Array.from({ length: Math.ceil(testList.length / showPageCourseCount) }, (_, index) => index + 1))
         }
         catch (err: any) {
             console.log("err ===>", err)
@@ -68,15 +75,15 @@ const CourseDashboard = () => {
 
 
     const sliceData = (elemens: Array<any>, currentIndex: number) => {
-        var sliceLength = 8
+        var sliceLength = showPageCourseCount
         var startIndex = (currentIndex - 1) * sliceLength
         var endIndex = startIndex + sliceLength
         let result = elemens.slice(startIndex, endIndex)
         return result
     }
     const divideChunks = (len: number) => {
-        let mod = len % 8
-        let divide = Math.floor(len / 8)
+        let mod = len % showPageCourseCount
+        let divide = Math.floor(len / showPageCourseCount)
         const result = [];
         for (let i = 1; i <= divide; i++) {
             result.push(i);
@@ -125,7 +132,7 @@ const CourseDashboard = () => {
                     <Input placeholder='search' className='search_input' onChange={searchOnChange} />
                     {
                         roleControl && (
-                            <select className='form-control' value={active} style={{ marginLeft: "20px",paddingLeft:"30px",paddingRight:"30px"}} onChange={(e) => {
+                            <select className='form-control' value={active} style={{ marginLeft: "20px", paddingLeft: "30px", paddingRight: "30px" }} onChange={(e) => {
                                 activePassiveOnChange(e.target.value)
                             }} >
                                 <option value="aktif">Aktif Kurslar</option>
