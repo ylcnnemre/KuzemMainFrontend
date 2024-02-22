@@ -7,6 +7,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import { Link, useNavigate } from "react-router-dom";
 import ParticlesAuth from "../AuthenticationInner/ParticlesAuth";
 import { ICreateUserType } from "../../api/User/UserType";
+import { createUserApi } from "../../api/User/UserApi";
 
 
 const Register = () => {
@@ -50,21 +51,22 @@ const Register = () => {
         onSubmit: async (values, { resetForm }) => {
             try {
                 const { confirm_password, gender, tcNo, birthDate, ...rest } = values
-                /* const respo: ICreateUserType = {
+                const respo: ICreateUserType = {
                     ...rest,
                     tcNo: `${tcNo}`,
                     gender: gender as ICreateUserType["gender"],
-                    birthDate: new Date(birthDate).toISOString().split('T')[0]
-                } */
+                    birthDate: new Date(birthDate).toISOString().split('T')[0],
+                    role: "student"
+                }
+                await createUserApi(respo)
 
-                /* await createStudentApi(respo) */
 
                 toast.success("Kayıt başarılı", {
                     autoClose: 1000
                 })
-                setTimeout(() => {
+             /*    setTimeout(() => {
                     history("/giris")
-                }, 1000)
+                }, 2000) */
 
             }
             catch (err: any) {

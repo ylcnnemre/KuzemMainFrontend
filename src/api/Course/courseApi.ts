@@ -1,6 +1,6 @@
 import { AxiosResponse } from "axios";
 import { axiosInstance } from "../AxiosInstance";
-import { ICourseType, ICourseUpdateType, IDeleteDocument, IDeletePhoto, IFiles } from "./CourseTypes";
+import { ICourseType, ICourseUpdateType, IDeleteDocument, IDeletePhoto, IFiles, IUpdateCourseProgram } from "./CourseTypes";
 
 
 const createCourseApi = (data: FormData) => axiosInstance.post("/course/create", data, {
@@ -21,6 +21,10 @@ const deletePhotoApi = (data: IDeletePhoto) => axiosInstance.delete(`/course/pho
         ...data
     }
 })
+
+
+const updateCourseProgramApi = (data: IUpdateCourseProgram) => axiosInstance.post("/course/program", data)
+
 
 const deleteDocumentApi = (data: IDeleteDocument) => axiosInstance.delete("/course/document", {
     data: {
@@ -64,5 +68,6 @@ export {
     addDocumentApi,
     updateCourseApi,
     joinCourseApi,
-    courseTeacherListApi
+    courseTeacherListApi,
+    updateCourseProgramApi
 }

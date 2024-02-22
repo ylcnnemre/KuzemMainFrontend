@@ -21,7 +21,7 @@ const EditCourseStudentTab: FC<{ userList: ICourseType, setUserList: Function }>
 
     }, [userList])
 
-    console.log("userData ==>", userData)
+    
     const columns = useMemo(() => [
         {
             header: "#",

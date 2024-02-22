@@ -148,12 +148,17 @@ const TeacherCourseTable: FC<{ data: ICourseType[] }> = ({ data }) => {
                         </NavLink>
                     </NavItem>
                     <NavItem>
-                        <NavLink className={`${activeTab == 2 && "active"}`} onClick={() => { setActiveTab(2) }} >
-                            Duyuru
+                        <NavLink className={`${activeTab == 2 && "active"}`} onClick={() => setActiveTab(2)} >
+                            Kurs Programı
                         </NavLink>
                     </NavItem>
                     <NavItem>
                         <NavLink className={`${activeTab == 3 && "active"}`} onClick={() => { setActiveTab(3) }} >
+                            Duyuru
+                        </NavLink>
+                    </NavItem>
+                    <NavItem>
+                        <NavLink className={`${activeTab == 4 && "active"}`} onClick={() => { setActiveTab(4) }} >
                             Sınavlar
                         </NavLink>
                     </NavItem>
@@ -181,38 +186,7 @@ const TeacherCourseTable: FC<{ data: ICourseType[] }> = ({ data }) => {
                                     <Col lg={12} style={{ marginBottom: "15px" }} >
                                         <DetailWidget icon={<TbFileDescription />} title='Açıklama' value={selectedCourse?.description} />
                                     </Col>
-                                    <Col lg={12}>
-                                        {
-                                            selectedCourse.schedules.length !== 0 && (
-                                                <Row>
-                                                    <h5>
-                                                        Program
-                                                    </h5>
-                                                    {
-                                                        selectedCourse?.schedules.map((item, index) => {
-                                                            return (
-                                                                <Col key={`${index}`} sm={4} >
-                                                                    <div className='program_card'>
-                                                                        <p  >
-                                                                            <strong>Gün :</strong> <span style={{ color: "#FFCE02" }}>{item.day}</span>
-                                                                        </p>
-                                                                        <div className='program_card_date mt-2'>
-                                                                            <p>
-                                                                                <strong>Başlangıç : </strong> <span style={{ color: "#FFCE02" }}>{item.startTime}</span>
-                                                                            </p>
-                                                                            <p>
-                                                                                <strong>Bitiş : </strong> <span style={{ color: "#FFCE02" }}>{item.endTime}</span>
-                                                                            </p>
-                                                                        </div>
-                                                                    </div>
-                                                                </Col>
-                                                            )
-                                                        })
-                                                    }
-                                                </Row>
-                                            )
-                                        }
-                                    </Col>
+
 
                                 </Row>
                             ) : (
@@ -226,7 +200,38 @@ const TeacherCourseTable: FC<{ data: ICourseType[] }> = ({ data }) => {
 
                     </TabPane>
                     <TabPane tabId={2} >
-                        Duyuru
+                        <Col lg={12}>
+                            {
+                                selectedCourse && selectedCourse.schedules.length !== 0 && (
+                                    <Row>
+                                        <h5 style={{marginBottom:"15px"}}>
+                                            Program
+                                        </h5>
+                                        {
+                                            selectedCourse?.schedules.map((item, index) => {
+                                                return (
+                                                    <Col key={`${index}`} sm={6} >
+                                                        <div className='program_card'>
+                                                            <p style={{marginBottom:"10px"}} >
+                                                                <strong>Gün :</strong> <span style={{ color: "#FFCE02" }}>{item.day}</span>
+                                                            </p>
+                                                            <div className='program_card_date mt-2'>
+                                                                <p>
+                                                                    <strong>Başlangıç : </strong> <span style={{ color: "#FFCE02" }}>{item.startTime}</span>
+                                                                </p>
+                                                                <p>
+                                                                    <strong>Bitiş : </strong> <span style={{ color: "#FFCE02" }}>{item.endTime}</span>
+                                                                </p>
+                                                            </div>
+                                                        </div>
+                                                    </Col>
+                                                )
+                                            })
+                                        }
+                                    </Row>
+                                )
+                            }
+                        </Col>
                     </TabPane>
                     <TabPane tabId={3} >
                         Sınavlar
@@ -239,3 +244,5 @@ const TeacherCourseTable: FC<{ data: ICourseType[] }> = ({ data }) => {
 }
 
 export default TeacherCourseTable
+
+

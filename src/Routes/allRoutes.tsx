@@ -6,7 +6,6 @@ import AddAdminPage from "../pages/Admin/AddAdminPage";
 import { Permission } from "../common/constants/PermissionList";
 import EditAdminPage from "../pages/Admin/EditAdminPage";
 import SemesterPage from "../pages/Semester/SemesterPage";
-import MyCoursePage from "../pages/Course/MyCoursePage";
 import MyCourseDashboard from "../Components/Course/MyCourse/MyCourseDashboard";
 import { Role } from "../config/constant";
 import TeacherCourseDashboard from "../Components/Course/TeacherCourse/TeacherCourseDashboard";

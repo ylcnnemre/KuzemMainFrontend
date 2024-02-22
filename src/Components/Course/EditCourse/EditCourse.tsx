@@ -5,7 +5,7 @@ import "swiper/css/scrollbar";
 import "swiper/css/effect-fade";
 import "swiper/css/effect-flip";
 import "./index.scss"
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import { Nav, NavItem, NavLink, TabContent, TabPane } from 'reactstrap';
 import { toast } from 'react-toastify';
 import { getDetailCourseApi } from '../../../api/Course/courseApi';
@@ -16,12 +16,14 @@ import EditCoursePhoto from "./EditCoursePhoto";
 import EditCourseDocumentTab from "./EditCourseDocumentTab";
 import EditCourseStudentTab from "./EditCourseStudentTab";
 import { PropagateLoader } from "react-spinners";
+import EditCourseProgram from "./EditCourseProgram";
 
 
 const EditCourse = () => {
     const [photoList, setPhotoList] = useState<ICourseType["files"]>([])
     const [documentList, setDocumentList] = useState<ICourseType["files"]>([])
     const [mainData, setMainData] = useState<ICourseType>()
+    const [scheduleList, setScheduleList] = useState<ICourseType["schedules"]>([])
     const { id } = useParams()
     const [activeTab, setActiveTab] = useState(1);
     const navigation = useNavigate()
@@ -33,7 +35,7 @@ const EditCourse = () => {
             setMainData(response.data)
             setPhotoList(response.data.files.filter(el => el.type == "photo"))
             setDocumentList(response.data.files.filter(el => el.type == "document"))
-
+            setScheduleList(response.data.schedules)
         }
         catch (err: any) {
             navigation("/kurs")
@@ -101,6 +103,16 @@ const EditCourse = () => {
                         Öğrenciler
                     </NavLink>
                 </NavItem>
+                <NavItem>
+                    <NavLink
+                        className={`${activeTab == 5 && "active"}`}
+                        onClick={() => {
+                            setActiveTab(5)
+                        }}
+                    >
+                        Kurs Programı
+                    </NavLink>
+                </NavItem>
             </Nav>
             <TabContent activeTab={activeTab} style={{ paddingTop: "20px" }} className="tab_content" >
                 <TabPane tabId={1}>
@@ -114,6 +126,9 @@ const EditCourse = () => {
                 </TabPane>
                 <TabPane tabId={4}>
                     <EditCourseStudentTab userList={mainData} setUserList={setMainData} />
+                </TabPane>
+                <TabPane tabId={5}>
+                    <EditCourseProgram programList={scheduleList} setProgramList={setScheduleList} />
                 </TabPane>
             </TabContent>
 

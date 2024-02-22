@@ -26,12 +26,12 @@ axiosInstance.interceptors.response.use((response) => response, (error) => {
         })
 
     }
-   /*  else if (error.response.status === 403) {
-        window.location.href = "/anasayfa"
-        toast.error(error.response.data.message,{
-            autoClose : 1000
-        })
-    } */
+    /*  else if (error.response.status === 403) {
+         window.location.href = "/anasayfa"
+         toast.error(error.response.data.message,{
+             autoClose : 1000
+         })
+     } */
     else {
         return Promise.reject(error)
     }

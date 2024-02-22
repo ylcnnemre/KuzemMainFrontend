@@ -46,6 +46,7 @@ export interface IUserData {
         updatedAt: string
     },
     permission: Permission[]
+    responsibleCourse ?: any[]
 }
 
 

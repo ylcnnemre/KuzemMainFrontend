@@ -20,7 +20,7 @@ export interface ICourseType {
         startTime: string
         createdAt: string
         updatedAt: string
-        _id : string
+        _id: string
     }[]
     endDate: string
     files: Array<IFiles>
@@ -79,4 +79,13 @@ export interface IDeleteDocument {
     documentName: string
     courseId: string
     documentId: string
+}
+
+export interface IUpdateCourseProgram {
+    courseId: string
+    programs: {
+        day: string
+        endTime: string
+        startTime: string
+    }[]
 }

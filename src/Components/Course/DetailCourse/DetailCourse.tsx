@@ -36,6 +36,9 @@ const DetailCourse = () => {
     const { user } = useUserStore()
     const [activeTab, setActiveTab] = useState(1);
     const navigation = useNavigate()
+
+    console.log("user =>", user)
+
     const DetailCourseRequest = async () => {
         try {
             setLoading(true)

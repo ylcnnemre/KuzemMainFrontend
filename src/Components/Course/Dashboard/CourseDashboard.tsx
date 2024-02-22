@@ -32,7 +32,7 @@ const CourseDashboard = () => {
     const { user: { permission, role } } = useUserStore()
     const navigate = useNavigate()
     const showPageCourseCount = 8   //sayfada kaç adet kurs gözükecek  mobil için 4 uygun
-
+    console.log("permis on =>>", permission)
     const getCourseList = async (status: "aktif" | "pasif") => {
         try {
             setLoading(true)
@@ -42,17 +42,17 @@ const CourseDashboard = () => {
             testList.push(...response.data.map(el => {
                 return {
                     ...el,
-                    title: el.title 
+                    title: el.title
                 }
             }))
-           /*  for (let item = 0; item < 5; item++) {
-                testList.push(...response.data.map(el => {
-                    return {
-                        ...el,
-                        title: el.title + item
-                    }
-                }))
-            } */
+            /*  for (let item = 0; item < 5; item++) {
+                 testList.push(...response.data.map(el => {
+                     return {
+                         ...el,
+                         title: el.title + item
+                     }
+                 }))
+             } */
             setCourseData(testList)
             setTempData(sliceData(testList, 1))
             setTemp2(testList)

@@ -1,14 +1,22 @@
 import { TimePicker } from 'antd'
-import dayjs from 'dayjs'
-import React, { FC, useMemo } from 'react'
-import { Button, Col, Label, Row } from 'reactstrap'
-import { IProgram } from './AddCourseForm'
-import { toast } from 'react-toastify'
+import React, { FC, useMemo, useState } from 'react'
 import { CgClose } from 'react-icons/cg'
+import { Button, Col, Label, Row } from 'reactstrap'
+import { IProgram } from '../AddCourseForm/AddCourseForm'
+import { ICourseType } from '../../../api/Course/CourseTypes'
+import { toast } from 'react-toastify'
+import dayjs from 'dayjs'
+import { updateCourseProgramApi } from '../../../api/Course/courseApi'
+import { useParams } from 'react-router-dom'
 
-
-const AddCourseProgram: FC<{ setCurrent: any, programData: IProgram, setProgramData: React.Dispatch<React.SetStateAction<IProgram>>, programList: IProgram[], setProgramList: Function }> = ({ programData, programList, setProgramData, setProgramList, setCurrent }) => {
-
+const EditCourseProgram: FC<{ programList: ICourseType["schedules"], setProgramList: Function }> = ({ programList, setProgramList }) => {
+    const { id } = useParams()
+    const [selectedProgramData, setSelectedProgramData] = useState<{ id: string, day: string, startTime: string, endTime: string }>({
+        day: "Pazartesi",
+        endTime: "12:30",
+        startTime: "12:00",
+        id: ""
+    })
 
     const dayList = useMemo(() => {
         return ["Pazartesi", "Salı", "Çarşamba", "Perşembe", "Cuma", "Cumartesi", "Pazar"]
@@ -16,7 +24,7 @@ const AddCourseProgram: FC<{ setCurrent: any, programData: IProgram, setProgramD
     const format: string = 'HH:mm'
 
     const addProgram = () => {
-        const control = compareHour(programData.startTime, programData.endTime)
+        const control = compareHour(selectedProgramData.startTime, selectedProgramData.endTime)
         if (!control) {
             toast.error("bitiş saati başlangıçtan önce olamaz", {
                 autoClose: 1500
@@ -25,17 +33,10 @@ const AddCourseProgram: FC<{ setCurrent: any, programData: IProgram, setProgramD
             setProgramList([
                 ...programList,
                 {
-                    ...programData,
+                    ...selectedProgramData,
                     id: Math.random().toString()
                 }
             ])
-            setProgramData({
-                id: "",
-                day: "Pazartesi",
-                endTime: "12:30",
-                startTime: "12:00"
-            })
-
         }
     }
 
@@ -59,6 +60,29 @@ const AddCourseProgram: FC<{ setCurrent: any, programData: IProgram, setProgramD
         }
     }
 
+    const confirmProgram = async () => {
+        try {
+            const response = await updateCourseProgramApi({
+                courseId: id as string,
+                programs: programList.map(el => {
+                    return {
+                        day: el.day,
+                        endTime: el.endTime,
+                        startTime: el.startTime
+                    }
+                })
+            })
+            toast.success("Program kayıt edildi",{
+                autoClose : 1000
+            })
+        }
+        catch (err: any) {
+            toast.error(err.message, {
+                autoClose: 1000
+            })
+        }
+    }
+
 
     return (
         <Row>
@@ -67,10 +91,10 @@ const AddCourseProgram: FC<{ setCurrent: any, programData: IProgram, setProgramD
                     <Label className="form-label">
                         Gün
                     </Label>
-                    <select className={`form-control`} value={programData.day} onChange={(e) => {
-                        setProgramData({
-                            ...programData,
-                            day: e.target.value
+                    <select className={`form-control`} onChange={(e) => {
+                        setSelectedProgramData({
+                            ...selectedProgramData,
+                            day: e.target.value,
                         })
                     }} >
                         {
@@ -94,13 +118,13 @@ const AddCourseProgram: FC<{ setCurrent: any, programData: IProgram, setProgramD
                     <div>
                         <TimePicker allowClear={false}
                             onChange={(e) => {
-                                setProgramData({
-                                    ...programData,
+                                setSelectedProgramData({
+                                    ...selectedProgramData,
                                     startTime: `${e.hour()}:${e.minute().toString().padStart(2, "0")}`
                                 })
                             }}
 
-                            value={dayjs(programData.startTime, format)} className='custom-time-picker' format={format} />
+                            value={dayjs(selectedProgramData.startTime, format)} className='custom-time-picker' format={format} />
                     </div>
 
 
@@ -113,12 +137,12 @@ const AddCourseProgram: FC<{ setCurrent: any, programData: IProgram, setProgramD
                     </Label>
                     <div>
                         <TimePicker className='custom-time-picker' onChange={(e) => {
-                            setProgramData({
-                                ...programData,
+                            setSelectedProgramData({
+                                ...selectedProgramData,
                                 endTime: `${e.hour()}:${e.minute().toString().padStart(2, "0")}`
                             })
 
-                        }} allowClear={false} value={dayjs(programData.endTime, format)} format={format} />
+                        }} value={dayjs(selectedProgramData.endTime, format)} allowClear={false} format={format} />
                     </div>
 
 
@@ -130,10 +154,15 @@ const AddCourseProgram: FC<{ setCurrent: any, programData: IProgram, setProgramD
 
                     </Label>
                     <div style={{ transform: "translateY(20%)" }}>
-                        <Button className='px-4' onClick={() => {
+                        <Button className='px-2 me-3 btn btn-warning' onClick={() => {
                             addProgram()
                         }}  >
-                            Ekle
+                            Program Ekle
+                        </Button>
+                        <Button className='px-2  btn btn-' onClick={() => {
+                            confirmProgram()
+                        }}  >
+                            Programı Onayla
                         </Button>
                     </div>
 
@@ -164,7 +193,7 @@ const AddCourseProgram: FC<{ setCurrent: any, programData: IProgram, setProgramD
                                             </p>
                                         </div>
                                         <CgClose color='red' className='program_card_close_icon' onClick={() => {
-                                            setProgramList(programList.filter(item => item.id !== el.id))
+                                            setProgramList(programList.filter(item => item._id !== el._id))
                                         }} />
                                     </div>
                                 </Col>
@@ -173,28 +202,39 @@ const AddCourseProgram: FC<{ setCurrent: any, programData: IProgram, setProgramD
                     }
                 </Row>
             </Col>
-            <Col style={{ display: "flex", justifyContent: "flex-end" }} >
-                <Button className='btn btn-warning me-4' onClick={() => {
-                    setCurrent(0)
-                }}  >
-                    Geri
-                </Button>
-                <Button className='btn btn-primary' onClick={() => {
-                    if (programList.length == 0) {
-                        toast.error("en az bir adet seçim yapılmalı", {
-                            autoClose: 1000
-                        })
-                    }
-                    else {
-                        setCurrent(2)
-                    }
 
-                }}  >
-                    İleri
-                </Button>
-            </Col>
         </Row>
     )
 }
 
-export default AddCourseProgram
+export default EditCourseProgram
+
+/* {
+    programList.map((el, index) => {
+        return (
+            <Col key={`${index}`} lg={3}>
+                <div className='program_card'>
+                    <div className='program_card_header' >
+                        <span style={{ marginRight: "5px" }}>
+                            Gün :
+                        </span>
+                        <p style={{ color: "#FFCE02" }}>
+                            {el.day}
+                        </p>
+                    </div>
+                    <div className='program_card_footer'>
+                        <p>
+                            <strong>Başlangıç :</strong> <span style={{ color: "#FFCE02" }} >{el.startTime}</span>
+                        </p>
+                        <p>
+                            <strong>Bitiş :</strong> <span style={{ color: "#FFCE02" }} >{el.endTime}</span>
+                        </p>
+                    </div>
+                    <CgClose color='red' className='program_card_close_icon' onClick={() => {
+                            setProgramList(programList.filter(item => item.id !== el.id)) 
+                    }} />
+                </div>
+            </Col>
+        )
+    })
+} */
