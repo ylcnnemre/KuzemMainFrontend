@@ -1,6 +1,6 @@
 import { AxiosResponse } from "axios";
 import { axiosInstance } from "../AxiosInstance";
-import { ICourseType, ICourseUpdateType, IDeleteDocument, IDeletePhoto, IFiles, IUpdateCourseProgram } from "./CourseTypes";
+import { ICourseType, ICourseUpdateType, ICreateAnnouncement, IDeleteDocument, IDeletePhoto, IFiles, IUpdateCourseProgram } from "./CourseTypes";
 
 
 const createCourseApi = (data: FormData) => axiosInstance.post("/course/create", data, {
@@ -57,6 +57,9 @@ const courseTeacherListApi = (): Promise<AxiosResponse<ICourseType[]>> => axiosI
 
 const joinCourseApi = (id: string) => axiosInstance.post(`/course/join/${id}`)
 
+const createAnnouncementApi = (data: ICreateAnnouncement) => axiosInstance.post("/course/announcement", data)
+
+
 export {
     createCourseApi,
     deleteEnrollerUserApi,
@@ -69,5 +72,6 @@ export {
     updateCourseApi,
     joinCourseApi,
     courseTeacherListApi,
-    updateCourseProgramApi
+    updateCourseProgramApi,
+    createAnnouncementApi
 }

@@ -40,6 +40,14 @@ export interface ICourseType {
     },
     active: "aktif" | "pasif"
     joinUserList?: any[]
+    announcement: {
+        _id: string
+        content: string
+        title: string
+        createdAt: string
+        updatedAt: string
+        createdBy: IUserData
+    }[]
 }
 
 export interface ICourseUpdateType {
@@ -88,4 +96,10 @@ export interface IUpdateCourseProgram {
         endTime: string
         startTime: string
     }[]
+}
+
+export interface ICreateAnnouncement {
+    courseId: string
+    title: string
+    content: string
 }

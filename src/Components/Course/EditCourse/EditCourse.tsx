@@ -6,7 +6,7 @@ import "swiper/css/effect-fade";
 import "swiper/css/effect-flip";
 import "./index.scss"
 import React, { useEffect, useMemo, useState } from 'react'
-import { Nav, NavItem, NavLink, TabContent, TabPane } from 'reactstrap';
+import { Button, Col, Nav, NavItem, NavLink, Row, TabContent, TabPane } from 'reactstrap';
 import { toast } from 'react-toastify';
 import { getDetailCourseApi } from '../../../api/Course/courseApi';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -17,6 +17,7 @@ import EditCourseDocumentTab from "./EditCourseDocumentTab";
 import EditCourseStudentTab from "./EditCourseStudentTab";
 import { PropagateLoader } from "react-spinners";
 import EditCourseProgram from "./EditCourseProgram";
+import TeacherCourseAnnouncementModal from "../TeacherCourse/TeacherCourseAnnouncementModal";
 
 
 const EditCourse = () => {
@@ -26,6 +27,7 @@ const EditCourse = () => {
     const [scheduleList, setScheduleList] = useState<ICourseType["schedules"]>([])
     const { id } = useParams()
     const [activeTab, setActiveTab] = useState(1);
+    const [announcementModal, setAnnouncementModal] = useState<boolean>(false)
     const navigation = useNavigate()
 
     const detailCourseApiRequest = async () => {
@@ -50,6 +52,9 @@ const EditCourse = () => {
         detailCourseApiRequest()
     }, [])
 
+    const announcementList = useMemo(() => {
+        return mainData?.announcement
+    }, [mainData?.announcement])
 
 
     if (!mainData) {
@@ -113,6 +118,16 @@ const EditCourse = () => {
                         Kurs Programı
                     </NavLink>
                 </NavItem>
+                <NavItem>
+                    <NavLink
+                        className={`${activeTab == 6 && "active"}`}
+                        onClick={() => {
+                            setActiveTab(6)
+                        }}
+                    >
+                        Duyurular
+                    </NavLink>
+                </NavItem>
             </Nav>
             <TabContent activeTab={activeTab} style={{ paddingTop: "20px" }} className="tab_content" >
                 <TabPane tabId={1}>
@@ -129,6 +144,28 @@ const EditCourse = () => {
                 </TabPane>
                 <TabPane tabId={5}>
                     <EditCourseProgram programList={scheduleList} setProgramList={setScheduleList} />
+                </TabPane>
+                <TabPane tabId={6}   >
+                    <div className="d-flex justify-content-end">
+                        <Button onClick={() => {
+                            setAnnouncementModal(true)
+                        }}>
+                            Duyuru Ekle
+                        </Button>
+                        <TeacherCourseAnnouncementModal courseId={id as string} modalShow={announcementModal} setModalShow={setAnnouncementModal} />
+                    </div>
+                    <Row>
+                        {
+                            announcementList?.map(el => {
+                                return (
+                                    <Col key={el._id} >
+                                            
+                                    </Col>
+                                )
+                            })
+                        }
+
+                    </Row>
                 </TabPane>
             </TabContent>
 

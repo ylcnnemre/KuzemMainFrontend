@@ -1,6 +1,6 @@
 import { ColumnDef, flexRender, getCoreRowModel, useReactTable } from '@tanstack/react-table';
 import React, { FC, useMemo, useState } from 'react'
-import { Button, Col, Nav, NavItem, NavLink, Row, TabContent, TabPane, Table } from 'reactstrap';
+import { Button, Col, Modal, ModalBody, ModalFooter, ModalHeader, Nav, NavItem, NavLink, Row, TabContent, TabPane, Table } from 'reactstrap';
 import { ICourseType } from '../../../api/Course/CourseTypes';
 import DetailWidget from '../DetailCourse/DetailWidget';
 import { IoTimeOutline } from 'react-icons/io5';
@@ -9,10 +9,17 @@ import { VscSymbolField } from 'react-icons/vsc';
 import { FaChalkboardTeacher } from 'react-icons/fa';
 import { TbFileDescription } from 'react-icons/tb';
 import { RxText } from "react-icons/rx";
+import TeacherCourseAnnouncementModal from './TeacherCourseAnnouncementModal';
 
 const TeacherCourseTable: FC<{ data: ICourseType[] }> = ({ data }) => {
     const [activeTab, setActiveTab] = useState<number>(1)
     const [selectedCourse, setSelectedCourse] = useState<ICourseType>()
+    const [modalShow, setModalShow] = useState<boolean>(false)
+    const [modalData, setModalData] = useState<{
+        title: string,
+        content: string
+    }>({ title: "", content: "" })
+
 
 
     const columns = useMemo<ColumnDef<any>[]>(() => {
@@ -58,6 +65,7 @@ const TeacherCourseTable: FC<{ data: ICourseType[] }> = ({ data }) => {
     }, [data])
 
     const tableData = useMemo(() => {
+        console.log("kurs =>",data)
         return data
     }, [data])
 
@@ -87,9 +95,11 @@ const TeacherCourseTable: FC<{ data: ICourseType[] }> = ({ data }) => {
     }, [selectedCourse?.teacher])
 
 
+
+
     return (
         <Row style={{ height: "70vh" }}>
-            <Col lg={5} style={{ borderRight: "1px solid gray" }} >
+            <Col lg={4} style={{ borderRight: "1px solid gray" }} >
                 <Table hover className={"mb-0 align-middle table-borderless"}>
                     <thead className={"table-light text-muted"}>
                         {table.getHeaderGroups().map((headerGroup: any) => (
@@ -140,7 +150,7 @@ const TeacherCourseTable: FC<{ data: ICourseType[] }> = ({ data }) => {
                     </tbody>
                 </Table>
             </Col>
-            <Col lg={7} style={{ borderLeft: "1px solid gray" }} >
+            <Col lg={8} style={{ borderLeft: "1px solid gray" }} >
                 <Nav tabs>
                     <NavItem>
                         <NavLink className={`${activeTab == 1 && "active"}`} onClick={() => setActiveTab(1)} >
@@ -204,7 +214,7 @@ const TeacherCourseTable: FC<{ data: ICourseType[] }> = ({ data }) => {
                             {
                                 selectedCourse && selectedCourse.schedules.length !== 0 && (
                                     <Row>
-                                        <h5 style={{marginBottom:"15px"}}>
+                                        <h5 style={{ marginBottom: "15px" }}>
                                             Program
                                         </h5>
                                         {
@@ -212,7 +222,7 @@ const TeacherCourseTable: FC<{ data: ICourseType[] }> = ({ data }) => {
                                                 return (
                                                     <Col key={`${index}`} sm={6} >
                                                         <div className='program_card'>
-                                                            <p style={{marginBottom:"10px"}} >
+                                                            <p style={{ marginBottom: "10px" }} >
                                                                 <strong>Gün :</strong> <span style={{ color: "#FFCE02" }}>{item.day}</span>
                                                             </p>
                                                             <div className='program_card_date mt-2'>
@@ -234,8 +244,18 @@ const TeacherCourseTable: FC<{ data: ICourseType[] }> = ({ data }) => {
                         </Col>
                     </TabPane>
                     <TabPane tabId={3} >
-                        Sınavlar
+                        <div className='d-flex justify-content-end'>
+                            <Button className='btn btn-primary px-4' onClick={() => {
+                                setModalShow(true)
+                            }} >
+                                Ekle
+                            </Button>
+                        </div>
+                        <div className='d-flex flex-column' >
 
+
+                        </div>
+                        <TeacherCourseAnnouncementModal courseId={selectedCourse?._id ?? ""} modalShow={modalShow} setModalShow={setModalShow} />
                     </TabPane>
                 </TabContent>
             </Col>
