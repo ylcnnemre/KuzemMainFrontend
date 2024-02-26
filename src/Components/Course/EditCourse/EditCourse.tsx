@@ -18,6 +18,7 @@ import EditCourseStudentTab from "./EditCourseStudentTab";
 import { PropagateLoader } from "react-spinners";
 import EditCourseProgram from "./EditCourseProgram";
 import TeacherCourseAnnouncementModal from "../TeacherCourse/TeacherCourseAnnouncementModal";
+import EditCourseAnnouncement from "./EditCourseAnnouncement";
 
 
 const EditCourse = () => {
@@ -146,26 +147,7 @@ const EditCourse = () => {
                     <EditCourseProgram programList={scheduleList} setProgramList={setScheduleList} />
                 </TabPane>
                 <TabPane tabId={6}   >
-                    <div className="d-flex justify-content-end">
-                        <Button onClick={() => {
-                            setAnnouncementModal(true)
-                        }}>
-                            Duyuru Ekle
-                        </Button>
-                        <TeacherCourseAnnouncementModal courseId={id as string} modalShow={announcementModal} setModalShow={setAnnouncementModal} />
-                    </div>
-                    <Row>
-                        {
-                            announcementList?.map(el => {
-                                return (
-                                    <Col key={el._id} >
-                                            
-                                    </Col>
-                                )
-                            })
-                        }
-
-                    </Row>
+                    <EditCourseAnnouncement data={mainData} setData={setMainData} />
                 </TabPane>
             </TabContent>
 

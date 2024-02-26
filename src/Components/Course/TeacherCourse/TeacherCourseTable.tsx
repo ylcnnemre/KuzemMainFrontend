@@ -2,24 +2,14 @@ import { ColumnDef, flexRender, getCoreRowModel, useReactTable } from '@tanstack
 import React, { FC, useMemo, useState } from 'react'
 import { Button, Col, Modal, ModalBody, ModalFooter, ModalHeader, Nav, NavItem, NavLink, Row, TabContent, TabPane, Table } from 'reactstrap';
 import { ICourseType } from '../../../api/Course/CourseTypes';
-import DetailWidget from '../DetailCourse/DetailWidget';
-import { IoTimeOutline } from 'react-icons/io5';
-import { IoMdTime } from 'react-icons/io';
-import { VscSymbolField } from 'react-icons/vsc';
-import { FaChalkboardTeacher } from 'react-icons/fa';
-import { TbFileDescription } from 'react-icons/tb';
-import { RxText } from "react-icons/rx";
-import TeacherCourseAnnouncementModal from './TeacherCourseAnnouncementModal';
+import CourseDetailModal from '../EditCourse/CourseDetailModal';
+import CourseDocumentModal from '../MyCourse/CourseDocumentModal';
 
 const TeacherCourseTable: FC<{ data: ICourseType[] }> = ({ data }) => {
     const [activeTab, setActiveTab] = useState<number>(1)
     const [selectedCourse, setSelectedCourse] = useState<ICourseType>()
     const [modalShow, setModalShow] = useState<boolean>(false)
-    const [modalData, setModalData] = useState<{
-        title: string,
-        content: string
-    }>({ title: "", content: "" })
-
+    const [documentModalShow, setDocumentModalShow] = useState<boolean>(false)
 
 
     const columns = useMemo<ColumnDef<any>[]>(() => {
@@ -42,30 +32,50 @@ const TeacherCourseTable: FC<{ data: ICourseType[] }> = ({ data }) => {
                     )
                 }
             },
-            /*  {
-                 id: "id",
-                 accessorKey: "_id",
-                 header: "işlem",
-                 cell: ({ getValue }) => {
-                     const id = getValue()
-                     return (
-                         <Button className='btn btn-warning' size='sm' style={{ padding: "5px 15px" }} onClick={() => {
-                             console.log("data ==>", data)
-                             setSelectedCourse(data.find(el => el._id == id))
-                             console.log("id =>", getValue())
-                        
-                         }} >
-                             İncele
-                         </Button>
-                     )
-                 }
-             } */
+            {
+                accessorKey: "_id",
+                header: "Ayrıntılar",
+                cell: ({ getValue }) => {
+                    return (
+                        <Button size='sm' onClick={() => {
+                            setSelectedCourse(data.find(item => item._id == getValue()))
+                            setModalShow(true)
+                        }} >
+                            Ayrıntılar
+                        </Button>
+                    )
+                }
+            },
+            {
+                accessorKey: "_id",
+                header: "Döküman",
+                cell: () => {
+                    return (
+                        <Button size='sm' onClick={() => {
+                            setDocumentModalShow(true)
+                        }} >
+                            Dökümanlar
+                        </Button>
+                    )
+                }
+            },
+            {
+                accessorKey: "_id",
+                header: "Duyurular",
+                cell: () => {
+                    return (
+                        <Button size='sm'>
+                            Duyurular
+                        </Button>
+                    )
+                }
+            }
         ]
 
     }, [data])
 
     const tableData = useMemo(() => {
-        console.log("kurs =>",data)
+        console.log("kurs =>", data)
         return data
     }, [data])
 
@@ -80,77 +90,73 @@ const TeacherCourseTable: FC<{ data: ICourseType[] }> = ({ data }) => {
         },
     });
 
-
-
-    const startDate = useMemo(() => {
-        return new Date(selectedCourse?.startDate ?? "").toLocaleDateString()
-    }, [selectedCourse?.startDate])
-
-    const endDate = useMemo(() => {
-        return new Date(selectedCourse?.endDate ?? "").toLocaleDateString()
-    }, [selectedCourse?.endDate])
-
-    const teacherName = useMemo(() => {
-        return selectedCourse?.teacher.name + " " + selectedCourse?.teacher.surname
-    }, [selectedCourse?.teacher])
-
-
+    const documents = useMemo(() => {
+        return selectedCourse?.files.filter(el => el.type == "document") ?? []
+    }, [selectedCourse?.files])
 
 
     return (
         <Row style={{ height: "70vh" }}>
-            <Col lg={4} style={{ borderRight: "1px solid gray" }} >
-                <Table hover className={"mb-0 align-middle table-borderless"}>
-                    <thead className={"table-light text-muted"}>
-                        {table.getHeaderGroups().map((headerGroup: any) => (
-                            <tr key={headerGroup.id}  >
-                                {headerGroup.headers.map((header: any) => (
-                                    <th key={header.id}   {...{
-                                        onClick: header.column.getToggleSortingHandler(),
-                                    }}>
-                                        {header.isPlaceholder ? null : (
-                                            <React.Fragment>
-                                                {flexRender(
-                                                    header.column.columnDef.header,
-                                                    header.getContext()
-                                                )}
-                                                {{
-                                                    asc: ' ',
-                                                    desc: ' ',
-                                                }
-                                                [header.column.getIsSorted() as string] ?? null}
+            <Col lg={12}  >
+                <div className={"table-responsive mb-1"}>
+                    <Table hover className={"mb-0 align-middle table-borderless"}>
+                        <thead className={"table-light text-muted"}>
+                            {table.getHeaderGroups().map((headerGroup: any) => (
+                                <tr key={headerGroup.id}  >
+                                    {headerGroup.headers.map((header: any) => (
+                                        <th key={header.id}   {...{
+                                            onClick: header.column.getToggleSortingHandler(),
+                                        }}>
+                                            {header.isPlaceholder ? null : (
+                                                <React.Fragment>
+                                                    {flexRender(
+                                                        header.column.columnDef.header,
+                                                        header.getContext()
+                                                    )}
+                                                    {{
+                                                        asc: ' ',
+                                                        desc: ' ',
+                                                    }
+                                                    [header.column.getIsSorted() as string] ?? null}
 
-                                            </React.Fragment>
-                                        )}
-                                    </th>
-                                ))}
-                            </tr>
-                        ))}
-                    </thead>
-
-                    <tbody>
-                        {table.getRowModel().rows.map((row: any) => {
-                            return (
-                                <tr key={row.id} style={{ cursor: "pointer" }} onClick={() => {
-                                    setSelectedCourse(data.find(el => el._id == row.original._id))
-                                }} >
-                                    {row.getVisibleCells().map((cell: any) => {
-                                        return (
-                                            <td key={cell.id} style={selectedCourse?._id == row.original._id ? { backgroundColor: "rgba(128,128,128,.4)" } : {}}   >
-                                                {flexRender(
-                                                    cell.column.columnDef.cell,
-                                                    cell.getContext()
-                                                )}
-                                            </td>
-                                        );
-                                    })}
+                                                </React.Fragment>
+                                            )}
+                                        </th>
+                                    ))}
                                 </tr>
-                            );
-                        })}
-                    </tbody>
-                </Table>
+                            ))}
+                        </thead>
+
+                        <tbody>
+                            {table.getRowModel().rows.map((row: any) => {
+                                return (
+                                    <tr key={row.id} style={{ cursor: "pointer" }} onClick={() => {
+                                        let rest = data.find(el => el._id == row.original._id)
+                                        console.log("res ==<", rest)
+                                        setSelectedCourse(data.find(el => el._id == row.original._id))
+                                    }} >
+                                        {row.getVisibleCells().map((cell: any) => {
+                                            return (
+                                                <td key={cell.id} style={selectedCourse?._id == row.original._id ? { backgroundColor: "rgba(128,128,128,.4)" } : {}}   >
+                                                    {flexRender(
+                                                        cell.column.columnDef.cell,
+                                                        cell.getContext()
+                                                    )}
+                                                </td>
+                                            );
+                                        })}
+                                    </tr>
+                                );
+                            })}
+                        </tbody>
+                    </Table>
+
+                </div>
+
             </Col>
-            <Col lg={8} style={{ borderLeft: "1px solid gray" }} >
+            <CourseDetailModal selectedCourse={selectedCourse as ICourseType} modalShow={modalShow} setModalShow={setModalShow} />
+            <CourseDocumentModal courseId={selectedCourse?._id} editMode={true} documents={documents} modalShow={documentModalShow} setModalShow={setDocumentModalShow} />
+            {/*  <Col lg={8} style={{ borderLeft: "1px solid gray" }} >
                 <Nav tabs>
                     <NavItem>
                         <NavLink className={`${activeTab == 1 && "active"}`} onClick={() => setActiveTab(1)} >
@@ -245,7 +251,7 @@ const TeacherCourseTable: FC<{ data: ICourseType[] }> = ({ data }) => {
                     </TabPane>
                     <TabPane tabId={3} >
                         <div className='d-flex justify-content-end'>
-                            <Button className='btn btn-primary px-4' onClick={() => {
+                            <Button className='btn btn-primary px-4 mb-3' onClick={() => {
                                 setModalShow(true)
                             }} >
                                 Ekle
@@ -253,12 +259,12 @@ const TeacherCourseTable: FC<{ data: ICourseType[] }> = ({ data }) => {
                         </div>
                         <div className='d-flex flex-column' >
 
-
+                            <AnnouncementTable data={selectedCourse?.announcement ?? []} />
                         </div>
-                        <TeacherCourseAnnouncementModal courseId={selectedCourse?._id ?? ""} modalShow={modalShow} setModalShow={setModalShow} />
+                        <TeacherCourseAnnouncementModal process={() => { }} courseId={selectedCourse?._id ?? ""} modalShow={modalShow} setModalShow={setModalShow} />
                     </TabPane>
                 </TabContent>
-            </Col>
+            </Col> */}
         </Row>
     )
 }

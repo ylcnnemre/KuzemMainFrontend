@@ -103,3 +103,16 @@ export interface ICreateAnnouncement {
     title: string
     content: string
 }
+
+
+export interface IUpdateAnnouncement {
+    courseId: string
+    announcementId: string
+    title: string
+    content: string
+}
+
+export interface IDeleteAnnouncement{
+    courseId: string
+    announcementId: string
+}

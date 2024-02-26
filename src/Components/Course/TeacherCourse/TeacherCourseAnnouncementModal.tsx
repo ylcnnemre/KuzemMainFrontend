@@ -1,10 +1,14 @@
 import { useFormik } from 'formik'
-import React, { FC, useState } from 'react'
+import React, { FC, useEffect, useState } from 'react'
 import { Button, FormFeedback, Input, Label, Modal, ModalBody, ModalFooter, ModalHeader } from 'reactstrap'
 import * as yup from "yup"
-import { createAnnouncementApi } from '../../../api/Course/courseApi'
-const TeacherCourseAnnouncementModal: FC<{ courseId: string, modalShow: boolean, setModalShow: Function }> = ({ modalShow, setModalShow, courseId }) => {
+import { createAnnouncementApi, updateAnnouncementApi } from '../../../api/Course/courseApi'
+import { toast } from 'react-toastify'
+import { useParams } from 'react-router-dom'
 
+
+const TeacherCourseAnnouncementModal: FC<{ initialData?: { content?: string, title?: string, announcementId?: string }, courseId: string, modalShow: boolean, setModalShow: Function, process: Function }> = ({ modalShow, setModalShow, courseId, process, initialData }) => {
+    const { id } = useParams()
     const formik = useFormik({
         initialValues: {
             content: "",
@@ -16,12 +20,31 @@ const TeacherCourseAnnouncementModal: FC<{ courseId: string, modalShow: boolean,
         }),
         onSubmit: async (value, { resetForm }) => {
             try {
-                const response = await createAnnouncementApi({
-                    ...value,
-                    courseId
-                })
-                
-                
+                if (!initialData) {
+                    const response = await createAnnouncementApi({
+                        ...value,
+                        courseId
+                    })
+                    console.log("response ==>", response)
+                    process(response.data)
+                    toast.success("Duyuru kaydedildi", {
+                        autoClose: 1000
+                    })
+                    setModalShow(false)
+                }
+                else {
+                    const response = await updateAnnouncementApi({
+                        content: value.content,
+                        title: value.title,
+                        courseId: id as string,
+                        announcementId: initialData.announcementId as string
+                    })
+                    process(response.data)
+                    toast.success("Duyuru güncellendi", {
+                        autoClose: 1000
+                    })
+                    setModalShow(false)
+                }
             }
             catch (err) {
 
@@ -29,12 +52,23 @@ const TeacherCourseAnnouncementModal: FC<{ courseId: string, modalShow: boolean,
         }
     })
 
+    useEffect(() => {
+        if (initialData) {
+            formik.setFieldValue("title", initialData.title)
+            formik.setFieldValue("content", initialData.content)
+        }
+        else {
+            formik.setFieldValue("title", "")
+            formik.setFieldValue("content", "")
+        }
+
+    }, [initialData])
 
     return (
         <Modal isOpen={modalShow}>
             <ModalHeader>
                 <h6>
-                    Duyuru Ekle
+                    {initialData ? "Duyuru Güncelle" : "Duyuru Ekle"}
                 </h6>
             </ModalHeader>
             <ModalBody>
@@ -80,7 +114,7 @@ const TeacherCourseAnnouncementModal: FC<{ courseId: string, modalShow: boolean,
                 <Button className='btn btn-success' onClick={() => {
                     formik.handleSubmit()
                 }}>
-                    Kaydet
+                    {initialData ? "Güncelle" : "Kaydet"}
                 </Button>
                 <Button className='btn btn-danger' onClick={() => {
                     setModalShow(false)

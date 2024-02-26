@@ -40,17 +40,39 @@ const EditCourseDocumentTab: FC<{ documentList: ICourseType["files"], setDocumen
     const handleAddCourseDocument = async (e: React.ChangeEvent<HTMLInputElement>) => {
         if (e.target.files) {
             try {
-                const filesArray: File[] = Array.from(e.target.files);
-                const formData = new FormData()
-                formData.append("id", id as string)
-                filesArray.forEach(item => {
-                    formData.append("files[]", item)
-                })
+                const arr = Array.from(e.target.files)
+                let control: boolean = false
+                const allowedTypes = ["application/pdf", "application/msword", "application/vnd.openxmlformats-officedocument.wordprocessingml.document"]
+                const maxSize = 10 * 1024 * 1024 // 10 MB
 
-                let response = await addDocumentApi(formData)
-               /*  console.log("docc ==>", documetInputRef.current.reset()) */
-                console.log("responseDcoc ==>", response)
-                setDocumentList([...response.data.files.filter(el => el.type == "document").reverse()])
+                arr.forEach(el => {
+                    if (!allowedTypes.includes(el.type)) {
+                        toast.error("Sadece PDF veya Word dosyaları yükleyebilirsiniz.", {
+                            autoClose: 3000
+                        })
+                        control = true
+                        return
+                    }
+
+                    if (el.size > maxSize) {
+                        toast.error("Dosya boyutu 10 MB'ı geçemez.", {
+                            autoClose: 3000
+                        })
+                        control = true
+                        return
+                    }
+                })
+                if (!control) {
+                    const filesArray: File[] = Array.from(e.target.files);
+                    const formData = new FormData()
+                    formData.append("id", id as string)
+                    filesArray.forEach(item => {
+                        formData.append("files[]", item)
+                    })
+                    let response = await addDocumentApi(formData)
+                    setDocumentList([...response.data.files.filter(el => el.type == "document").reverse()])
+                }
+
             }
             catch (err: any) {
                 toast.error(err.response.data.message, {
@@ -65,9 +87,9 @@ const EditCourseDocumentTab: FC<{ documentList: ICourseType["files"], setDocumen
 
             <Swiper className="swiper_container" slidesPerView={3} grid={{ rows: 1 }} spaceBetween={30} pagination={{ clickable: true }} modules={[Grid]} >
                 {
-                    documentList.map((el) => {
+                    documentList.map((el, index) => {
                         return (
-                            <SwiperSlide className="document_slide">
+                            <SwiperSlide key={`${index}`} className="document_slide">
                                 <div className="document_section">
                                     <div className="document_section_container">
                                         <FaRegFilePdf style={{ fontSize: "52px" }} />

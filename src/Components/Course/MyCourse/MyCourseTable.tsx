@@ -3,18 +3,24 @@ import React, { FC, useMemo, useState } from 'react'
 import { Button, Col, Modal, ModalBody, ModalFooter, ModalHeader, Nav, NavItem, NavLink, Row, TabContent, TabPane, Table } from 'reactstrap';
 import { IUserData } from '../../../api/User/UserType';
 import { ICourseType } from '../../../api/Course/CourseTypes';
+import { FaChalkboardTeacher, FaRegFilePdf } from 'react-icons/fa';
+import { LuFileJson } from 'react-icons/lu';
 import DetailWidget from '../DetailCourse/DetailWidget';
 import { IoTimeOutline } from 'react-icons/io5';
 import { IoMdTime } from 'react-icons/io';
 import { VscSymbolField } from 'react-icons/vsc';
-import { FaChalkboardTeacher, FaRegFilePdf } from 'react-icons/fa';
 import { TbFileDescription } from 'react-icons/tb';
-import { LuFileJson } from 'react-icons/lu';
+import CourseDetailModal from '../EditCourse/CourseDetailModal';
+import CourseDocumentModal from './CourseDocumentModal';
+import CourseAnnouncementModal from '../EditCourse/CourseAnnouncementModal';
+
 
 const MyCourseTable: FC<{ userData: IUserData }> = ({ userData }) => {
     const [selectedCourse, setSelectedCourse] = useState<ICourseType>()
     const [activeTab, setActiveTab] = useState<number>(1)
-    const [modalShow, setModalShow] = useState<boolean>()
+    const [detailModal, setDetailModal] = useState<boolean>(false)
+    const [documentModal, setDocumentModal] = useState<boolean>(false)
+    const [announcementModal, setAnnouncementModal] = useState<boolean>(false)
     const columns = useMemo<ColumnDef<any>[]>(() => {
         return [
             {
@@ -35,29 +41,53 @@ const MyCourseTable: FC<{ userData: IUserData }> = ({ userData }) => {
                     )
                 }
             },
-            /* {
-                id: "id",
+            {
                 accessorKey: "_id",
-                header: "işlem",
-                cell: ({ getValue }) => {
-                    const id = getValue()
+                header: "Ayrıntılar",
+                cell: () => {
                     return (
-                        <Button className='btn btn-warning' size='sm' style={{ padding: "5px 15px" }} onClick={() => {
-                            setSelectedCourse(userData.courses.find(el => el._id == id))
-                      
+                        <Button size='sm' onClick={() => {
+                            setDetailModal(true)
                         }} >
-                            İncele
+                            Ayrıntılar
                         </Button>
                     )
                 }
-            } */
+            },
+            {
+                accessorKey: "_id",
+                header: "Dökümanlar",
+                cell: () => {
+                    return (
+                        <Button size='sm' onClick={() => {
+                            setDocumentModal(true)
+                        }} >
+                            Dökümanlar
+                        </Button>
+                    )
+                }
+            },
+            {
+                accessorKey: "_id",
+                header: "Duyurular",
+                cell: () => {
+                    return (
+                        <Button size='sm' onClick={() => {
+                            setAnnouncementModal(true)
+                        }} >
+                            Duyurular
+                        </Button>
+                    )
+                }
+            },
+
         ]
 
     }, [])
 
     const tableData = useMemo(() => {
         console.log("user => ", userData)
-        return userData?.courses ?? []
+        return userData?.courses.filter(el => el != null) ?? []
     }, [userData])
 
     const table = useReactTable({
@@ -71,110 +101,75 @@ const MyCourseTable: FC<{ userData: IUserData }> = ({ userData }) => {
         },
     });
 
-    const startDate = useMemo(() => {
-        return new Date(selectedCourse?.startDate ?? "").toLocaleDateString()
-    }, [selectedCourse?.startDate])
-
-    const endDate = useMemo(() => {
-        return new Date(selectedCourse?.endDate ?? "").toLocaleDateString()
-    }, [selectedCourse?.endDate])
-
-    const teacherName = useMemo(() => {
-        return selectedCourse?.teacher.name + " " + selectedCourse?.teacher.surname
-    }, [selectedCourse?.teacher])
 
     const documents = useMemo(() => {
         return selectedCourse?.files.filter(el => el.type == "document") ?? []
     }, [selectedCourse?.files])
 
-    const formatFileName = (name: string) => {
-        return name.split("-")[0]
-    }
-    const extensionIcon = (ext: string) => {
-        if (ext == ".pdf") {
-            return <FaRegFilePdf style={{ fontSize: "30px", marginRight: "10px" }} />
-        }
-        else if (ext == ".json") {
-            return <LuFileJson style={{ fontSize: "30px" }} />
-        }
-    }
 
-    const openFile = (path: any) => {
-        const fullFilePath = `${import.meta.env.VITE_BASEURL}${path}`;
-        window.open(fullFilePath, '_blank');
-    };
 
     return (
         <Row style={{ height: "60vh" }} >
-            <Col lg={4}>
-                <Table hover className={"mb-0 align-middle table-borderless"}>
-                    <thead className={"table-light text-muted"}>
-                        {table.getHeaderGroups().map((headerGroup: any) => (
-                            <tr key={headerGroup.id}   >
-                                {headerGroup.headers.map((header: any) => (
-                                    <th key={header.id}   {...{
-                                        onClick: header.column.getToggleSortingHandler(),
-                                    }}>
-                                        {header.isPlaceholder ? null : (
-                                            <React.Fragment>
-                                                {flexRender(
-                                                    header.column.columnDef.header,
-                                                    header.getContext()
-                                                )}
-                                                {{
-                                                    asc: ' ',
-                                                    desc: ' ',
-                                                }
-                                                [header.column.getIsSorted() as string] ?? null}
+            <Col lg={12}>
+                <div className={"table-responsive mb-1"}>
+                    <Table hover className={"mb-0 align-middle table-borderless"}>
+                        <thead className={"table-light text-muted"}>
+                            {table.getHeaderGroups().map((headerGroup: any) => (
+                                <tr key={headerGroup.id}   >
+                                    {headerGroup.headers.map((header: any) => (
+                                        <th key={header.id}   {...{
+                                            onClick: header.column.getToggleSortingHandler(),
+                                        }}>
+                                            {header.isPlaceholder ? null : (
+                                                <React.Fragment>
+                                                    {flexRender(
+                                                        header.column.columnDef.header,
+                                                        header.getContext()
+                                                    )}
+                                                    {{
+                                                        asc: ' ',
+                                                        desc: ' ',
+                                                    }
+                                                    [header.column.getIsSorted() as string] ?? null}
 
-                                            </React.Fragment>
-                                        )}
-                                    </th>
-                                ))}
-                            </tr>
-                        ))}
-                    </thead>
-
-                    <tbody>
-                        {table.getRowModel().rows.map((row: any) => {
-                            console.log("row =>", row)
-                            return (
-                                <tr key={row.id} style={{ cursor: "pointer" }} onClick={() => {
-                                    setSelectedCourse(userData.courses.find(el => el._id == row.original._id))
-                                }} >
-                                    {row.getVisibleCells().map((cell: any) => {
-                                        return (
-                                            <td key={cell.id} style={selectedCourse?._id == row.original._id ? { backgroundColor: "rgba(128,128,128,.2)" } : {}}   >
-                                                {flexRender(
-                                                    cell.column.columnDef.cell,
-                                                    cell.getContext()
-                                                )}
-                                            </td>
-                                        );
-                                    })}
+                                                </React.Fragment>
+                                            )}
+                                        </th>
+                                    ))}
                                 </tr>
-                            );
-                        })}
-                    </tbody>
-                </Table>
+                            ))}
+                        </thead>
+
+                        <tbody>
+                            {table.getRowModel().rows.map((row: any) => {
+                                console.log("row =>", row)
+                                return (
+                                    <tr key={row.id} style={{ cursor: "pointer" }} onClick={() => {
+                                        setSelectedCourse(userData.courses.find(el => el?._id == row.original?._id))
+                                    }} >
+                                        {row.getVisibleCells().map((cell: any) => {
+                                            return (
+                                                <td key={cell?.id} style={selectedCourse?._id == row.original?._id ? { backgroundColor: "rgba(128,128,128,.2)" } : {}}   >
+                                                    {flexRender(
+                                                        cell.column.columnDef.cell,
+                                                        cell.getContext()
+                                                    )}
+                                                </td>
+                                            );
+                                        })}
+                                    </tr>
+                                );
+                            })}
+                        </tbody>
+                    </Table>
+                </div>
+
 
             </Col>
-            <Modal isOpen={modalShow} toggle={() => setModalShow(false)} >
-                <ModalHeader>
-                    Ayrıntılıar
-                </ModalHeader>
-
-                <ModalBody>
-
-                </ModalBody>
-                <ModalFooter>
-
-                    <Button color="danger" onClick={() => { setModalShow(false) }}>
-                        İptal
-                    </Button>
-                </ModalFooter>
-            </Modal>
-            <Col lg={8} style={{ borderLeft: "1px solid gray" }} >
+            <CourseDetailModal selectedCourse={selectedCourse as ICourseType} modalShow={detailModal} setModalShow={setDetailModal} />
+            <CourseDocumentModal setModalShow={setDocumentModal} modalShow={documentModal} documents={documents} />
+            <CourseAnnouncementModal modalShow={announcementModal} setModalShow={setAnnouncementModal} data={selectedCourse?.announcement ?? []} />
+            {/*  <Col lg={8} style={{ borderLeft: "1px solid gray" }} >
                 <Nav tabs>
                     <NavItem>
                         <NavLink className={`${activeTab == 1 && "active"}`} onClick={() => setActiveTab(1)} >
@@ -267,7 +262,7 @@ const MyCourseTable: FC<{ userData: IUserData }> = ({ userData }) => {
                                 documents.map(el => {
                                     return (
                                         <Col md={4} key={`${el?._id}`} >
-                                            <div className='course_document_card' onClick={()=>{
+                                            <div className='course_document_card' onClick={() => {
                                                 openFile(el.path)
                                             }} >
                                                 {
@@ -277,9 +272,7 @@ const MyCourseTable: FC<{ userData: IUserData }> = ({ userData }) => {
                                                     <p >
                                                         {formatFileName(el.name)}
                                                     </p>
-                                                    {/*    <Button size='sm'>
-                                                        incele
-                                                    </Button> */}
+                                               
                                                 </div>
                                             </div>
                                         </Col>
@@ -295,7 +288,7 @@ const MyCourseTable: FC<{ userData: IUserData }> = ({ userData }) => {
 
                     </TabPane>
                 </TabContent>
-            </Col>
+            </Col> */}
         </Row>
     )
 }

@@ -4,7 +4,6 @@ import { Button, Col, Nav, NavItem, NavLink, Row, TabContent, TabPane, Table } f
 import { courseTeacherListApi } from '../../../api/Course/courseApi'
 import { ICourseType } from '../../../api/Course/CourseTypes'
 import { toast } from 'react-toastify'
-import { ColumnDef, flexRender, getCoreRowModel, useReactTable } from '@tanstack/react-table'
 import TeacherCourseTable from './TeacherCourseTable'
 
 const TeacherCourseDashboard = () => {
