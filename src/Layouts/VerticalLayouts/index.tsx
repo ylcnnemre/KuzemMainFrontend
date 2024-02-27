@@ -13,6 +13,7 @@ const VerticalLayout = (props: any) => {
     const navData = navdata().props.children;
 
     const { user: { role, permission } } = useUserStore()
+    console.log("user =>",role,permission)
     const { leftsidbarSizeType, sidebarVisibilitytype, layoutType } = useLayoutStore()
     //vertical and semibox resize events
     const resizeSidebarMenu = useCallback(() => {
@@ -61,7 +62,7 @@ const VerticalLayout = (props: any) => {
 
 
     const permissionControl = (item: any) => {
-        return permission.includes(item.permission) || item.permission == "all"
+        return permission?.includes(item?.permission) || item?.permission == "all"
     }
 
     const roleControl = (item: any) => {
@@ -72,7 +73,7 @@ const VerticalLayout = (props: any) => {
             return false
         }
         else {
-            return item.role == role
+            return item?.role == role
         }
     }
 

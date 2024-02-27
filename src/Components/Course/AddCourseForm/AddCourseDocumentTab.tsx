@@ -23,6 +23,7 @@ const AddCourseDocumentTab: FC<{ programList: IProgram[], setCurrent: any, handl
 
   const saveCourse = async () => {
     const value = formik.values
+    console.log("valea =>", formik.values)
     const formData = new FormData()
     Object.entries(value).map(([key, val]) => {
       const data: any = val
@@ -36,24 +37,23 @@ const AddCourseDocumentTab: FC<{ programList: IProgram[], setCurrent: any, handl
     selectedDocumentFiles.forEach((item, index) => {
       formData.append("files[]", item, `courseDocument-ctype-${item.name}`)
     })
+    formData.append("program", JSON.stringify(programList));
 
-    programList.forEach((el) => {
-      formData.append("program", JSON.stringify(el))
-    })
+
     console.log("formData ==>=", formData.get("program"))
-     try {
-       let response = await createCourseApi(formData)
-       toast.success(response.data.msg, {
-         autoClose: 1500
-       })
-       formik.resetForm()
-       navigate("/kurs")
-     }
-     catch (err: any) {
-       toast.error(err.response.data.message, {
-         autoClose: 1500
-       })
-     }
+    try {
+      let response = await createCourseApi(formData)
+      toast.success(response.data.msg, {
+        autoClose: 1500
+      })
+      formik.resetForm()
+      navigate("/kurs")
+    }
+    catch (err: any) {
+      toast.error(err.response.data.message, {
+        autoClose: 1500
+      })
+    }
 
   }
 

@@ -39,7 +39,7 @@ const AddCourseForm = () => {
     const imageExtension = ["jpg", "jpeg", "png"]
     if (e.target.files) {
       const filesArray: File[] = Array.from(e.target.files);
-      const MAX_FILE_SIZE_BYTES = 10 * 1024 * 1024;
+      const MAX_FILE_SIZE_BYTES = 30 * 1024 * 1024;
       let control: {
         fail: boolean,
         msg: string
@@ -56,7 +56,7 @@ const AddCourseForm = () => {
         }
         else if (item.size > MAX_FILE_SIZE_BYTES) {
           control.fail = true
-          control.msg = "Dosya Boyutu maksimum 10mb olmalı"
+          control.msg = "Dosya Boyutu maksimum 30mb olmalı"
           break
         }
       }

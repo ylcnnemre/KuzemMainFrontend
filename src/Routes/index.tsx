@@ -15,11 +15,11 @@ const Index = () => {
     const { user: { role, permission } } = useUserStore()
 
     const permissionControl = (item: any) => {
-        if (!item.role) {
-            return permission.includes(item.permission) || item.permission == Permission.all
+        if (!item?.role) {
+            return permission?.includes(item?.permission) || item?.permission == Permission.all
         }
         else {
-            return item.role.includes(role)
+            return item?.role.includes(role)
         }
     }
 
