@@ -138,7 +138,7 @@ const CourseDocumentModal: FC<{ courseId?: string, modalShow: boolean, setModalS
                                                 <SwiperSlide key={`${index}`} >
                                                     <div className='document_modal_card_container' >
                                                         <div className='document_modal_card_container_content' style={editMode ? { borderBottom: "1px solid gray" } : { cursor: "pointer" }} onClick={() => {
-
+                                                             openFile(el.path)
                                                         }}>
                                                             <FaRegFilePdf style={{ fontSize: "25px" }} />
 

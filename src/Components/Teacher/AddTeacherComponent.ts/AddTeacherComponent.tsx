@@ -8,13 +8,14 @@ import { IUserData } from '../../../api/User/UserType'
 import { toast } from 'react-toastify'
 import { getAllBranch } from '../../../api/Branch/BranchApi'
 import { createUserApi } from '../../../api/User/UserApi'
+import useUserStore from '../../../zustand/useUserStore'
 
 const today = new Date();
 const eighteenYearsAgo = new Date(today.getFullYear() - 18, today.getMonth(), today.getDate());
 const eightyYearsAgo = new Date(today.getFullYear() - 80, today.getMonth(), today.getDate());
 
 const AddTeacherComponent: FC<{ t: Function }> = ({ t }) => {
-
+    const { user: { _id } } = useUserStore()
     const [branchList, setBranchList] = useState<Array<{ id: string, name: string }>>([])
 
     useEffect(() => {
@@ -66,7 +67,8 @@ const AddTeacherComponent: FC<{ t: Function }> = ({ t }) => {
                 await createUserApi({
                     ...rest,
                     gender: gender as IUserData["gender"],
-                    role: "teacher"
+                    role: "teacher",
+                    userId : _id as string
                 })
                 toast.success("Öğretmen kayıt edildi", {
                     autoClose: 1500

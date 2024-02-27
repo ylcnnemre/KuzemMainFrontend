@@ -104,6 +104,12 @@ const Navdata = () => {
                     parentId: "Kurslar",
                     role: Role.teacher
                 },
+                {
+                    id : "Cizelge",
+                    label : "Çizelge",
+                    link: "/cizelge",
+                    parentId : "Kurslar"
+                }
             ],
         },
         {

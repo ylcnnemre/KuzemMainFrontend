@@ -47,6 +47,7 @@ export interface IUserData {
     },
     permission: Permission[]
     responsibleCourse ?: any[]
+
 }
 
 
@@ -62,7 +63,8 @@ export interface ICreateUserType {
     birthDate: string
     gender: "erkek" | "kadın",
     branch?: string,
-    permission?: Permission[]
+    permission?: Permission[],
+    userId ?: string
 }
 
 

@@ -1,0 +1,88 @@
+.left-50 {
+    position: absolute;
+    top: 0;
+    left: -50%;
+    transition: 1s all;
+}
+
+.right-0 {
+    position: absolute;
+    top: 0;
+    right: 0 !important;
+    transition: 1s all;
+}
+
+
+
+.teacher_course_announcement {
+    opacity: 0;
+    height: 0;
+    overflow: hidden;
+    background-color: #061E39;
+    z-index: 10000;
+    height: 100vh;
+    width: 450px;
+    transition: opacity 0.5s ease, height 0.5s ease;
+ 
+    border-top-left-radius: 50px;
+
+    &_header{
+        padding: 30px;
+        padding-bottom: 13px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-bottom: 1px solid gray;
+        .close_icon{
+            font-size: 24px;
+            background-color: rgba($color: red, $alpha: .8);
+            border-radius: 50%;
+            padding: 3px;
+            cursor: pointer;
+        }
+    }
+
+
+    &_content{
+        display: flex;
+        flex-direction: column;
+        padding: 30px;
+        overflow-y: auto;
+        height: 100%;
+        
+
+
+        .announcement_item{
+            display: flex;
+            background-color: rgba($color: gray, $alpha: .5);
+            border-radius: 10px;
+            margin-bottom: 20px;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px;
+            cursor: pointer;
+            transition: .5s all;
+            &:hover{
+                opacity: .7;
+            }
+
+            &_left_side{
+                display: flex;
+                align-items: center;
+
+                .announcement_icon{
+                    font-size: 20px;
+                    transform: translateY(-3px);
+                    margin-right: 10px;
+                }
+            }
+            
+        }
+    }
+
+}
+
+.teacher_course_announcement.show {
+    /* Gösterme durumunda ayarlar */
+    opacity: 1;
+}

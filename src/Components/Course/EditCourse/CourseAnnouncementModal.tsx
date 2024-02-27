@@ -20,7 +20,7 @@ const CourseAnnouncementModal: FC<{ modalShow: boolean, setModalShow: Function, 
                             {
                                 data.map((el, index) => {
                                     return (
-                                        <Col lg={4} key={`${index}`}>
+                                        <Col lg={6} key={`${index}`}>
                                             <div className='course_announcement_container_card' onClick={() => {
                                                 setSelectedAnnouncement(data.find(item => {
                                                     return item._id == el._id
@@ -60,7 +60,7 @@ const CourseAnnouncementModal: FC<{ modalShow: boolean, setModalShow: Function, 
                     </p>
                 </ModalBody>
                 <ModalFooter>
-                    <Button className='btn btn-danger' onClick={()=>{
+                    <Button className='btn btn-danger' onClick={() => {
                         setDetailModal(false)
                     }}>
                         Kapat

@@ -1,0 +1,27 @@
+.week_calendar_container {
+    width: 100%;
+    height: calc(100vh - 300px);
+    background-color: rgba($color: black, $alpha: .3);
+    border: none;
+    border-radius: 10px;
+}
+
+.react-calendar__tile{  
+    transition: .2s all;
+    &:hover{
+        background-color: blueviolet !important;
+    }
+}
+
+.react-calendar__tile--now {
+    background-color: transparent;
+}
+
+.tesv123 {
+    background-color: purple;
+}
+
+.white-tile{
+    border:  1px solid rgba($color: gray, $alpha: .7) !important;
+    padding: 20px !important;
+}

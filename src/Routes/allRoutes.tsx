@@ -9,6 +9,7 @@ import SemesterPage from "../pages/Semester/SemesterPage";
 import MyCourseDashboard from "../Components/Course/MyCourse/MyCourseDashboard";
 import { Role } from "../config/constant";
 import TeacherCourseDashboard from "../Components/Course/TeacherCourse/TeacherCourseDashboard";
+import WeekChart from "../Components/WeekChart/WeekChart";
 
 const Dashboard = lazy(() => import("../pages/Dashboard"));
 const Login = lazy(() => import("../pages/Authentication/Login"));
@@ -61,6 +62,7 @@ const authProtectedRoutes: Array<{ path: string, component: React.ReactNode, exa
   { path: "/profil", component: <Settings />, permission: Permission.all },
   { path: "/pages-faqs", component: <Faqs />, permission: Permission.all },
   { path: "/test", component: <TestPage />, permission: Permission.all },
+  { path: "/cizelge", component: <WeekChart />, permission: Permission.all },
   {
     path: "/",
     exact: true,
