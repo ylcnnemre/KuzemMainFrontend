@@ -9,19 +9,18 @@ type ValuePiece = Date | null;
 type Value = ValuePiece | [ValuePiece, ValuePiece];
 
 const WeekChart = () => {
-    const [value, onChange] = useState<Value>(new Date());
+    const [selectedDates, setSelectedDates] = useState<Date[]>([]);
 
     const tileContent = ({ date, view }: any) => {
-        if (view === 'month' && date.getDate() === 7 && date.getMonth() === 1) { // 7 Ekim Perşembe (Ekim ayı 0'dan başladığı için 9, Perşembe günü 0'dan başladığı için 4)
+        if (view === 'month' && date.getDate() === 7 && date.getMonth() === 1) {
             return <p style={{ color: 'red' }}>İşaret</p>;
         }
     };
 
-    const tileClassName = ({ date, view }: any) => {
-        if (view === 'month') {
-            return 'white-tile'; // Günlerin olduğu kareyi beyaz yapacak sınıf
-        }
+    const tileClassName = () => {
+        return "white-tile"
     };
+
 
 
     return (
@@ -29,7 +28,15 @@ const WeekChart = () => {
             <Container fluid >
                 <BreadCrumb title="Çizelge" />
 
-                <Calendar className={"week_calendar_container"} tileContent={tileContent} tileClassName={tileClassName} onChange={onChange} value={value} />
+                <Calendar
+                    className={"week_calendar_container"}
+                    tileClassName={tileClassName}
+                    tileContent={tileContent}
+                    onChange={(e: any) => {
+                        const tarih = new Date(e)
+                        console.log("tarih =<", tarih.toLocaleDateString())
+                    }}
+                />
             </Container>
         </div>
     )

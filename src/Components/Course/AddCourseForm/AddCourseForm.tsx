@@ -137,6 +137,8 @@ const AddCourseForm = () => {
         .test('start-date', 'Başlangıç tarihi bitiş tarihinden önce olmalıdır', function (value) {
           const endDate = this.parent.endDate;  // Değişiklik burada
           return !endDate || value < endDate;
+        }).test("start-date", "Günümüzden ileri olmalı", function (value) {
+          return new Date() < value
         }),
       endDate: yup
         .date()
@@ -144,6 +146,8 @@ const AddCourseForm = () => {
         .test('end-date', 'Bitiş tarihi başlangıç tarihinden sonra olmalıdır', function (value) {
           const startDate = this.parent.startDate;  // Değişiklik burada
           return !startDate || value > startDate;
+        }).test("end-date", "Günümüzden ileri bir tarih olmalı", function (value) {
+          return new Date() < value
         }),
       quota: yup.number().min(1).required(),
       teacher: yup.string().required()
@@ -185,7 +189,7 @@ const AddCourseForm = () => {
         }
         {
           current == 1 && (
-            <AddCourseProgram setCurrent={setCurrent} programData={programData} setProgramData={setProgramData} programList={programList} setProgramList={setProgramList} />
+            <AddCourseProgram formik={formik} setCurrent={setCurrent} programData={programData} setProgramData={setProgramData} programList={programList} setProgramList={setProgramList} />
           )
         }
         {

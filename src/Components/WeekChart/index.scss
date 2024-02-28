@@ -1,7 +1,7 @@
 .week_calendar_container {
     width: 100%;
-    height: calc(100vh - 300px);
-    background-color: rgba($color: black, $alpha: .3);
+    padding: 40px;
+    background-color: rgba($color: gray, $alpha: .2);
     border: none;
     border-radius: 10px;
 }
@@ -9,7 +9,7 @@
 .react-calendar__tile{  
     transition: .2s all;
     &:hover{
-        background-color: blueviolet !important;
+        background-color: #006EDC !important;
     }
 }
 
@@ -18,10 +18,31 @@
 }
 
 .tesv123 {
-    background-color: purple;
+    background-color: pink;
 }
 
 .white-tile{
     border:  1px solid rgba($color: gray, $alpha: .7) !important;
     padding: 20px !important;
+}
+
+.react-calendar__navigation__label{
+    transition: .5s all;
+    &:hover
+    {
+        opacity: .5 !important;
+        background-color: rgba($color: gray, $alpha: .3) !important;
+    }
+}
+
+.react-calendar__navigation__arrow{
+    transition: .5s all;
+    &:hover{
+        background-color: rgba($color: gray, $alpha: .3) !important;
+        opacity: .8;
+    }
+}
+
+.react-calendar__tile--active{
+    background-color: transparent !important;
 }

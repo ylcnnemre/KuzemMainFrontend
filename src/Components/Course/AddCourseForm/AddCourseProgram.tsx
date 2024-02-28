@@ -1,19 +1,22 @@
 import { TimePicker } from 'antd'
 import dayjs from 'dayjs'
-import React, { FC, useMemo } from 'react'
+import React, { FC, useEffect, useMemo, useState } from 'react'
 import { Button, Col, Label, Row } from 'reactstrap'
 import { IProgram } from './AddCourseForm'
 import { toast } from 'react-toastify'
 import { CgClose } from 'react-icons/cg'
+import { getDatesBetween, getDayIndex } from '../../../config/utils'
 
 
-const AddCourseProgram: FC<{ setCurrent: any, programData: IProgram, setProgramData: React.Dispatch<React.SetStateAction<IProgram>>, programList: IProgram[], setProgramList: Function }> = ({ programData, programList, setProgramData, setProgramList, setCurrent }) => {
+const AddCourseProgram: FC<{ setCurrent: any, programData: IProgram, formik: any, setProgramData: React.Dispatch<React.SetStateAction<IProgram>>, programList: IProgram[], setProgramList: Function }> = ({ programData, programList, setProgramData, setProgramList, setCurrent, formik }) => {
 
 
     const dayList = useMemo(() => {
         return ["Pazartesi", "Salı", "Çarşamba", "Perşembe", "Cuma", "Cumartesi", "Pazar"]
     }, [])
     const format: string = 'HH:mm'
+
+    const [programDateList, setProgramDateList] = useState<Array<{ id: string, day: string, dates: Date[] }>>([])
 
     const addProgram = () => {
         const control = compareHour(programData.startTime, programData.endTime)
@@ -22,11 +25,12 @@ const AddCourseProgram: FC<{ setCurrent: any, programData: IProgram, setProgramD
                 autoClose: 1500
             })
         } else {
+            const randomId = Math.random().toString()
             setProgramList([
                 ...programList,
                 {
                     ...programData,
-                    id: Math.random().toString()
+                    id: randomId
                 }
             ])
             setProgramData({
@@ -35,15 +39,35 @@ const AddCourseProgram: FC<{ setCurrent: any, programData: IProgram, setProgramD
                 endTime: "12:30",
                 startTime: "12:00"
             })
+            const allProgram: Array<{ id: string, day: string, dates: Date[], startTime: string, endTime: string }> = []
 
+            const dataList = [...programList, {
+                ...programData,
+                id: randomId
+            }]
+
+            for (let item of dataList) {
+                let dayIndex = getDayIndex(item.day)
+                const start = parseISODate(formik.values.startDate)
+                const end = parseISODate(formik.values.endDate)
+                const list = getDatesBetween(start, end, dayIndex)
+                allProgram.push({
+                    id: item.id,
+                    day: item.day,
+                    dates: list,
+                    startTime: item.startTime,
+                    endTime: item.endTime
+                })
+            }
+            setProgramDateList(allProgram)
+
+            console.log("list DAY==>", allProgram)
         }
     }
 
     const compareHour = (time1: string, time2: string) => {
         var [saat1, dakika1] = time1.split(':').map(Number);
         var [saat2, dakika2] = time2.split(':').map(Number);
-
-        // Saatleri ve dakikaları karşılaştır
         if (saat1 < saat2) {
             return true;
         } else if (saat1 > saat2) {
@@ -54,9 +78,30 @@ const AddCourseProgram: FC<{ setCurrent: any, programData: IProgram, setProgramD
             } else if (dakika1 > dakika2) {
                 return false;
             } else {
-                return false; // Zamanlar eşit
+                return false;
             }
         }
+    }
+    function parseISODate(dateString: string): Date {
+        const [year, month, day] = dateString.split('-').map(Number);
+        return new Date(year, month - 1, day);
+    }
+
+    useEffect(() => {
+        const start = parseISODate(formik.values.startDate)
+        const end = parseISODate(formik.values.endDate)
+        const list = getDatesBetween(start, end, 4)
+        console.log("list DAY==>", list)
+    }, [])
+
+
+    const deleteDay = (el: IProgram) => {
+        console.log("el =>", el)
+        console.log("pro  =>", programDateList)
+        /*   setProgramList(programList.filter(item => item.id !== el.id))
+          setProgramDateList(programDateList.filter(el => el.id !== el.id)) */
+        setProgramList(programList.filter(item => item.id !== el.id))
+        setProgramDateList(programDateList.filter(item => item.id !== el.id))
     }
 
 
@@ -164,7 +209,8 @@ const AddCourseProgram: FC<{ setCurrent: any, programData: IProgram, setProgramD
                                             </p>
                                         </div>
                                         <CgClose color='red' className='program_card_close_icon' onClick={() => {
-                                            setProgramList(programList.filter(item => item.id !== el.id))
+
+                                            deleteDay(el)
                                         }} />
                                     </div>
                                 </Col>
@@ -172,6 +218,33 @@ const AddCourseProgram: FC<{ setCurrent: any, programData: IProgram, setProgramD
                         })
                     }
                 </Row>
+            </Col>
+            <Col lg={12}>
+                <Row>
+                    {
+                        programDateList.map(el => {
+
+                            return el.dates.map(item => {
+                                return (
+                                    <Col lg={3} style={{ marginBottom: "10px" }} >
+                                        <div style={{ backgroundColor: "blue", display: "flex" }} >
+                                            <h6>
+                                                {el.day} { }
+                                            </h6>
+                                            <h6>
+                                                {item.toLocaleDateString()}
+                                            </h6>
+                                        </div>
+                                    </Col>
+
+                                )
+                            })
+                        })
+                    }
+
+
+                </Row>
+
             </Col>
             <Col style={{ display: "flex", justifyContent: "flex-end" }} >
                 <Button className='btn btn-warning me-4' onClick={() => {

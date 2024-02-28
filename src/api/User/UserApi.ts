@@ -20,6 +20,7 @@ const getAdminListApi = () => axiosInstance.get("/user/all/admin")
 
 const getStudentCourseApi = (id: string): Promise<AxiosResponse<IUserCourseResponse[]>> => axiosInstance.get(`/user/enrollmentcourse/${id}`) //öğrencinin katıldığı kursları getirir
 
+const createStudentApi = (data: ICreateUserType) => axiosInstance.post("/user/student", data)
 
 export {
     getUserByIdApi,
@@ -30,5 +31,6 @@ export {
     deleteUserApi,
     getStudentListApi,
     getAdminListApi,
-    getStudentCourseApi
+    getStudentCourseApi,
+    createStudentApi
 }
