@@ -16,11 +16,12 @@ const EditCourseAnnouncement: FC<{ data: ICourseType, setData: Function }> = ({ 
     const [modalShow, setModalShow] = useState<boolean>(false)
     const [initialData, setInitialData] = useState<{ title?: string, content?: string, announcementId?: string }>()
     const [deleteModal, setDeleteModal] = useState<boolean>(false)
+
     const tableData = useMemo(() => {
         return data.announcement
     }, [data])
 
-
+    console.log("test ==>")
     const columns = useMemo(() => [
         {
             header: "başlık",
@@ -138,15 +139,15 @@ const EditCourseAnnouncement: FC<{ data: ICourseType, setData: Function }> = ({ 
                                 announcementId: initialData?.announcementId as string,
                                 courseId: id as string
                             })
-                            toast.success("duyuru silindi",{
-                                autoClose : 1000
+                            toast.success("duyuru silindi", {
+                                autoClose: 1000
                             })
                             setData(response.data)
                             setDeleteModal(false)
                         }
-                        catch (err:any) {
-                            toast.error(err.message,{
-                                autoClose : 1000
+                        catch (err: any) {
+                            toast.error(err.message, {
+                                autoClose: 1000
                             })
                         }
                     }}>

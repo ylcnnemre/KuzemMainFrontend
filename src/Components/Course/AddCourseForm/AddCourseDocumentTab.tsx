@@ -9,7 +9,7 @@ import { toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
 import { IProgram } from './AddCourseForm';
 
-const AddCourseDocumentTab: FC<{ programList: IProgram[], setCurrent: any, handleCourseDocument: any, selectedDocumentFiles: any[], formik: any, selectedImageFiles: any[] }> = ({ handleCourseDocument, selectedDocumentFiles, formik, selectedImageFiles, setCurrent, programList }) => {
+const AddCourseDocumentTab: FC<{ programList: Array<{ id: string, day: string, dates: Date[], startTime: string, endTime: string }>, setCurrent: any, handleCourseDocument: any, selectedDocumentFiles: any[], formik: any, selectedImageFiles: any[] }> = ({ handleCourseDocument, selectedDocumentFiles, formik, selectedImageFiles, setCurrent, programList }) => {
 
   const navigate = useNavigate()
   const extensionIcon = (mimeType: string) => {
@@ -37,7 +37,12 @@ const AddCourseDocumentTab: FC<{ programList: IProgram[], setCurrent: any, handl
     selectedDocumentFiles.forEach((item, index) => {
       formData.append("files[]", item, `courseDocument-ctype-${item.name}`)
     })
-    formData.append("program", JSON.stringify(programList));
+    formData.append("program", JSON.stringify(programList.map(el => {
+      return {
+         ...el,
+         dates : el.dates.map(item => item.toLocaleDateString())
+      }
+    })));
 
 
     console.log("formData ==>=", formData.get("program"))
@@ -46,8 +51,8 @@ const AddCourseDocumentTab: FC<{ programList: IProgram[], setCurrent: any, handl
       toast.success(response.data.msg, {
         autoClose: 1500
       })
-      formik.resetForm()
-      navigate("/kurs")
+      /* formik.resetForm()
+      navigate("/kurs") */
     }
     catch (err: any) {
       toast.error(err.response.data.message, {

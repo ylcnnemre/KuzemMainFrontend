@@ -18,6 +18,7 @@ const MyCourseDashboard = () => {
         try {
 
             const response = await getUserByIdApi(_id)
+            
             setUserData(response.data)
         }
         catch (err: any) {

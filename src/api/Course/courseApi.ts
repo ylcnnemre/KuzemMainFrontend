@@ -67,6 +67,14 @@ const deleteAnnouncementApi = (data: IDeleteAnnouncement) => axiosInstance.delet
     }
 })
 
+const deleteCourseSendEmailApi = (id: string) => axiosInstance.post(`/course/${id}`)
+
+const deleteCourseApi = (data: { courseId: string, confirmCode: number }) => axiosInstance.delete("/course/delete", {
+    data: {
+        ...data
+    }
+})
+
 export {
     createCourseApi,
     deleteEnrollerUserApi,
@@ -82,5 +90,7 @@ export {
     updateCourseProgramApi,
     createAnnouncementApi,
     updateAnnouncementApi,
-    deleteAnnouncementApi
+    deleteAnnouncementApi,
+    deleteCourseSendEmailApi,
+    deleteCourseApi
 }

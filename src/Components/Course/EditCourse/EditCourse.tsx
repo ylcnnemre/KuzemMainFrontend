@@ -5,10 +5,10 @@ import "swiper/css/scrollbar";
 import "swiper/css/effect-fade";
 import "swiper/css/effect-flip";
 import "./index.scss"
-import React, { useEffect, useMemo, useState } from 'react'
-import { Button, Col, Nav, NavItem, NavLink, Row, TabContent, TabPane } from 'reactstrap';
+import React, { useCallback, useEffect, useMemo, useState } from 'react'
+import { Button, Col, Input, Modal, ModalBody, ModalFooter, ModalHeader, Nav, NavItem, NavLink, Row, TabContent, TabPane } from 'reactstrap';
 import { toast } from 'react-toastify';
-import { getDetailCourseApi } from '../../../api/Course/courseApi';
+import { deleteCourseApi, deleteCourseSendEmailApi, getDetailCourseApi } from '../../../api/Course/courseApi';
 import { useNavigate, useParams } from 'react-router-dom';
 import { ICourseType, } from '../../../api/Course/CourseTypes';
 import EditCourseInfo from "./EditCourseInfo";
@@ -17,8 +17,10 @@ import EditCourseDocumentTab from "./EditCourseDocumentTab";
 import EditCourseStudentTab from "./EditCourseStudentTab";
 import { PropagateLoader } from "react-spinners";
 import EditCourseProgram from "./EditCourseProgram";
-import TeacherCourseAnnouncementModal from "../TeacherCourse/TeacherCourseAnnouncementModal";
 import EditCourseAnnouncement from "./EditCourseAnnouncement";
+import VerificationInput from "react-verification-input";
+import { LuTimer } from "react-icons/lu";
+import useCountdown from "@bradgarropy/use-countdown"
 
 
 const EditCourse = () => {
@@ -28,8 +30,19 @@ const EditCourse = () => {
     const [scheduleList, setScheduleList] = useState<ICourseType["schedules"]>([])
     const { id } = useParams()
     const [activeTab, setActiveTab] = useState(1);
+    const navigate = useNavigate()
     const [announcementModal, setAnnouncementModal] = useState<boolean>(false)
     const navigation = useNavigate()
+    const [showDeleteModal, setShowDeleteModal] = useState<boolean>(false)
+    const [showDeleteConfirmSection, setShowDeleteConfirmSection] = useState<boolean>(false)
+    const [verificationCode, setVerificationCode] = useState<string>("")
+    const [disableButtonControl, setDisableButtonControl] = useState<{
+        modalButtonDisable: boolean,
+        deleteButtonDisable: boolean
+    }>({
+        modalButtonDisable: false,
+        deleteButtonDisable: true
+    })
 
     const detailCourseApiRequest = async () => {
         try {
@@ -53,9 +66,45 @@ const EditCourse = () => {
         detailCourseApiRequest()
     }, [])
 
-    const announcementList = useMemo(() => {
-        return mainData?.announcement
-    }, [mainData?.announcement])
+    const countdown = useCountdown({
+        minutes: 5,
+        seconds: 0,
+        format: "mm:ss",
+        autoStart: false,
+        onCompleted: () => {
+            setDisableButtonControl({
+                modalButtonDisable: false,
+                deleteButtonDisable: true
+            })
+            setShowDeleteConfirmSection(false)
+            toast.error("Süre doldu", {
+                autoClose: 2000
+            })
+        }
+    })
+
+    const deleteCourse = async () => {
+        try {
+            await deleteCourseApi({ confirmCode: parseInt(verificationCode), courseId: id as string })
+            toast.success("Kurs Silindi", {
+                autoClose: 1500
+            })
+            const sleep = () => {
+                return new Promise((resolve) => {
+                    setTimeout(resolve, 2000)
+                })
+            }
+            sleep()
+
+            navigate("/kurs")
+
+        }
+        catch (err: any) {
+            toast.error(err.response.data.message, {
+                autoClose: 1500
+            })
+        }
+    }
 
 
     if (!mainData) {
@@ -129,6 +178,16 @@ const EditCourse = () => {
                         Duyurular
                     </NavLink>
                 </NavItem>
+                <NavItem>
+                    <NavLink
+                        className={`${activeTab == 7 && "active"}`}
+                        onClick={() => {
+                            setActiveTab(7)
+                        }}
+                    >
+                        İşlemler
+                    </NavLink>
+                </NavItem>
             </Nav>
             <TabContent activeTab={activeTab} style={{ paddingTop: "20px" }} className="tab_content" >
                 <TabPane tabId={1}>
@@ -149,8 +208,108 @@ const EditCourse = () => {
                 <TabPane tabId={6}   >
                     <EditCourseAnnouncement data={mainData} setData={setMainData} />
                 </TabPane>
+                <TabPane tabId={7}   >
+                    <Row>
+                        <Col lg={6}>
+                            <div className="delete_course_container">
+                                <Button disabled={disableButtonControl.modalButtonDisable} color="danger" className="delete_course_btn" onClick={() => {
+                                    setShowDeleteModal(true)
+                                }} >
+                                    Kursu sil
+                                </Button>
+                                {
+                                    showDeleteConfirmSection && (
+                                        <div className="delete_course_confirm">
+                                            <div className="timer_container">
+                                                <h6>
+                                                    Kursu silmek için mailinize gönderilen onay kodunu giriniz
+                                                </h6>
+                                                <div className="timer_element">
+                                                    <LuTimer className="timer_icon" />
+                                                    <p style={{ fontWeight: "bold", fontSize: "1rem" }}>
+                                                        {countdown.minutes} : {countdown.seconds}
+                                                    </p>
+
+                                                </div>
+                                            </div>
+                                            <div className="verification_input_container" >
+                                                <VerificationInput validChars='0-9' autoFocus={true} classNames={{
+                                                    character: "character_field",
+                                                }} onChange={(e) => {
+                                                    setVerificationCode(e)
+                                                    if (e.length == 6) {
+                                                        setDisableButtonControl({
+                                                            ...disableButtonControl,
+                                                            deleteButtonDisable: false
+                                                        })
+                                                    } else {
+                                                        setDisableButtonControl({
+                                                            ...disableButtonControl,
+                                                            deleteButtonDisable: true
+                                                        })
+                                                    }
+                                                }} />
+                                            </div>
+
+                                            <div className="delete_course_confirm_container">
+                                                <Button disabled={disableButtonControl.deleteButtonDisable} className="delete_course_confirm_button" color="danger" onClick={async () => {
+                                                    deleteCourse()
+                                                }} >
+                                                    Onaylıyorum
+                                                </Button>
+                                            </div>
+                                        </div>
+                                    )
+                                }
+                            </div>
+
+                        </Col>
+                        <Col lg={4}>
+
+                        </Col>
+                    </Row>
+                </TabPane>
             </TabContent>
 
+            <Modal isOpen={showDeleteModal}>
+                <ModalHeader>
+                    Onay Menüsü
+                </ModalHeader>
+                <ModalBody>
+                    Bu kursu silmek istediğinizden emin misiniz ?
+                </ModalBody>
+                <ModalFooter>
+                    <Button color="danger" onClick={async () => {
+                        try {
+                            await deleteCourseSendEmailApi(id as string)
+                            countdown.start()
+                            setShowDeleteConfirmSection(true)
+                            setShowDeleteModal(false)
+                            setDisableButtonControl({
+                                ...disableButtonControl,
+                                modalButtonDisable: true
+                            })
+                        }
+                        catch (err: any) {
+                            toast.error(err.message, {
+                                autoClose: 1000
+                            })
+                        }
+
+                    }}
+
+
+                    >
+                        Onayla
+                    </Button>
+                    <Button color="primary" onClick={() => {
+                        setShowDeleteModal(false)
+                    }} >
+                        İptal
+                    </Button>
+
+                </ModalFooter>
+            </Modal>
         </>
 
     )

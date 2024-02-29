@@ -16,12 +16,12 @@ const EditCourseStudentTab: FC<{ userList: ICourseType, setUserList: Function }>
 
     const userData = useMemo(() => {
         if (userList) {
-            return userList.joinUserList?.filter(item => item != null || item != undefined)
+            return userList.joinUserList?.filter(item => item != null || item != undefined) ?? []
         }
+        return []
+    }, [userList.joinUserList])
 
-    }, [userList])
 
-    
     const columns = useMemo(() => [
         {
             header: "#",
@@ -164,7 +164,7 @@ const EditCourseStudentTab: FC<{ userList: ICourseType, setUserList: Function }>
 
 
     const table = useReactTable({
-        data: userData ?? [],
+        data: userData,
         columns,
         getCoreRowModel: getCoreRowModel(),
         state: {
@@ -191,7 +191,7 @@ const EditCourseStudentTab: FC<{ userList: ICourseType, setUserList: Function }>
                 <input placeholder="ara" className="form-control" style={{ width: "max-content" }} onChange={e => {
                     setGlobalFilter(e.target.value)
                 }} />
-                <p  style={{ color: "white" , backgroundColor:"green",padding:"4px 10px", borderRadius:"10px" }}    >
+                <p style={{ color: "white", backgroundColor: "green", padding: "4px 10px", borderRadius: "10px" }}    >
                     Toplam: {userData?.length}
                 </p>
             </div>

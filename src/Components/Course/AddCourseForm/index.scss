@@ -88,18 +88,32 @@
     border-radius: 20px;
     padding: 10px 20px;
     position: relative;
-    &_header{   
+
+    &_header {
         display: flex;
         align-items: center;
-        margin-bottom: 15px;
+        margin-bottom: 20px;
     }
 
-    &_footer{
+    &_footer {
         display: flex;
         justify-content: space-between;
+        align-items: center;
+
+        &_detail_btn {
+            background-color: rgba($color: #4788FF, $alpha: .9);
+            padding: 2px 15px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: .5s all;
+
+            &:hover {
+                opacity: .7;
+            }
+        }
     }
 
-    .program_card_close_icon{
+    .program_card_close_icon {
         position: absolute;
         right: 0;
         top: 0;
@@ -109,8 +123,97 @@
         padding: 4px;
         cursor: pointer;
         transition: .5s all;
-        &:hover{
+
+        &:hover {
             opacity: .7;
         }
     }
+}
+
+
+.program_date_card {
+    position: absolute;
+    right: -300px;
+    transition: 1s all;
+}
+
+
+.program_date_right_bar {
+    visibility: hidden;
+    position: absolute;
+    overflow-y: scroll;
+    right: 0;
+    height: 100vh;
+    top: 0;
+    width: 420px;
+    z-index: 10000;
+    border-top-left-radius: 10px;
+    border-bottom-left-radius: 20px;
+    background-color: #061E39;
+    padding: 30px;
+
+    &_header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 30px;
+
+        .close_icon {
+            font-size: 32px;
+            background-color: rgba($color: red, $alpha: .7);
+            border-radius: 50%;
+            padding: 3px 8px;
+            cursor: pointer;
+            transition: opacity .5s ease-in-out;
+
+            &:hover {
+                opacity: .5;
+            }
+        }
+
+        h6 {
+            font-size: 1.1rem;
+        }
+    }
+
+
+    &_content {
+        display: flex;
+        flex-direction: column;
+
+        .content_day_list_card {
+            display: flex;
+            flex-direction: column;
+            background-color: rgba($color: #4788FF, $alpha: .4);
+            margin-bottom: 20px;
+            border-radius: 10px;
+            padding-top: 8px;
+            padding-left: 20px;
+            padding-right: 20px;
+            padding-bottom: 8px;
+
+            h6 {
+                margin-bottom: 0;
+            }
+
+            &_header {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                margin-bottom: 10px;
+            }
+
+
+            &_footer {
+                display: flex;
+                justify-content: space-between;
+            }
+        }
+
+    }
+}
+
+
+.opacity-show {
+    visibility: visible;
 }

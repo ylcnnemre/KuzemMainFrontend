@@ -48,13 +48,13 @@ const CourseDetailModal: FC<{ modalShow: boolean, setModalShow: Function, select
                     </Col>
                     <Col lg={12}>
                         {
-                            selectedCourse && selectedCourse.schedules.length !== 0 && (
+                            selectedCourse && selectedCourse.schedules?.length !== 0 && (
                                 <Row>
                                     <h5>
                                         Program
                                     </h5>
                                     {
-                                        selectedCourse?.schedules.map((item, index) => {
+                                        selectedCourse?.schedules?.map((item, index) => {
                                             return (
                                                 <Col key={`${index}`} sm={4} >
                                                     <div className='program_card'>

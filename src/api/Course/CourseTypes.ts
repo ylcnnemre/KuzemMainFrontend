@@ -20,6 +20,7 @@ export interface ICourseType {
         startTime: string
         createdAt: string
         updatedAt: string
+        dates: string[]
         _id: string
     }[]
     endDate: string
@@ -112,7 +113,7 @@ export interface IUpdateAnnouncement {
     content: string
 }
 
-export interface IDeleteAnnouncement{
+export interface IDeleteAnnouncement {
     courseId: string
     announcementId: string
 }

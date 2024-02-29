@@ -34,6 +34,7 @@ const AddCourseForm = () => {
     id: ""
   })
   const [programList, setProgramList] = useState<IProgram[]>([])
+  const [programDateList, setProgramDateList] = useState<Array<{ id: string, day: string, dates: Date[], startTime: string, endTime: string }>>([])
 
   const handleCourseImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const imageExtension = ["jpg", "jpeg", "png"]
@@ -189,7 +190,7 @@ const AddCourseForm = () => {
         }
         {
           current == 1 && (
-            <AddCourseProgram formik={formik} setCurrent={setCurrent} programData={programData} setProgramData={setProgramData} programList={programList} setProgramList={setProgramList} />
+            <AddCourseProgram programDateList={programDateList} setProgramDateList={setProgramDateList} formik={formik} setCurrent={setCurrent} programData={programData} setProgramData={setProgramData} programList={programList} setProgramList={setProgramList} />
           )
         }
         {
@@ -199,7 +200,7 @@ const AddCourseForm = () => {
         }
         {
           current == 3 && (
-            <AddCourseDocumentTab programList={programList} setCurrent={setCurrent} selectedImageFiles={selectedImageFiles} formik={formik} handleCourseDocument={handleCourseDocument} selectedDocumentFiles={selectedDocumentFiles} />
+            <AddCourseDocumentTab   programList={programDateList} setCurrent={setCurrent} selectedImageFiles={selectedImageFiles} formik={formik} handleCourseDocument={handleCourseDocument} selectedDocumentFiles={selectedDocumentFiles} />
           )
         }
       </div>
