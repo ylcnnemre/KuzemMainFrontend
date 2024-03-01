@@ -62,19 +62,28 @@ const EditCourseProgram: FC<{ programList: ICourseType["schedules"], setProgramL
 
     const confirmProgram = async () => {
         try {
-            const response = await updateCourseProgramApi({
-                courseId: id as string,
-                programs: programList.map(el => {
-                    return {
-                        day: el.day,
-                        endTime: el.endTime,
-                        startTime: el.startTime
-                    }
+            if (programList.length == 0) {
+                toast.warning("en az bir gün seçiniz", {
+                    autoClose: 1000
                 })
-            })
-            toast.success("Program kayıt edildi",{
-                autoClose : 1000
-            })
+            }
+            else {
+                const response = await updateCourseProgramApi({
+                    courseId: id as string,
+                    programs: programList.map(el => {
+                        return {
+                            day: el.day,
+                            endTime: el.endTime,
+                            startTime: el.startTime
+                        }
+                    })
+                })
+                toast.success("Program kayıt edildi", {
+                    autoClose: 1000
+                })
+            }
+
+
         }
         catch (err: any) {
             toast.error(err.message, {
@@ -83,6 +92,8 @@ const EditCourseProgram: FC<{ programList: ICourseType["schedules"], setProgramL
         }
     }
 
+
+    console.log("prog =>", programList)
 
     return (
         <Row>

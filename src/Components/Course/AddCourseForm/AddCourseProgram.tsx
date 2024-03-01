@@ -187,7 +187,7 @@ const AddCourseProgram: FC<{ setCurrent: any, programDateList: Array<{ id: strin
                         {
                             programList.map((el, index) => {
                                 return (
-                                    <Col key={`${index}`} lg={3}>
+                                    <Col key={`${index}`} lg={4}>
                                         <div className='program_card'>
                                             <div className='program_card_header' >
 

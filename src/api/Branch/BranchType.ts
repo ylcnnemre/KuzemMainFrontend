@@ -1,4 +1,4 @@
-import { IUser } from "../User/UserType"
+import { IUserData } from "../User/UserType"
 
 export interface IBranch {
     _id: string
@@ -6,11 +6,18 @@ export interface IBranch {
     description: string
     createdAt: string
     updatedAt: string
-    createdByUser: IUser[]
-    uptadedByUser: IUser[]
+    createdByUser: IUserData[]
+    uptadedByUser: IUserData[]
 }
 
 export interface ICreateBranch {
+    name: string
+    description: string
+}
+
+
+export interface IUpdateBranchRequest {
+    id: string
     name: string
     description: string
 }

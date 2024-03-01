@@ -291,6 +291,7 @@ const EditCourse = () => {
                             })
                         }
                         catch (err: any) {
+                            setShowDeleteModal(false)
                             toast.error(err.message, {
                                 autoClose: 1000
                             })

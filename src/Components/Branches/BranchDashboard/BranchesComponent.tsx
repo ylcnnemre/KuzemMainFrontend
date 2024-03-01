@@ -1,17 +1,33 @@
 import React, { useEffect, useMemo, useState } from 'react'
-import { getAllBranch } from '../../../api/Branch/BranchApi'
+import { createBranch, deleteBranchApi, getAllBranch, updateBranchApi } from '../../../api/Branch/BranchApi'
 import { IBranch } from '../../../api/Branch/BranchType'
-import { Button, Table } from 'reactstrap'
+import { Button, Col, FormFeedback, Input, Label, Modal, ModalBody, ModalFooter, ModalHeader, Row, Table } from 'reactstrap'
 import "./index.scss"
 import { Link } from 'react-router-dom'
 import { ColumnDef, ColumnFiltersState, FilterFn, flexRender, getCoreRowModel, getFilteredRowModel, getPaginationRowModel, getSortedRowModel, useReactTable } from '@tanstack/react-table'
-
+import { FiEdit, FiTrash } from 'react-icons/fi'
+import { useFormik } from 'formik'
+import * as yup from "yup"
+import { toast } from 'react-toastify'
 
 const BranchDashboard = () => {
     const [branch, setBranch] = useState<IBranch[]>([])
     const [globalFilter, setGlobalFilter] = useState<string>('');
     const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
-
+    const [deleteModalShow, setDeleteModalShow] = useState<{
+        show: boolean,
+        branchId: string
+    }>({
+        branchId: "",
+        show: false
+    })
+    const [modalShow, setModalShow] = useState<{
+        type: "edit" | "create",
+        show: boolean
+    }>({
+        type: "create",
+        show: false
+    })
     useEffect(() => {
         const fetchBranches = async () => {
             try {
@@ -29,12 +45,35 @@ const BranchDashboard = () => {
             {
                 id: "name",
                 accessorKey: "name",
-                header: "name"
+                header: "name",
+                cell: ({ getValue }) => {
+                    const name: any = getValue()
+                    return (
+                        <p>
+                            {name.substring(0, 15)}
+                            {
+                                name.length > 15 && (
+                                    <span>
+                                        ...
+                                    </span>
+                                )
+                            }
+                        </p>
+                    )
+                }
             },
             {
                 id: "description",
                 accessorKey: "description",
-                header: "description"
+                header: "description",
+                cell: ({ getValue }) => {
+                    const description: any = getValue()
+                    return (
+                        <p>
+                            {description.substring(0, 10)}...
+                        </p>
+                    )
+                }
             },
             {
                 id: "createdBy",
@@ -54,14 +93,31 @@ const BranchDashboard = () => {
                 }
             },
             {
-                id: "actions",
+                id: "Action",
                 accessorKey: "id",
-                header: "Action",
+                header: "İşlemler",
                 cell: function render({ getValue }) {
                     return (
                         <div>
-                            <Button color="warning">
-                                Sil
+                            <Button color="warning" onClick={() => {
+                                const selectedBranch = branch.find(el => el._id == getValue())
+                                formik.setFieldValue("name", selectedBranch?.name)
+                                formik.setFieldValue("description", selectedBranch?.description)
+                                formik.setFieldValue("id", selectedBranch?._id)
+                                setModalShow({
+                                    type: "edit",
+                                    show: true
+                                })
+                            }} >
+                                <FiEdit />
+                            </Button>
+                            <Button color='danger' style={{ marginLeft: "20px" }} onClick={async () => {
+                                setDeleteModalShow({
+                                    branchId: getValue() as string,
+                                    show: true
+                                })
+                            }} >
+                                <FiTrash />
                             </Button>
                         </div>
                     )
@@ -69,13 +125,13 @@ const BranchDashboard = () => {
             }
         ]
 
-    }, [])
+    }, [branch])
 
 
     const data = useMemo(() => {
-        console.log("brd ==>",branch)
         return branch.map(el => {
             return {
+                id: el._id,
                 name: el.name,
                 description: el.description,
                 createdByUser: el.createdByUser[0]?.name,
@@ -103,7 +159,54 @@ const BranchDashboard = () => {
         getPaginationRowModel: getPaginationRowModel(),
         getSortedRowModel: getSortedRowModel()
     });
-    console.log("selammm")
+
+    const formik = useFormik({
+        initialValues: {
+            id: "",
+            name: "",
+            description: ""
+        },
+        validationSchema: yup.object({
+            name: yup.string().required("İsim Giriniz"),
+            description: yup.string().required("Açıklama giriniz")
+        }),
+        onSubmit: async (value, { resetForm }) => {
+            try {
+                if (modalShow.type == "create") {
+                    const response = await createBranch(value)
+                    setBranch(response.data.map(el => el))
+                    toast.success("branş kayıt edildi", {
+                        autoClose: 1000
+                    })
+                    resetForm()
+                    setModalShow({
+                        type: "create",
+                        show: false
+                    })
+                }
+                else {
+                    console.log("val =>", value)
+                    const response = await updateBranchApi(value)
+                    setBranch(response.data.map(el => el))
+                    toast.success("branş kayıt edildi", {
+                        autoClose: 1000
+                    })
+                    resetForm()
+                    setModalShow({
+                        type: "create",
+                        show: false
+                    })
+                }
+            }
+            catch (err: any) {
+                toast.error(err.response.data.message, {
+                    autoClose: 1500
+                })
+            }
+
+        }
+    })
+
 
 
     return (
@@ -115,12 +218,17 @@ const BranchDashboard = () => {
                     setGlobalFilter(e.target.value)
                 }} />
                 <div className="col-sm-auto ms-auto">
-                    <Link
-                        to="/brans/ekle"
-                        className="btn btn-primary"
+                    <Button
+                        color='primary'
+                        onClick={() => {
+                            setModalShow({
+                                show: true,
+                                type: "create"
+                            })
+                        }}
                     >
                         Branş Ekle
-                    </Link>
+                    </Button>
                 </div>
             </div>
             <div className={"table-responsive mb-1"}>
@@ -226,6 +334,116 @@ const BranchDashboard = () => {
 
             </div>
 
+
+            <Modal isOpen={modalShow.show}>
+                <ModalHeader>
+                    {
+                        modalShow.type == "edit" ? "Branş Düzenle" : "Branş Ekle"
+                    }
+                </ModalHeader>
+                <ModalBody>
+                    <Row>
+                        <Col lg={12}>
+                            <div className="mb-3">
+                                <Label htmlFor="firstnameInput" className="form-label">
+                                    İsim
+                                </Label>
+                                <Input type="text" className="form-control" id="name" name='name'
+                                    placeholder='isim'
+                                    value={formik.values.name} onChange={formik.handleChange} onBlur={formik.handleBlur}
+                                    invalid={
+                                        formik.touched.name && formik.errors.name ? true : false
+                                    }
+                                />
+                                {formik.touched.name && formik.errors.name ? (
+                                    <FormFeedback type="invalid"><div>{formik.errors.name}</div></FormFeedback>
+                                ) : null}
+                            </div>
+                        </Col>
+                        <Col lg={12}>
+                            <div className="mb-3">
+                                <Label htmlFor="firstnameInput" className="form-label">
+                                    Açıklama
+                                </Label>
+                                <Input type="textarea" className="form-control" id="name" name='description'
+                                    style={{ resize: "none" }}
+                                    placeholder='açıklama'
+                                    value={formik.values.description} onChange={formik.handleChange} onBlur={formik.handleBlur}
+                                    invalid={
+                                        formik.touched.description && formik.errors.description ? true : false
+                                    }
+                                />
+                                {formik.touched.description && formik.errors.description ? (
+                                    <FormFeedback type="invalid"><div>{formik.errors.description}</div></FormFeedback>
+                                ) : null}
+                            </div>
+                        </Col>
+                    </Row>
+                </ModalBody>
+                <ModalFooter>
+                    <Button onClick={() => {
+                        formik.handleSubmit()
+                    }} >
+                        {
+                            modalShow.type == "edit" ? "Güncelle" : "Ekle"
+                        }
+                    </Button>
+                    <Button color='danger' onClick={() => {
+                        setModalShow({
+                            show: false,
+                            type: "create"
+                        })
+                    }} >
+                        İptal
+                    </Button>
+                </ModalFooter>
+            </Modal>
+
+
+            <Modal isOpen={deleteModalShow.show}>
+                <ModalHeader>
+                    Onay Formu
+                </ModalHeader>
+                <ModalBody>
+                    Bu branşı silmek istediğinize emin misiniz ?
+                </ModalBody>
+                <ModalFooter>
+                    <Button color='danger' onClick={async () => {
+                        try {
+                            await deleteBranchApi(deleteModalShow.branchId)
+
+                            setBranch(branch.filter(el => el._id !== deleteModalShow.branchId))
+
+                            setDeleteModalShow({
+                                show: false,
+                                branchId: ""
+                            })
+                            toast.success("Silme işlemi başarılı", {
+                                autoClose: 1000
+                            })
+                        }
+                        catch (err: any) {
+                            toast.error(err.response.data.message, {
+                                autoClose: 1500
+                            })
+                            setDeleteModalShow({
+                                show: false,
+                                branchId: ""
+                            })
+                        }
+                    }} >
+                        Sil
+                    </Button>
+                    <Button onClick={() => {
+                        setDeleteModalShow({
+                            show: false,
+                            branchId: ""
+                        })
+                    }}>
+                        İptal
+                    </Button>
+                </ModalFooter>
+            </Modal>
         </div>
     )
 }

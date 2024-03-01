@@ -9,12 +9,16 @@ import { withTranslation } from 'react-i18next';
 import withRouter from '../../Common/withRouter';
 import Select from 'react-select';
 import { Permission } from '../../../common/constants/PermissionList';
+import useUserStore from '../../../zustand/useUserStore';
 
 const today = new Date();
 const eighteenYearsAgo = new Date(today.getFullYear() - 18, today.getMonth(), today.getDate());
 const eightyYearsAgo = new Date(today.getFullYear() - 80, today.getMonth(), today.getDate());
 
 const AddAdmin = ({ t }: any) => {
+
+  const { user } = useUserStore()
+
   const formik = useFormik({
     initialValues: {
       name: "",
@@ -26,7 +30,7 @@ const AddAdmin = ({ t }: any) => {
       gender: "erkek",
       permission: [{
         label: "Öğrenci Düzenle",
-        value: Permission.STUDENT_EDIT
+        value: Permission.STUDENT_ADD
       }]
     },
     validationSchema: yup.object({
@@ -55,12 +59,13 @@ const AddAdmin = ({ t }: any) => {
           gender: gender as ICreateUserType["gender"],
           birthDate: new Date(birthDate).toISOString().split('T')[0],
           role: "admin",
-          permission: permission.map(item => item.value)
+          permission: permission.map(item => item.value),
+          userId: user._id
         }
         console.log("reqq ==>", requestBody)
         const response = await createUserApi(requestBody)
         console.log("response ==>", response)
-        toast.success("Öğrenci kayıt edildi", {
+        toast.success("Yönetici edildi", {
           autoClose: 1000
         })
         /*       resetForm() */
@@ -131,6 +136,7 @@ const AddAdmin = ({ t }: any) => {
 
   console.log("formikErrors ==>", formik.errors)
   return (
+   <>
     <div className='' >
       <Form onSubmit={formik.handleSubmit}>
         <Row>
@@ -298,6 +304,7 @@ const AddAdmin = ({ t }: any) => {
         </Row>
       </Form>
     </div>
+   </>
   )
 }
 
